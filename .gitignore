@@ -1,0 +1,10 @@
+node_modules/
+*.*~
+*.db
+.goutputstream-*
+*.bac
+/.project
+coverage/
+dist
+docs/dist
+npm-debug.log
