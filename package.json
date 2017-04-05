@@ -22,8 +22,8 @@
     "build": "rollup -c rollup.config.es5.js && rollup -c rollup.config.es2015.js",
     "pretest": "npm run lint && npm run build",
     "test": "mocha tests/*.js",
-    "preversion": "npm test",
-    "postversion": "git push origin && git push origin --tags",
+    "preversion": "npm test && git add -f dist/",
+    "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags",
     "prepublish": "in-publish && npm run build || exit 0"
   },
   "repository": {
