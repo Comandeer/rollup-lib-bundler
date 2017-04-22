@@ -1,5 +1,7 @@
 # @comandeer/rollup-lib-bundler [![Build Status](https://travis-ci.org/Comandeer/rollup-lib-bundler.svg?branch=master)](https://travis-ci.org/Comandeer/rollup-lib-bundler) [![Dependency Status](https://david-dm.org/Comandeer/rollup-lib-bundler.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler) [![devDependencies Status](https://david-dm.org/Comandeer/rollup-lib-bundler/dev-status.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler?type=dev)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Comandeer/rollup-lib-bundler.svg)](https://greenkeeper.io/)
+
 Super opinionated library bundler using Rollup, Babel, Babili and Uglify.js.
 
 ## How does it work?
