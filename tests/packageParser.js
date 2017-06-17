@@ -110,4 +110,13 @@ describe( 'packageParser', () => {
 
 		expect( packageParser( jsnext ).dist.es2015 ).to.equal( 'dist/esnext.js' );
 	} );
+
+	it( 'parses author object into string', () => {
+		const author = Object.assign( {}, valid );
+		author.author = {
+			name: 'Tester'
+		};
+
+		expect( packageParser( author ).author ).to.equal( 'Tester' );
+	} );
 } );

@@ -6,7 +6,7 @@ import preset from 'babel-preset-es2015-rollup';
 import uglify from 'rollup-plugin-uglify';
 
 function getRollupConfig( metadata, isEs5 ) {
-	const banner = `/*! ${metadata.name} v${metadata.version} | (c) ${new Date().getFullYear()} ${metadata.author.name} | ${metadata.license} license (see LICENSE) */`;
+	const banner = `/*! ${metadata.name} v${metadata.version} | (c) ${new Date().getFullYear()} ${metadata.author} | ${metadata.license} license (see LICENSE) */`;
 	const plugins = [
 		convertCJS(),
 		babili( {
