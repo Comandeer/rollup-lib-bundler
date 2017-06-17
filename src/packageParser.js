@@ -38,11 +38,19 @@ function lintObject( obj ) {
 	checkProperty( 'license' );
 }
 
+function prepareAuthorMetadata( author ) {
+	if ( typeof author !== 'object' ) {
+		return String( author );
+	}
+
+	return author.name;
+}
+
 function prepareMetadata( obj ) {
 	return {
 		name: obj.name,
 		version: obj.version,
-		author: obj.author,
+		author: prepareAuthorMetadata( obj.author ),
 		license: obj.license,
 		src: 'src/index.js',
 		dist: {
