@@ -1,6 +1,6 @@
 import { rollup } from 'rollup';
 import convertCJS from 'rollup-plugin-commonjs';
-import babili from 'rollup-plugin-babili';
+import minify from 'rollup-plugin-babel-minify';
 import babel from 'rollup-plugin-babel';
 import preset from 'babel-preset-es2015-rollup';
 import uglify from 'rollup-plugin-uglify';
@@ -9,7 +9,7 @@ function getRollupConfig( metadata, isEs5 ) {
 	const banner = `/*! ${metadata.name} v${metadata.version} | (c) ${new Date().getFullYear()} ${metadata.author} | ${metadata.license} license (see LICENSE) */`;
 	const plugins = [
 		convertCJS(),
-		babili( {
+		minify( {
 			comments: false,
 			banner
 		} )
