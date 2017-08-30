@@ -7,10 +7,9 @@ const packageInfo = require( './package.json' );
 const banner = `/*! ${packageInfo.name} v${packageInfo.version} | (c) ${new Date().getFullYear()} ${packageInfo.author.name} | ${packageInfo.license} license (see LICENSE) */`;
 
 export default {
-	entry: 'src/index.js',
-	format: 'cjs',
-	moduleName: 'rlb',
-	sourceMap: true,
+	input: 'src/index.js',
+	name: 'rlb',
+	sourcemap: true,
 	plugins: [
 		convertCJS(),
 		babel( {
@@ -25,5 +24,8 @@ export default {
 		} )
 	],
 	banner,
-	dest: packageInfo.main
+	output: {
+		file: packageInfo.main,
+		format: 'cjs'
+	}
 };
