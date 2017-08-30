@@ -5,9 +5,8 @@ const packageInfo = require( './package.json' );
 const banner = `/*! ${packageInfo.name} v${packageInfo.version} | (c) ${new Date().getFullYear()} ${packageInfo.author.name} | ${packageInfo.license} license (see LICENSE) */`;
 
 export default {
-	entry: 'src/index.js',
-	format: 'es',
-	sourceMap: true,
+	input: 'src/index.js',
+	sourcemap: true,
 	plugins: [
 		convertCJS(),
 		minify( {
@@ -16,5 +15,8 @@ export default {
 		} )
 	],
 	banner,
-	dest: packageInfo.module || packageInfo[ 'jsnext:main' ]
+	output: {
+		file: packageInfo.module || packageInfo[ 'jsnext:main' ],
+		format: 'es'
+	}
 };

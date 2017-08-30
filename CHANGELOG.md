@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 0.2.0
 ## Changed
 * Switch from rollup-plugin-babili to rollup-plugin-babel-minify.
+* Update rollup to `^0.49.2`.
 
 ## [0.1.2] – 2017-06-17
 ## Fixed
