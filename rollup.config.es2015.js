@@ -1,5 +1,5 @@
 import convertCJS from 'rollup-plugin-commonjs';
-import babili from 'rollup-plugin-babili';
+import minify from 'rollup-plugin-babel-minify';
 
 const packageInfo = require( './package.json' );
 const banner = `/*! ${packageInfo.name} v${packageInfo.version} | (c) ${new Date().getFullYear()} ${packageInfo.author.name} | ${packageInfo.license} license (see LICENSE) */`;
@@ -10,7 +10,7 @@ export default {
 	sourceMap: true,
 	plugins: [
 		convertCJS(),
-		babili( {
+		minify( {
 			comments: false,
 			banner
 		} )
