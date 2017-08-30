@@ -30,12 +30,14 @@ function getRollupConfig( metadata, isEs5 ) {
 	}
 
 	return {
-		entry: metadata.src,
-		format: isEs5 ? 'cjs' : 'es',
-		sourceMap: true,
+		input: metadata.src,
 		plugins,
 		banner,
-		dest: isEs5 ? metadata.dist.es5 : metadata.dist.es2015
+		output: {
+			sourcemap: true,
+			format: isEs5 ? 'cjs' : 'es',
+			file: isEs5 ? metadata.dist.es5 : metadata.dist.es2015
+		}
 	};
 }
 
@@ -48,8 +50,8 @@ function bundler( metadata ) {
 		rollup( configEs2015 )
 	] ).then( ( bundles ) => {
 		return Promise.all( [
-			bundles[ 0 ].write( configEs5 ),
-			bundles[ 1 ].write( configEs2015 )
+			bundles[ 0 ].write( configEs5.output ),
+			bundles[ 1 ].write( configEs2015.output )
 		] );
 	} );
 }

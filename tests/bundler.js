@@ -13,7 +13,6 @@ const metadata = {
 	version: '9.0.1',
 };
 const bundlerConfig = Object.assign( {}, metadata, {
-	moduleName: 'testPackage',
 	src: 'tests/fixtures/testPackage/src/index.js',
 	dist: {
 		es2015: 'tests/fixtures/testPackage/dist/es2015.js',
