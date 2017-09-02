@@ -44,6 +44,7 @@
   "homepage": "https://github.com/Comandeer/rollup-lib-bundler#readme",
   "devDependencies": {
     "chai": "^4.0.0",
+    "commitplease": "^2.7.10",
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^4.1.0",
     "in-publish": "^2.0.0",
