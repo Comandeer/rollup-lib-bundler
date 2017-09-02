@@ -1,4 +1,4 @@
-# @comandeer/rollup-lib-bundler [![Build Status](https://travis-ci.org/Comandeer/rollup-lib-bundler.svg?branch=master)](https://travis-ci.org/Comandeer/rollup-lib-bundler) [![Dependency Status](https://david-dm.org/Comandeer/rollup-lib-bundler.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler) [![devDependencies Status](https://david-dm.org/Comandeer/rollup-lib-bundler/dev-status.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler?type=dev)
+# @comandeer/rollup-lib-bundler [![Build Status](https://travis-ci.org/Comandeer/rollup-lib-bundler.svg?branch=master)](https://travis-ci.org/Comandeer/rollup-lib-bundler) [![Dependency Status](https://david-dm.org/Comandeer/rollup-lib-bundler.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler) [![devDependencies Status](https://david-dm.org/Comandeer/rollup-lib-bundler/dev-status.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler?type=dev) [![codecov](https://codecov.io/gh/Comandeer/rollup-lib-bundler/branch/master/graph/badge.svg)](https://codecov.io/gh/Comandeer/rollup-lib-bundler)
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/Comandeer/rollup-lib-bundler.svg)](https://greenkeeper.io/)
 
