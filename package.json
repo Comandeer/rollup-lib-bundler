@@ -42,6 +42,23 @@
     "url": "https://github.com/Comandeer/rollup-lib-bundler/issues"
   },
   "homepage": "https://github.com/Comandeer/rollup-lib-bundler#readme",
+  "commitplease": {
+    "style": "angular",
+    "types": [
+      "feat",
+      "fix",
+      "docs",
+      "style",
+      "refactor",
+      "perf",
+      "test",
+      "build",
+      "ci",
+      "chore",
+      "revert"
+    ],
+    "scope": "\\S+.*"
+  },
   "devDependencies": {
     "chai": "^4.0.0",
     "commitplease": "^2.7.10",
