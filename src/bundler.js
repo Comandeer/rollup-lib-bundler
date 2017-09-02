@@ -1,3 +1,4 @@
+import generateBanner from './generateBanner.js';
 import { rollup } from 'rollup';
 import convertCJS from 'rollup-plugin-commonjs';
 import minify from 'rollup-plugin-babel-minify';
@@ -6,7 +7,7 @@ import preset from 'babel-preset-es2015-rollup';
 import uglify from 'rollup-plugin-uglify';
 
 function getRollupConfig( metadata, isEs5 ) {
-	const banner = `/*! ${metadata.name} v${metadata.version} | (c) ${new Date().getFullYear()} ${metadata.author} | ${metadata.license} license (see LICENSE) */`;
+	const banner = generateBanner( metadata );
 	const plugins = [
 		convertCJS(),
 		minify( {
