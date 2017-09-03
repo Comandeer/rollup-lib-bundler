@@ -1,8 +1,8 @@
-# @comandeer/rollup-lib-bundler [![Build Status](https://travis-ci.org/Comandeer/rollup-lib-bundler.svg?branch=master)](https://travis-ci.org/Comandeer/rollup-lib-bundler) [![Dependency Status](https://david-dm.org/Comandeer/rollup-lib-bundler.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler) [![devDependencies Status](https://david-dm.org/Comandeer/rollup-lib-bundler/dev-status.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler?type=dev) [![codecov](https://codecov.io/gh/Comandeer/rollup-lib-bundler/branch/master/graph/badge.svg)](https://codecov.io/gh/Comandeer/rollup-lib-bundler)
+# @comandeer/rollup-lib-bundler
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/Comandeer/rollup-lib-bundler.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/Comandeer/rollup-lib-bundler.svg?branch=master)](https://travis-ci.org/Comandeer/rollup-lib-bundler) [![Dependency Status](https://david-dm.org/Comandeer/rollup-lib-bundler.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler) [![devDependencies Status](https://david-dm.org/Comandeer/rollup-lib-bundler/dev-status.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler?type=dev) [![codecov](https://codecov.io/gh/Comandeer/rollup-lib-bundler/branch/master/graph/badge.svg)](https://codecov.io/gh/Comandeer/rollup-lib-bundler) [![npm (scoped)](https://img.shields.io/npm/v/@comandeer/rollup-lib-bundler.svg)]() [![Greenkeeper badge](https://badges.greenkeeper.io/Comandeer/rollup-lib-bundler.svg)](https://greenkeeper.io/)
 
-Super opinionated library bundler using Rollup, Babel, Babili and Uglify.js.
+Super opinionated library bundler using [Rollup](https://github.com/rollup/rollup), [Babel](https://github.com/babel/babel), [babel-minify](https://github.com/babel/minify) and [Uglify.js](https://github.com/mishoo/UglifyJS2).
 
 ## How does it work?
 
