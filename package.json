@@ -21,7 +21,7 @@
     "lint": "eslint src/**/*.js tests/*.js",
     "build": "rollup -c rollup.config.es5.js && rollup -c rollup.config.es2015.js",
     "pretest": "npm run lint && npm run build",
-    "test": "nyc mocha tests/*.js",
+    "test": "nyc mocha tests/*.js --timeout 15000",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "preversion": "npm test && git add -f dist/",
     "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags",
@@ -81,11 +81,10 @@
     "rimraf": "^2.6.1"
   },
   "dependencies": {
-    "babel-preset-es2015-rollup": "^3.0.0",
+    "@comandeer/babel-preset-rollup": "^1.0.0",
     "rollup": "^0.49.2",
     "rollup-plugin-babel": "^3.0.0",
     "rollup-plugin-babel-minify": "^3.1.2",
-    "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-uglify": "^2.0.0"
+    "rollup-plugin-commonjs": "^8.0.2"
   }
 }

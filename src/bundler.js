@@ -3,8 +3,7 @@ import { rollup } from 'rollup';
 import convertCJS from 'rollup-plugin-commonjs';
 import minify from 'rollup-plugin-babel-minify';
 import babel from 'rollup-plugin-babel';
-import preset from 'babel-preset-es2015-rollup';
-import uglify from 'rollup-plugin-uglify';
+import preset from '@comandeer/babel-preset-rollup';
 
 function getRollupConfig( metadata, isEs5 ) {
 	const banner = generateBanner( metadata );
@@ -17,16 +16,10 @@ function getRollupConfig( metadata, isEs5 ) {
 	];
 
 	if ( isEs5 ) {
-		plugins[ 1 ] = babel( {
+		plugins.splice( 1, 0, babel( {
 			presets: [
 				[ preset ]
 			]
-		} );
-
-		plugins.push( uglify( {
-			output: {
-				preamble: banner
-			}
 		} ) );
 	}
 
