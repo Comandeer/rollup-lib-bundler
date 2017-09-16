@@ -13,6 +13,7 @@ export default {
 	plugins: [
 		convertCJS(),
 		babel( {
+			babelrc: false,
 			presets: [
 				[ preset ]
 			]
