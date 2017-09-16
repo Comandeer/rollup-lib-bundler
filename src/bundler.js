@@ -17,6 +17,7 @@ function getRollupConfig( metadata, isEs5 ) {
 
 	if ( isEs5 ) {
 		plugins.splice( 1, 0, babel( {
+			babelrc: false,
 			presets: [
 				[ preset ]
 			]
