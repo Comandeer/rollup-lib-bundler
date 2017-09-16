@@ -70,21 +70,21 @@
     ]
   },
   "devDependencies": {
-    "chai": "^4.0.0",
+    "chai": "^4.1.2",
     "codecov": "^2.3.0",
     "commitplease": "^2.7.10",
     "cz-conventional-changelog": "^2.0.0",
-    "eslint": "^4.1.0",
+    "eslint": "^4.7.0",
     "in-publish": "^2.0.0",
-    "mocha": "^3.2.0",
-    "nyc": "^11.1.0",
-    "rimraf": "^2.6.1"
+    "mocha": "^3.5.3",
+    "nyc": "^11.2.1",
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "@comandeer/babel-preset-rollup": "^1.0.0",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.0",
     "rollup-plugin-babel-minify": "^3.1.2",
-    "rollup-plugin-commonjs": "^8.0.2"
+    "rollup-plugin-commonjs": "^8.2.1"
   }
 }
