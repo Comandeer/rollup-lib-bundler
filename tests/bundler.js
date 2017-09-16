@@ -4,7 +4,7 @@ const fs = require( 'fs' );
 const rimraf = require( 'rimraf' ).sync;
 const chai = require( 'chai' );
 const expect = chai.expect;
-const bundler = require( '../dist/rollup-lib-bundler' ).bundler;
+const bundler = require( '../src/bundler' ).default;
 
 const metadata = {
 	name: 'test-package',

@@ -3,7 +3,7 @@
 const chai = require( 'chai' );
 const expect = chai.expect;
 const valid = require( './fixtures/packageParser/valid.json' );
-const packageParser = require( '../dist/rollup-lib-bundler' ).packageParser;
+const packageParser = require( '../src/packageParser' ).default;
 
 describe( 'packageParser', () => {
 	it( 'is a function', () => {

@@ -4,7 +4,7 @@ const fs = require( 'fs' );
 const rimraf = require( 'rimraf' ).sync;
 const chai = require( 'chai' );
 const expect = chai.expect;
-const rlb = require( '../dist/rollup-lib-bundler' ).default;
+const rlb = require( '../src/index' ).default;
 const oldCwd = process.cwd();
 
 function checkFiles( files ) {

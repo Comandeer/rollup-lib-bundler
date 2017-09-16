@@ -2,7 +2,7 @@
 
 const chai = require( 'chai' );
 const expect = chai.expect;
-const generateBanner = require( '../dist/rollup-lib-bundler' ).generateBanner;
+const generateBanner = require( '../src/generateBanner' ).default;
 
 describe( 'generateBanner', () => {
 	it( 'produces correct banner', () => {
