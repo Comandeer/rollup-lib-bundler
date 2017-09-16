@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## 0.2.1
+## 0.3.0
 ## Changed
+* BREAKING CHANGE: force Babel to ignore `.babelrc` file.
 * Update rollup to `^0.50.0`.
 * Update other dependencies.
 
