@@ -70,6 +70,9 @@
     ]
   },
   "devDependencies": {
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "codecov": "^2.3.0",
     "commitplease": "^2.7.10",
