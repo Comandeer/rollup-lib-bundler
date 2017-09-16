@@ -78,7 +78,6 @@
     "commitplease": "^2.7.10",
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^4.7.0",
-    "in-publish": "^2.0.0",
     "mocha": "^3.5.3",
     "nyc": "^11.2.1",
     "rimraf": "^2.6.2"
