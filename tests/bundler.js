@@ -59,8 +59,6 @@ describe( 'bundler', () => {
 
 	it( 'produces correct banner', () => {
 		return bundler( bundlerConfig ).then( () => {
-			// const expected = `/*! test-package v9.0.1 | (c) ${new Date().getFullYear()} Comandeer | MIT license (see LICENSE) */`;
-
 			checkBanner( 'tests/fixtures/testPackage/dist/es5.js' );
 			checkBanner( 'tests/fixtures/testPackage/dist/es2015.js' );
 		} );
