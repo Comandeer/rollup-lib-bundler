@@ -43,6 +43,7 @@
   },
   "homepage": "https://github.com/Comandeer/rollup-lib-bundler#readme",
   "commitplease": {
+  	"nohook": true,
     "style": "angular",
     "types": [
       "feat",
