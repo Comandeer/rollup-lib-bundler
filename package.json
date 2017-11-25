@@ -87,7 +87,7 @@
   },
   "dependencies": {
     "@comandeer/babel-preset-rollup": "^1.0.0",
-    "rollup": "^0.51.0",
+    "rollup": "^0.52.0",
     "rollup-plugin-babel": "^3.0.0",
     "rollup-plugin-babel-minify": "^3.1.2",
     "rollup-plugin-commonjs": "^8.2.1"
