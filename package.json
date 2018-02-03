@@ -19,7 +19,7 @@
   },
   "scripts": {
     "lint": "eslint src/**/*.js tests/*.js",
-    "build": "rollup -c rollup.config.es5.js && rollup -c rollup.config.es2015.js",
+    "build": "rlb",
     "pretest": "npm run lint",
     "test": "nyc mocha tests/*.js --timeout 15000 --compilers js:babel-register",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "@comandeer/is-ci": "^1.0.0",
+    "@comandeer/rollup-lib-bundler": "^0.3.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-register": "^6.26.0",
