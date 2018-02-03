@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Changed
 * [#48] BREAKING CHANGE: add new line after the banner comment.
 
+## Fixed
+* [#49] Fix incorrect version of package in banner comment.
+
 ## [0.3.0] – 2017-09-16
 ## Changed
 * [#30] BREAKING CHANGE: force Babel to ignore `.babelrc` file.
