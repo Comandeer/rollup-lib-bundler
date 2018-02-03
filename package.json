@@ -19,7 +19,7 @@
   },
   "scripts": {
     "lint": "eslint src/**/*.js tests/*.js",
-    "build": "rollup -c rollup.config.es5.js && rollup -c rollup.config.es2015.js",
+    "build": "rlb",
     "pretest": "npm run lint",
     "test": "nyc mocha tests/*.js --timeout 15000 --compilers js:babel-register",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
