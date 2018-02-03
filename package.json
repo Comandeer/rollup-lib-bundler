@@ -72,6 +72,7 @@
   },
   "devDependencies": {
     "@comandeer/is-ci": "^1.0.0",
+    "@comandeer/rollup-lib-bundler": "^0.3.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-register": "^6.26.0",
