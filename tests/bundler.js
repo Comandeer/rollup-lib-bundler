@@ -28,7 +28,7 @@ function checkFiles( files ) {
 
 function checkBanner( file ) {
 	const fileContent = fs.readFileSync( file, 'utf8' );
-	const banner = fileContent.match( /^\/\*!(.+?)\*\// );
+	const banner = fileContent.match( /^\/\*!(.+?)\*\/\n{1}/ );
 
 	expect( banner ).to.not.be.null;
 }
