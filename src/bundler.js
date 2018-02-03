@@ -11,7 +11,8 @@ function getRollupConfig( metadata, isEs5 ) {
 		convertCJS(),
 		minify( {
 			comments: false,
-			banner
+			banner,
+			bannerNewLine: true
 		} )
 	];
 
