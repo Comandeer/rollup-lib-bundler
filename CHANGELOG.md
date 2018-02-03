@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.4.0]
+## Changed
+* [#48] BREAKING CHANGE: add new line after the banner comment.
+
 ## [0.3.0] – 2017-09-16
 ## Changed
 * [#30] BREAKING CHANGE: force Babel to ignore `.babelrc` file.
@@ -41,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#18]: https://github.com/Comandeer/rollup-lib-bundler/issues/18
 [#21]: https://github.com/Comandeer/rollup-lib-bundler/pull/21
 [#30]: https://github.com/Comandeer/rollup-lib-bundler/issues/30
+[#48]: https://github.com/Comandeer/rollup-lib-bundler/issues/48
 
 [0.3.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.1.2...v0.2.0
