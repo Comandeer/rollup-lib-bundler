@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.4.1]
+## Added
+* [#54] Add `babel-core` as dependency.
+
 ## [0.4.0] – 2018-02-03
 ## Changed
 * [#48] BREAKING CHANGE: add new line after the banner comment.
@@ -50,7 +54,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#30]: https://github.com/Comandeer/rollup-lib-bundler/issues/30
 [#48]: https://github.com/Comandeer/rollup-lib-bundler/issues/48
 [#49]: https://github.com/Comandeer/rollup-lib-bundler/issues/49
+[#54]: https://github.com/Comandeer/rollup-lib-bundler/issues/49
 
+[0.4.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.1.2...v0.2.0
