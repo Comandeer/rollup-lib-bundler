@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.4.1]
+## [0.4.1] – 2018-02-11
 ## Added
 * [#54] Add `babel-core` as dependency.
 
