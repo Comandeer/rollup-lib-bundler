@@ -21,7 +21,7 @@
     "lint": "eslint src/**/*.js tests/*.js",
     "build": "rlb",
     "pretest": "npm run lint",
-    "test": "nyc mocha tests/*.js --timeout 15000 --compilers js:babel-register",
+    "test": "nyc mocha tests/*.js --timeout 15000 --require babel-register",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "commitmsg": "is-ci && exit 0 || commitplease .git/COMMIT_EDITMSG",
     "version": "npm test && npm run build && git add -f dist/",
