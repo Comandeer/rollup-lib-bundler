@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.4.2] – 2018-02-11
+### Fixed
+* [#58] Usage of deprecated Rollup config options.
+
 ## [0.4.1] – 2018-02-11
 ## Added
 * [#54] Add `babel-core` as dependency.
@@ -54,8 +58,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#30]: https://github.com/Comandeer/rollup-lib-bundler/issues/30
 [#48]: https://github.com/Comandeer/rollup-lib-bundler/issues/48
 [#49]: https://github.com/Comandeer/rollup-lib-bundler/issues/49
-[#54]: https://github.com/Comandeer/rollup-lib-bundler/issues/49
+[#54]: https://github.com/Comandeer/rollup-lib-bundler/issues/54
+[#58]: https://github.com/Comandeer/rollup-lib-bundler/issues/58
 
+[0.4.2]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.2.0...v0.3.0
