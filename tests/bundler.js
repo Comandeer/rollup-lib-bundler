@@ -3,6 +3,7 @@
 const fs = require( 'fs' );
 const rimraf = require( 'rimraf' ).sync;
 const chai = require( 'chai' );
+const sinon = require( 'sinon' );
 const expect = chai.expect;
 const bundler = require( '../src/bundler' ).default;
 
@@ -61,6 +62,17 @@ describe( 'bundler', () => {
 		return bundler( bundlerConfig ).then( () => {
 			checkBanner( 'tests/fixtures/testPackage/dist/es5.js' );
 			checkBanner( 'tests/fixtures/testPackage/dist/es2015.js' );
+		} );
+	} );
+
+	// #58
+	it( 'does not emit warning about deprecated options', () => {
+		const spy = sinon.spy( console, 'warn' );
+
+		return bundler( bundlerConfig ).then( () => {
+			spy.restore();
+
+			expect( spy.callCount ).to.equal( 0 );
 		} );
 	} );
 } );
