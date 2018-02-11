@@ -28,8 +28,8 @@ function getRollupConfig( metadata, isEs5 ) {
 	return {
 		input: metadata.src,
 		plugins,
-		banner,
 		output: {
+			banner,
 			sourcemap: true,
 			format: isEs5 ? 'cjs' : 'es',
 			file: isEs5 ? metadata.dist.es5 : metadata.dist.es2015
