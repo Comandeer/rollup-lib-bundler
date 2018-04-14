@@ -11,7 +11,7 @@ const metadata = {
 	name: 'test-package',
 	author: 'Comandeer',
 	license: 'MIT',
-	version: '9.0.1',
+	version: '9.0.1'
 };
 const bundlerConfig = Object.assign( {}, metadata, {
 	src: 'tests/fixtures/testPackage/src/index.js',
