@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.5.0]
+## Changed
+* [#68] **BREAKING CHANGE**: update `@comandeer/babel-preset-rollup` to version `^2.0.0`.
+
+## Removed
+* [#62] **BREAKING CHANGE**: remove support for Node <6.
+
 ## [0.4.2] – 2018-02-11
 ### Fixed
 * [#58] Usage of deprecated Rollup config options.
@@ -60,7 +67,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#49]: https://github.com/Comandeer/rollup-lib-bundler/issues/49
 [#54]: https://github.com/Comandeer/rollup-lib-bundler/issues/54
 [#58]: https://github.com/Comandeer/rollup-lib-bundler/issues/58
+[#62]: https://github.com/Comandeer/rollup-lib-bundler/issues/62
+[#68]: https://github.com/Comandeer/rollup-lib-bundler/pull/68
 
+[0.5.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.3.0...v0.4.0
