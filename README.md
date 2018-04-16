@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Comandeer/rollup-lib-bundler.svg?branch=master)](https://travis-ci.org/Comandeer/rollup-lib-bundler) [![Dependency Status](https://david-dm.org/Comandeer/rollup-lib-bundler.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler) [![devDependencies Status](https://david-dm.org/Comandeer/rollup-lib-bundler/dev-status.svg)](https://david-dm.org/Comandeer/rollup-lib-bundler?type=dev) [![codecov](https://codecov.io/gh/Comandeer/rollup-lib-bundler/branch/master/graph/badge.svg)](https://codecov.io/gh/Comandeer/rollup-lib-bundler) [![npm (scoped)](https://img.shields.io/npm/v/@comandeer/rollup-lib-bundler.svg)](https://npmjs.com/package/@comandeer/rollup-lib-bundler) [![Greenkeeper badge](https://badges.greenkeeper.io/Comandeer/rollup-lib-bundler.svg)](https://greenkeeper.io/)
 
-Super opinionated library bundler using [Rollup](https://github.com/rollup/rollup), [Babel](https://github.com/babel/babel) and [babel-minify](https://github.com/babel/minif).
+Super opinionated library bundler using [Rollup](https://github.com/rollup/rollup), [Babel](https://github.com/babel/babel) and [babel-minify](https://github.com/babel/minify).
 
 ## How does it work?
 
