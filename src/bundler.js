@@ -9,21 +9,20 @@ function getRollupConfig( metadata, isEs5 ) {
 	const banner = generateBanner( metadata );
 	const plugins = [
 		convertCJS(),
+
+		babel( {
+			babelrc: false,
+			presets: [
+				[ preset ]
+			]
+		} ),
+
 		minify( {
 			comments: false,
 			banner,
 			bannerNewLine: true
 		} )
 	];
-
-	if ( isEs5 ) {
-		plugins.splice( 1, 0, babel( {
-			babelrc: false,
-			presets: [
-				[ preset ]
-			]
-		} ) );
-	}
 
 	return {
 		input: metadata.src,

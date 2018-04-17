@@ -3,9 +3,15 @@
 const fs = require( 'fs' );
 const rimraf = require( 'rimraf' ).sync;
 const chai = require( 'chai' );
-const sinon = require( 'sinon' );
+const { callThru } = require( 'proxyquire' );
+const { spy } = require( 'sinon' );
+const { stub } = require( 'sinon' );
+const sinonChai = require( 'sinon-chai' );
 const expect = chai.expect;
 const bundler = require( '../src/bundler' ).default;
+const proxyquire = callThru();
+
+chai.use( sinonChai );
 
 const metadata = {
 	name: 'test-package',
@@ -67,12 +73,34 @@ describe( 'bundler', () => {
 
 	// #58
 	it( 'does not emit warning about deprecated options', () => {
-		const spy = sinon.spy( console, 'warn' );
+		const consoleSpy = spy( console, 'warn' );
 
 		return bundler( bundlerConfig ).then( () => {
-			spy.restore();
+			consoleSpy.restore();
 
-			expect( spy.callCount ).to.equal( 0 );
+			expect( consoleSpy.callCount ).to.equal( 0 );
+		} );
+	} );
+
+	// #67
+	it( 'transpiles both versions of the bundle', () => {
+		function checkBabelPlugin( { plugins } ) {
+			return plugins[ 1 ] && plugins[ 1 ].name === 'babel';
+		}
+
+		const rollupStub = stub().returns( {
+			write() {}
+		} );
+		const { default: proxiedBundler } = proxyquire( '../src/bundler.js', {
+			rollup: {
+				rollup: rollupStub
+			}
+		} );
+
+		return proxiedBundler( bundlerConfig ).then( () => {
+			expect( rollupStub ).to.have.been.calledTwice;
+			expect( checkBabelPlugin( rollupStub.firstCall.args[ 0 ] ) ).to.be.true;
+			expect( checkBabelPlugin( rollupStub.secondCall.args[ 0 ] ) ).to.be.true;
 		} );
 	} );
 } );
