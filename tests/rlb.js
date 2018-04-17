@@ -1,15 +1,13 @@
-'use strict';
+import { existsSync } from 'fs';
+import { sync as rimraf } from 'rimraf';
+import { expect } from 'chai';
+import rlb from '../src/index';
 
-const fs = require( 'fs' );
-const rimraf = require( 'rimraf' ).sync;
-const chai = require( 'chai' );
-const expect = chai.expect;
-const rlb = require( '../src/index' ).default;
 const oldCwd = process.cwd();
 
 function checkFiles( files ) {
 	files.forEach( ( file ) => {
-		expect( fs.existsSync( file ) ).to.equal( true );
+		expect( existsSync( file ) ).to.equal( true );
 	} );
 }
 

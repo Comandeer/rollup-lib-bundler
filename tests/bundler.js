@@ -1,17 +1,16 @@
-'use strict';
+import { existsSync } from 'fs';
+import { readFileSync } from 'fs';
+import { sync as rimraf } from 'rimraf';
+import { use } from 'chai';
+import { expect } from 'chai';
+import { callThru } from 'proxyquire';
+import { spy } from 'sinon';
+import { stub } from 'sinon';
+import sinonChai from 'sinon-chai';
+import bundler from '../src/bundler';
 
-const fs = require( 'fs' );
-const rimraf = require( 'rimraf' ).sync;
-const chai = require( 'chai' );
-const { callThru } = require( 'proxyquire' );
-const { spy } = require( 'sinon' );
-const { stub } = require( 'sinon' );
-const sinonChai = require( 'sinon-chai' );
-const expect = chai.expect;
-const bundler = require( '../src/bundler' ).default;
 const proxyquire = callThru();
-
-chai.use( sinonChai );
+use( sinonChai );
 
 const metadata = {
 	name: 'test-package',
@@ -29,12 +28,12 @@ const bundlerConfig = Object.assign( {}, metadata, {
 
 function checkFiles( files ) {
 	files.forEach( ( file ) => {
-		expect( fs.existsSync( file ) ).to.equal( true );
+		expect( existsSync( file ) ).to.equal( true );
 	} );
 }
 
 function checkBanner( file ) {
-	const fileContent = fs.readFileSync( file, 'utf8' );
+	const fileContent = readFileSync( file, 'utf8' );
 	const banner = fileContent.match( /^\/\*!(.+?)\*\/\n{1}/ );
 
 	expect( banner ).to.not.be.null;
