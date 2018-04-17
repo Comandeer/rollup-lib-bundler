@@ -54,8 +54,8 @@ function prepareMetadata( obj ) {
 		license: obj.license,
 		src: 'src/index.js',
 		dist: {
-			es2015: obj.module || obj[ 'jsnext:main' ],
-			es5: obj.main
+			esm: obj.module || obj[ 'jsnext:main' ],
+			cjs: obj.main
 		}
 	};
 }

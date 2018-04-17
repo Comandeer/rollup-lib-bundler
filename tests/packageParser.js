@@ -90,8 +90,8 @@ describe( 'packageParser', () => {
 			version: '9.0.1',
 			src: 'src/index.js',
 			dist: {
-				es2015: 'dist/es2015.js',
-				es5: 'dist/es5.js'
+				esm: 'dist/es2015.js',
+				cjs: 'dist/es5.js'
 			}
 		} );
 	} );
@@ -100,7 +100,7 @@ describe( 'packageParser', () => {
 		const module = Object.assign( {}, valid );
 		module[ 'jsnext:main' ] = 'dist/esnext.js';
 
-		expect( packageParser( module ).dist.es2015 ).to.equal( 'dist/es2015.js' );
+		expect( packageParser( module ).dist.esm ).to.equal( 'dist/es2015.js' );
 	} );
 
 	it( 'uses jsnext:main when module is not available', () => {
@@ -108,7 +108,7 @@ describe( 'packageParser', () => {
 		jsnext[ 'jsnext:main' ] = 'dist/esnext.js';
 		delete jsnext.module;
 
-		expect( packageParser( jsnext ).dist.es2015 ).to.equal( 'dist/esnext.js' );
+		expect( packageParser( jsnext ).dist.esm ).to.equal( 'dist/esnext.js' );
 	} );
 
 	it( 'parses author object into string', () => {
