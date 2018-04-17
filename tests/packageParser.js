@@ -1,9 +1,6 @@
-'use strict';
-
-const chai = require( 'chai' );
-const expect = chai.expect;
-const valid = require( './fixtures/packageParser/valid.json' );
-const packageParser = require( '../src/packageParser' ).default;
+import { expect } from 'chai';
+import valid from './fixtures/packageParser/valid.json';
+import packageParser from '../src/packageParser';
 
 describe( 'packageParser', () => {
 	it( 'is a function', () => {

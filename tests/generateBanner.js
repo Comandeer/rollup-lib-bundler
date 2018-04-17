@@ -1,8 +1,5 @@
-'use strict';
-
-const chai = require( 'chai' );
-const expect = chai.expect;
-const generateBanner = require( '../src/generateBanner' ).default;
+import { expect } from 'chai';
+import generateBanner from '../src/generateBanner';
 
 describe( 'generateBanner', () => {
 	it( 'produces correct banner', () => {
