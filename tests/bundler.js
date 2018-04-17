@@ -22,8 +22,8 @@ const metadata = {
 const bundlerConfig = Object.assign( {}, metadata, {
 	src: 'tests/fixtures/testPackage/src/index.js',
 	dist: {
-		es2015: 'tests/fixtures/testPackage/dist/es2015.js',
-		es5: 'tests/fixtures/testPackage/dist/es5.js'
+		esm: 'tests/fixtures/testPackage/dist/es2015.js',
+		cjs: 'tests/fixtures/testPackage/dist/es5.js'
 	}
 } );
 

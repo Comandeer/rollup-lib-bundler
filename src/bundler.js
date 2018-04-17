@@ -5,7 +5,7 @@ import minify from 'rollup-plugin-babel-minify';
 import babel from 'rollup-plugin-babel';
 import preset from '@comandeer/babel-preset-rollup';
 
-function getRollupConfig( metadata, isEs5 ) {
+function getRollupConfig( metadata, isCJS ) {
 	const banner = generateBanner( metadata );
 	const plugins = [
 		convertCJS(),
@@ -30,23 +30,23 @@ function getRollupConfig( metadata, isEs5 ) {
 		output: {
 			banner,
 			sourcemap: true,
-			format: isEs5 ? 'cjs' : 'es',
-			file: isEs5 ? metadata.dist.es5 : metadata.dist.es2015
+			format: isCJS ? 'cjs' : 'es',
+			file: isCJS ? metadata.dist.cjs : metadata.dist.esm
 		}
 	};
 }
 
 function bundler( metadata ) {
-	const configEs5 = getRollupConfig( metadata, true );
-	const configEs2015 = getRollupConfig( metadata, false );
+	const configCJS = getRollupConfig( metadata, true );
+	const configESM = getRollupConfig( metadata, false );
 
 	return Promise.all( [
-		rollup( configEs5 ),
-		rollup( configEs2015 )
+		rollup( configCJS ),
+		rollup( configESM )
 	] ).then( ( bundles ) => {
 		return Promise.all( [
-			bundles[ 0 ].write( configEs5.output ),
-			bundles[ 1 ].write( configEs2015.output )
+			bundles[ 0 ].write( configCJS.output ),
+			bundles[ 1 ].write( configESM.output )
 		] );
 	} );
 }
