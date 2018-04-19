@@ -3,13 +3,13 @@ import { readFileSync } from 'fs';
 import { sync as rimraf } from 'rimraf';
 import { use } from 'chai';
 import { expect } from 'chai';
-import { callThru } from 'proxyquire';
+import { noCallThru } from 'proxyquire';
 import { spy } from 'sinon';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
 import bundler from '../src/bundler';
 
-const proxyquire = callThru();
+const proxyquire = noCallThru();
 use( sinonChai );
 
 const metadata = {
@@ -81,25 +81,81 @@ describe( 'bundler', () => {
 		} );
 	} );
 
-	// #67
-	it( 'transpiles both versions of the bundle', () => {
-		function checkBabelPlugin( { plugins } ) {
-			return plugins[ 1 ] && plugins[ 1 ].name === 'babel';
-		}
-
+	// #67, #78
+	it( 'passes code through specified plugins in correct order', () => {
+		const commonJSStub = stub().returns( {
+			name: 'commonjs'
+		} );
+		const babelStub = stub().returns( {
+			name: 'babel'
+		} );
+		const babelMinifyStub = stub().returns( {
+			name: 'babel-minify'
+		} );
+		const preset = {
+			name: '@comandeer/babel-preset-rollup'
+		};
+		const banner = 'This is banner';
+		const generateBannerStub = stub().returns( banner );
 		const rollupStub = stub().returns( {
 			write() {}
 		} );
+		const config = {
+			commonjs: undefined,
+
+			babel: {
+				babelrc: false,
+				presets: [
+					[ preset ]
+				]
+			},
+
+			'babel-minify': {
+				comments: false,
+				banner,
+				bannerNewLine: true
+			}
+		};
+
+		function checkCalls( name, calls ) {
+			calls.forEach( ( call ) => {
+				expect( call.args[ 0 ] ).to.deep.equal( config[ name ] );
+			} );
+		}
+
+		function checkPlugins( { plugins } ) {
+			expect( plugins ).to.be.an( 'array' );
+			expect( plugins ).to.have.lengthOf( 3 );
+
+			expect( plugins[ 0 ].name ).to.equal( 'commonjs' );
+			expect( plugins[ 1 ].name ).to.equal( 'babel' );
+			expect( plugins[ 2 ].name ).to.equal( 'babel-minify' );
+		}
+
 		const { default: proxiedBundler } = proxyquire( '../src/bundler.js', {
 			rollup: {
 				rollup: rollupStub
-			}
+			},
+
+			'rollup-plugin-commonjs': commonJSStub,
+			'rollup-plugin-babel': babelStub,
+			'rollup-plugin-babel-minify': babelMinifyStub,
+			'@comandeer/babel-preset-rollup': preset,
+			'./generateBanner.js': generateBannerStub
 		} );
 
 		return proxiedBundler( bundlerConfig ).then( () => {
 			expect( rollupStub ).to.have.been.calledTwice;
-			expect( checkBabelPlugin( rollupStub.firstCall.args[ 0 ] ) ).to.be.true;
-			expect( checkBabelPlugin( rollupStub.secondCall.args[ 0 ] ) ).to.be.true;
+			expect( commonJSStub ).to.have.been.calledTwice;
+			expect( babelStub ).to.have.been.calledTwice;
+			expect( babelMinifyStub ).to.have.been.calledTwice;
+
+			checkCalls( 'commonjs', commonJSStub.getCalls() );
+			checkCalls( 'babel', babelStub.getCalls() );
+			checkCalls( 'babel-minify', babelMinifyStub.getCalls() );
+
+			checkPlugins( rollupStub.firstCall.args[ 0 ] );
+			checkPlugins( rollupStub.secondCall.args[ 0 ] );
 		} );
 	} );
 } );
