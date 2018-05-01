@@ -6,11 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.5.0]
+## [0.5.0] – 2018-05-01
 ## Added
 * [#80] Add support for Node 10.
 
 ## Changed
+* [#67] **BREAKING CHANGE**: CJS bundle is also transpiled.
 * [#68] **BREAKING CHANGE**: update `@comandeer/babel-preset-rollup` to version `^2.0.0`.
 * [#74] **BREAKING CHANGE**: rename keys returned by `packageParser`:
 	* `dist.es5` → `dist.cjs`,
@@ -74,6 +75,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#54]: https://github.com/Comandeer/rollup-lib-bundler/issues/54
 [#58]: https://github.com/Comandeer/rollup-lib-bundler/issues/58
 [#62]: https://github.com/Comandeer/rollup-lib-bundler/issues/62
+[#67]: https://github.com/Comandeer/rollup-lib-bundler/issues/67
 [#68]: https://github.com/Comandeer/rollup-lib-bundler/pull/68
 [#74]: https://github.com/Comandeer/rollup-lib-bundler/issues/74
 [#80]: https://github.com/Comandeer/rollup-lib-bundler/issues/80
