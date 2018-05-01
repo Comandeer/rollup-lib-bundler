@@ -1,11 +1,10 @@
 language: node_js
 node_js:
-  - 9
+  - 10
   - 8
-  - 7
   - 6
-before_install: if [[ $( node --version ) =~ ^v9. ]]; then npm install -g greenkeeper-lockfile; fi;
-before_script: if [[ $( node --version ) =~ ^v9. ]]; then greenkeeper-lockfile-update; fi;
+before_install: if [[ $( node --version ) =~ ^v10. ]]; then npm install -g greenkeeper-lockfile; fi;
+before_script: if [[ $( node --version ) =~ ^v10. ]]; then greenkeeper-lockfile-update; fi;
 script: npm test
-after_script: if [[ $( node --version ) =~ ^v9. ]]; then greenkeeper-lockfile-upload; fi;
+after_script: if [[ $( node --version ) =~ ^v10. ]]; then greenkeeper-lockfile-upload; fi;
 after_success: npm run coverage
