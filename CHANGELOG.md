@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [0.5.0]
+## Added
+* [#80] Add support for Node 10.
+
 ## Changed
 * [#68] **BREAKING CHANGE**: update `@comandeer/babel-preset-rollup` to version `^2.0.0`.
 * [#74] **BREAKING CHANGE**: rename keys returned by `packageParser`:
@@ -14,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	* `dist.es2015` → `dist.esm`.
 
 ## Removed
-* [#62] **BREAKING CHANGE**: remove support for Node <6.
+* [#62] [#80] **BREAKING CHANGE**: remove support for Node <6, 7, 9.
 
 ## [0.4.2] – 2018-02-11
 ### Fixed
@@ -73,6 +76,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#62]: https://github.com/Comandeer/rollup-lib-bundler/issues/62
 [#68]: https://github.com/Comandeer/rollup-lib-bundler/pull/68
 [#74]: https://github.com/Comandeer/rollup-lib-bundler/issues/74
+[#80]: https://github.com/Comandeer/rollup-lib-bundler/issues/80
 
 [0.5.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.1...v0.4.2
