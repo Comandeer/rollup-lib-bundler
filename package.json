@@ -1,6 +1,6 @@
 {
   "name": "@comandeer/rollup-lib-bundler",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Simple library bundler",
   "main": "dist/rollup-lib-bundler.js",
   "jsnext:main": "dist/rollup-lib-bundler.es2015.js",
