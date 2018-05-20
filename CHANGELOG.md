@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.6.0] – 2018-05-20
+## Changed
+* [#83] **BREAKING CHANGE**: update `rollup-plugin-babel-minify` to version `^5.0.0`.
+
 ## [0.5.0] – 2018-05-01
 ## Added
 * [#80] Add support for Node 10.
@@ -79,7 +83,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#68]: https://github.com/Comandeer/rollup-lib-bundler/pull/68
 [#74]: https://github.com/Comandeer/rollup-lib-bundler/issues/74
 [#80]: https://github.com/Comandeer/rollup-lib-bundler/issues/80
+[#83]: https://github.com/Comandeer/rollup-lib-bundler/pull/83
 
+[0.6.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.0...v0.4.1
