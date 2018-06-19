@@ -87,16 +87,16 @@
     "eslint": "^4.17.0",
     "husky": "^0.14.3",
     "mocha": "^5.0.0",
-    "nyc": "^11.4.1",
+    "nyc": "^12.0.2",
     "proxyquire": "^2.0.1",
     "rimraf": "^2.6.2",
-    "sinon": "^5.0.0",
+    "sinon": "^6.0.0",
     "sinon-chai": "^3.0.0"
   },
   "dependencies": {
     "@comandeer/babel-preset-rollup": "^2.0.0",
     "babel-core": "^6.26.0",
-    "rollup": "^0.59.0",
+    "rollup": "^0.60.7",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-babel-minify": "^5.0.0",
     "rollup-plugin-commonjs": "^9.0.0"
