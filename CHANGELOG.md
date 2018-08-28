@@ -6,22 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.7.0]
+### Added
+* [#71] Add support for Babel 7.
+
+### Remove
+* [#71] **BREAKING CHANGE**: remove support for Babel < 7.
+
 ## [0.6.0] – 2018-05-20
-## Changed
+### Changed
 * [#83] **BREAKING CHANGE**: update `rollup-plugin-babel-minify` to version `^5.0.0`.
 
 ## [0.5.0] – 2018-05-01
-## Added
+### Added
 * [#80] Add support for Node 10.
 
-## Changed
+### Changed
 * [#67] **BREAKING CHANGE**: CJS bundle is also transpiled.
 * [#68] **BREAKING CHANGE**: update `@comandeer/babel-preset-rollup` to version `^2.0.0`.
 * [#74] **BREAKING CHANGE**: rename keys returned by `packageParser`:
 	* `dist.es5` → `dist.cjs`,
 	* `dist.es2015` → `dist.esm`.
 
-## Removed
+### Removed
 * [#62] [#80] **BREAKING CHANGE**: remove support for Node <6, 7, 9.
 
 ## [0.4.2] – 2018-02-11
@@ -29,31 +36,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [#58] Usage of deprecated Rollup config options.
 
 ## [0.4.1] – 2018-02-11
-## Added
+### Added
 * [#54] Add `babel-core` as dependency.
 
 ## [0.4.0] – 2018-02-03
-## Changed
+### Changed
 * [#48] BREAKING CHANGE: add new line after the banner comment.
 
-## Fixed
+### Fixed
 * [#49] Fix incorrect version of package in banner comment.
 
 ## [0.3.0] – 2017-09-16
-## Changed
+### Changed
 * [#30] BREAKING CHANGE: force Babel to ignore `.babelrc` file.
 * [#16] Update rollup to `^0.50.0`.
 * [`b36613d`] Update other dependencies.
 
 ## [0.2.0] – 2017-09-03
-## Changed
+### Changed
 * [#17] Switch from `rollup-plugin-babili` to `rollup-plugin-babel-minify`.
 * [#21] Update rollup to `^0.49.2`.
 * [#17] Remove rollup-plugin-uglify in favor of rollup-plugin-babel-minify.
 * [#18] Replace babel-preset-es2015-rollup with dedicated evergreen @comandeer/babel-preset-rollup.
 
 ## [0.1.2] – 2017-06-17
-## Fixed
+### Fixed
 * [#6] Fix incorrect parsing of author's metadata.
 
 ## [0.1.1] – 2017-03-19
@@ -81,10 +88,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#62]: https://github.com/Comandeer/rollup-lib-bundler/issues/62
 [#67]: https://github.com/Comandeer/rollup-lib-bundler/issues/67
 [#68]: https://github.com/Comandeer/rollup-lib-bundler/pull/68
+[#71]: https://github.com/Comandeer/rollup-lib-bundler/issues/71
 [#74]: https://github.com/Comandeer/rollup-lib-bundler/issues/74
 [#80]: https://github.com/Comandeer/rollup-lib-bundler/issues/80
 [#83]: https://github.com/Comandeer/rollup-lib-bundler/pull/83
 
+[0.7.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.4.1...v0.4.2
