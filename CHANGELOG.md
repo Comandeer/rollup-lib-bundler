@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.7.0]
+## [0.7.0] – 2018-08-29
 ### Added
 * [#71] Add support for Babel 7.
 
