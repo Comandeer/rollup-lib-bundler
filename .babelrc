@@ -1,6 +1,9 @@
 {
-	"plugins": [
-		"transform-es2015-modules-commonjs",
-		"add-module-exports"
-	]
+	"presets": [ [
+		"@babel/preset-env", {
+			"targets": {
+				"node": "6.0.0"
+			}
+		}
+	] ]
 }
