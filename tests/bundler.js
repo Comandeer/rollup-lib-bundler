@@ -158,4 +158,17 @@ describe( 'bundler', () => {
 			checkPlugins( rollupStub.secondCall.args[ 0 ] );
 		} );
 	} );
+
+	// #105
+	it( 'generates non-empty sourcemap', () => {
+		return bundler( bundlerConfig ).then( () => {
+			const correctMappingsRegex = /;[a-z0-9]+,/i;
+
+			const mapES5 = JSON.parse( readFileSync( 'tests/fixtures/testPackage/dist/es5.js.map' ) );
+			const mapES2015 = JSON.parse( readFileSync( 'tests/fixtures/testPackage/dist/es2015.js.map' ) );
+
+			expect( mapES5.mappings ).to.match( correctMappingsRegex );
+			expect( mapES2015.mappings ).to.match( correctMappingsRegex );
+		} );
+	} );
 } );
