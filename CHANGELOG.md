@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.7.3] – 2019-01-20
+## [0.8.0] – 2019-01-20
 ### Changed
-* [#110] Update `rollup` to `^1.1.0`.
+* [#110] **BREAKING CHANGE:** Update `rollup` to `^1.1.0`.
 * [#111] Update `rollup-plugin-babel-minify` to `^7.0.0`.
 
 ## [0.7.1] – 2018-10-07
@@ -105,7 +105,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#110]: https://github.com/Comandeer/rollup-lib-bundler/pull/110
 [#111]: https://github.com/Comandeer/rollup-lib-bundler/pull/111
 
-[0.7.2]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.7.1...v0.7.2
+[0.8.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.5.0...v0.6.0
