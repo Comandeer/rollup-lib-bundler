@@ -1,39 +1,32 @@
-import { existsSync } from 'fs';
 import { resolve as resolvePath } from 'path';
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { sync as rimraf } from 'rimraf';
-import { expect } from 'chai';
+import createFixtureTest from './helpers/createFixtureTest';
 
-const oldCwd = process.cwd();
-const cwd = resolvePath( __dirname, 'fixtures/testPackage' );
+const execPromise = promisify( exec );
+const binPath = resolvePath( __dirname, '../bin/bundler' );
+const fixturePath = resolvePath( __dirname, 'fixtures/testPackage' );
+const outputPath = resolvePath( fixturePath, 'dist' );
 
-function checkFiles( files ) {
-	files.forEach( ( file ) => {
-		expect( existsSync( file ) ).to.equal( true );
-	} );
-}
-
-describe( 'rlb', () => {
+describe( 'CLI', () => {
 	before( () => {
-		process.chdir( cwd );
-		rimraf( 'dist' );
+		rimraf( outputPath );
 	} );
 
 	after( () => {
-		rimraf( 'dist' );
-		process.chdir( oldCwd );
+		rimraf( outputPath );
 	} );
 
-	it( 'bundles files based on current working directory', () => {
-		const binPath = resolvePath( __dirname, '../bin/bundler' );
-
-		execSync( `node ${ binPath }`, { cwd } );
-
-		checkFiles( [
-			'dist/es5.js',
-			'dist/es5.js.map',
-			'dist/es2015.js',
-			'dist/es2015.js.map'
-		] );
-	} );
+	it( 'bundles files based on current working directory', createFixtureTest( {
+		cmd: () => {
+			return execPromise( `node ${ binPath }`, { cwd: fixturePath } );
+		},
+		expected: [
+			resolvePath( outputPath, 'es5.js' ),
+			resolvePath( outputPath, 'es5.js.map' ),
+			resolvePath( outputPath, 'es2015.js' ),
+			resolvePath( outputPath, 'es2015.js.map' )
+		]
+	} ) );
 } );

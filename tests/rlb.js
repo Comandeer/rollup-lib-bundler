@@ -1,19 +1,16 @@
-import { existsSync } from 'fs';
+import { resolve as resolvePath } from 'path';
 import { sync as rimraf } from 'rimraf';
 import { expect } from 'chai';
+import createFixtureTest from './helpers/createFixtureTest';
 import rlb from '../src/index';
 
 const oldCwd = process.cwd();
-
-function checkFiles( files ) {
-	files.forEach( ( file ) => {
-		expect( existsSync( file ) ).to.equal( true );
-	} );
-}
+const fixturePath = resolvePath( __dirname, 'fixtures/testPackage' );
+const outputPath = resolvePath( fixturePath, 'dist' );
 
 describe( 'rlb', () => {
 	before( () => {
-		process.chdir( 'tests/fixtures/testPackage' );
+		process.chdir( fixturePath );
 		rimraf( 'dist' );
 	} );
 
@@ -26,14 +23,14 @@ describe( 'rlb', () => {
 		expect( rlb ).to.be.a( 'function' );
 	} );
 
-	it( 'bundles files based on current working directory', () => {
-		return rlb().then( () => {
-			checkFiles( [
-				'dist/es5.js',
-				'dist/es5.js.map',
-				'dist/es2015.js',
-				'dist/es2015.js.map'
-			] );
-		} );
-	} );
+	it( 'bundles files based on current working directory', createFixtureTest( {
+		cwd: fixturePath,
+		cmd: rlb,
+		expected: [
+			resolvePath( outputPath, 'es5.js' ),
+			resolvePath( outputPath, 'es5.js.map' ),
+			resolvePath( outputPath, 'es2015.js' ),
+			resolvePath( outputPath, 'es2015.js.map' )
+		]
+	} ) );
 } );
