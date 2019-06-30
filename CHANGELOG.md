@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.9.0] – 2019-06-30
+### Added
+* [#129] Support for Node 12.
+* [#128] Official support for Windows and macOS.
+
+### Removed
+* [#129] **BREAKING CHANGE**: support for Node 6.
+
 ## [0.8.0] – 2019-01-20
 ### Changed
 * [#110] **BREAKING CHANGE:** Update `rollup` to `^1.1.0`.
@@ -104,7 +112,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#105]: https://github.com/Comandeer/rollup-lib-bundler/issues/105
 [#110]: https://github.com/Comandeer/rollup-lib-bundler/pull/110
 [#111]: https://github.com/Comandeer/rollup-lib-bundler/pull/111
+[#129]: https://github.com/Comandeer/rollup-lib-bundler/issues/129
+[#128]: https://github.com/Comandeer/rollup-lib-bundler/issues/128
 
+[0.9.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.6.0...v0.7.0

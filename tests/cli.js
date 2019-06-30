@@ -1,31 +1,27 @@
 import { resolve as resolvePath } from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { sync as rimraf } from 'rimraf';
-import { expect } from 'chai';
 import createFixtureTest from './helpers/createFixtureTest';
-import rlb from '../src/index';
 
-const oldCwd = process.cwd();
+const execPromise = promisify( exec );
+const binPath = resolvePath( __dirname, '../bin/bundler' );
 const fixturePath = resolvePath( __dirname, 'fixtures/testPackage' );
 const outputPath = resolvePath( fixturePath, 'dist' );
 
-describe( 'rlb', () => {
+describe( 'CLI', () => {
 	before( () => {
-		process.chdir( fixturePath );
-		rimraf( 'dist' );
+		rimraf( outputPath );
 	} );
 
 	after( () => {
-		rimraf( 'dist' );
-		process.chdir( oldCwd );
-	} );
-
-	it( 'is a function', () => {
-		expect( rlb ).to.be.a( 'function' );
+		rimraf( outputPath );
 	} );
 
 	it( 'bundles files based on current working directory', createFixtureTest( {
-		cwd: fixturePath,
-		cmd: rlb,
+		cmd: () => {
+			return execPromise( `node ${ binPath }`, { cwd: fixturePath } );
+		},
 		expected: [
 			resolvePath( outputPath, 'es5.js' ),
 			resolvePath( outputPath, 'es5.js.map' ),
