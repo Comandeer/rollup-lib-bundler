@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "eslint src/**/*.js tests/*.js",
     "build": "rlb",
-    "pretest": "npm run lint",
+    "pretest": "npm run lint && npm run build",
     "test": "nyc mocha tests/*.js --timeout 15000 --require @babel/register",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "version": "npm test && npm run build && git add -f dist/",
