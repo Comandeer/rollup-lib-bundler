@@ -76,7 +76,7 @@
     "@babel/preset-env": "^7.6.3",
     "@babel/register": "^7.6.2",
     "@comandeer/eslint-config": "^0.2.2",
-    "@comandeer/is-ci": "^2.0.0",
+    "@comandeer/is-ci": "^3.0.0",
     "@comandeer/rollup-lib-bundler": "^0.9.0",
     "chai": "^4.2.0",
     "codecov": "^3.6.1",
