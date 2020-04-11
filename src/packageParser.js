@@ -1,4 +1,17 @@
-import { existsSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
+import { readFileSync } from 'fs';
+
+function packageParser( metadata ) {
+	if ( typeof metadata === 'string' ) {
+		metadata = loadAndParseFile( metadata );
+	} else if ( typeof metadata !== 'object' ) {
+		throw new TypeError( 'Provide string or object.' );
+	}
+
+	lintObject( metadata );
+
+	return prepareMetadata( metadata );
+}
 
 function loadAndParseFile( path ) {
 	if ( !existsSync( path ) ) {
@@ -58,18 +71,6 @@ function prepareMetadata( obj ) {
 			cjs: obj.main
 		}
 	};
-}
-
-function packageParser( metadata ) {
-	if ( typeof metadata === 'string' ) {
-		metadata = loadAndParseFile( metadata );
-	} else if ( typeof metadata !== 'object' ) {
-		throw new TypeError( 'Provide string or object.' );
-	}
-
-	lintObject( metadata );
-
-	return prepareMetadata( metadata );
 }
 
 export default packageParser;

@@ -2,7 +2,7 @@ import { resolve as resolvePath } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { sync as rimraf } from 'rimraf';
-import createFixtureTest from './helpers/createFixtureTest';
+import createFixtureTest from './helpers/createFixtureTest.js';
 
 const execPromise = promisify( exec );
 const binPath = resolvePath( __dirname, '../bin/bundler' );

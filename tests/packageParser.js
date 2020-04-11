@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import valid from './fixtures/packageParser/valid.json';
-import packageParser from '../src/packageParser';
+import packageParser from '../src/packageParser.js';
 
 describe( 'packageParser', () => {
 	it( 'is a function', () => {

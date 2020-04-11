@@ -1,6 +1,6 @@
 import generateBanner from './generateBanner.js';
 import packageParser from './packageParser.js';
-import bundler from './bundler';
+import bundler from './bundler.js';
 
 function rlb() {
 	const metadata = packageParser( 'package.json' );

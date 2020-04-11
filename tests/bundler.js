@@ -7,7 +7,7 @@ import { noCallThru } from 'proxyquire';
 import { spy } from 'sinon';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
-import bundler from '../src/bundler';
+import bundler from '../src/bundler.js';
 import { node as nodeTarget } from '../src/targets.js';
 
 const proxyquire = noCallThru();
@@ -26,19 +26,6 @@ const bundlerConfig = Object.assign( {}, metadata, {
 		cjs: 'tests/fixtures/testPackage/dist/es5.js'
 	}
 } );
-
-function checkFiles( files ) {
-	files.forEach( ( file ) => {
-		expect( existsSync( file ) ).to.equal( true );
-	} );
-}
-
-function checkBanner( file ) {
-	const fileContent = readFileSync( file, 'utf8' );
-	const banner = fileContent.match( /^\/\*!(.+?)\*\/\n{1}/ );
-
-	expect( banner ).to.not.be.null;
-}
 
 describe( 'bundler', () => {
 	before( () => {
@@ -179,3 +166,16 @@ describe( 'bundler', () => {
 		} );
 	} );
 } );
+
+function checkFiles( files ) {
+	files.forEach( ( file ) => {
+		expect( existsSync( file ) ).to.equal( true );
+	} );
+}
+
+function checkBanner( file ) {
+	const fileContent = readFileSync( file, 'utf8' );
+	const banner = fileContent.match( /^\/\*!(.+?)\*\/\n{1}/ );
+
+	expect( banner ).to.not.be.null;
+}

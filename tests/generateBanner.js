@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import generateBanner from '../src/generateBanner';
+import generateBanner from '../src/generateBanner.js';
 
 describe( 'generateBanner', () => {
 	it( 'produces correct banner', () => {
