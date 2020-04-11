@@ -1,4 +1,3 @@
-import generateBanner from './generateBanner.js';
 import packageParser from './packageParser.js';
 import bundler from './bundler.js';
 
@@ -9,6 +8,3 @@ function rlb() {
 }
 
 export default rlb;
-export { bundler };
-export { packageParser };
-export { generateBanner };
