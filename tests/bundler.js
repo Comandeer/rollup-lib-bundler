@@ -8,6 +8,7 @@ import { spy } from 'sinon';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
 import bundler from '../src/bundler';
+import { node as nodeTarget } from '../src/targets.js';
 
 const proxyquire = noCallThru();
 use( sinonChai );
@@ -111,7 +112,7 @@ describe( 'bundler', () => {
 
 						{
 							targets: {
-								node: '10.0.0'
+								node: nodeTarget
 							}
 						}
 					]

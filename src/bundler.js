@@ -4,6 +4,7 @@ import convertCJS from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
 import preset from '@babel/preset-env';
+import { node as nodeTarget } from './targets.js';
 
 function getRollupConfig( metadata, isCJS ) {
 	const banner = generateBanner( metadata );
@@ -17,7 +18,7 @@ function getRollupConfig( metadata, isCJS ) {
 					preset,
 					{
 						targets: {
-							node: '10.0.0'
+							node: nodeTarget
 						}
 					}
 				]
