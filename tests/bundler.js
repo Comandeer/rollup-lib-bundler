@@ -92,8 +92,8 @@ describe( 'bundler', () => {
 		const babelMinifyStub = stub().returns( {
 			name: 'babel-minify'
 		} );
-		const preset = {
-			name: '@comandeer/babel-preset-rollup'
+		const presetStub = {
+			name: '@babel/preset-env'
 		};
 		const banner = 'This is banner';
 		const generateBannerStub = stub().returns( banner );
@@ -106,7 +106,15 @@ describe( 'bundler', () => {
 			babel: {
 				babelrc: false,
 				presets: [
-					[ preset ]
+					[
+						presetStub,
+
+						{
+							targets: {
+								node: '10.0.0'
+							}
+						}
+					]
 				]
 			},
 
@@ -140,7 +148,7 @@ describe( 'bundler', () => {
 			'rollup-plugin-commonjs': commonJSStub,
 			'rollup-plugin-babel': babelStub,
 			'rollup-plugin-babel-minify': babelMinifyStub,
-			'@comandeer/babel-preset-rollup': preset,
+			'@babel/preset-env': presetStub,
 			'./generateBanner.js': generateBannerStub
 		} );
 

@@ -3,7 +3,7 @@ import { rollup } from 'rollup';
 import convertCJS from 'rollup-plugin-commonjs';
 import minify from 'rollup-plugin-babel-minify';
 import babel from 'rollup-plugin-babel';
-import preset from '@comandeer/babel-preset-rollup';
+import preset from '@babel/preset-env';
 
 function getRollupConfig( metadata, isCJS ) {
 	const banner = generateBanner( metadata );
@@ -13,7 +13,14 @@ function getRollupConfig( metadata, isCJS ) {
 		babel( {
 			babelrc: false,
 			presets: [
-				[ preset ]
+				[
+					preset,
+					{
+						targets: {
+							node: '10.0.0'
+						}
+					}
+				]
 			]
 		} ),
 
