@@ -6,7 +6,7 @@
   "jsnext:main": "dist/rollup-lib-bundler.es2015.js",
   "module": "dist/rollup-lib-bundler.es2015.js",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "bin": {
     "rlb": "bin/bundler"
