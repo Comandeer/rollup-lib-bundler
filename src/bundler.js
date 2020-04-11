@@ -1,40 +1,10 @@
-import generateBanner from './generateBanner.js';
 import { rollup } from 'rollup';
 import convertCJS from 'rollup-plugin-commonjs';
-import minify from 'rollup-plugin-babel-minify';
+import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
-import preset from '@comandeer/babel-preset-rollup';
-
-function getRollupConfig( metadata, isCJS ) {
-	const banner = generateBanner( metadata );
-	const plugins = [
-		convertCJS(),
-
-		babel( {
-			babelrc: false,
-			presets: [
-				[ preset ]
-			]
-		} ),
-
-		minify( {
-			comments: false,
-			banner,
-			bannerNewLine: true
-		} )
-	];
-
-	return {
-		input: metadata.src,
-		plugins,
-		output: {
-			banner,
-			sourcemap: true,
-			format: isCJS ? 'cjs' : 'es',
-			file: isCJS ? metadata.dist.cjs : metadata.dist.esm
-		}
-	};
-}
+import preset from '@babel/preset-env';
+import generateBanner from './generateBanner.js';
+import { node as nodeTarget } from './targets.js';
 
 function bundler( metadata ) {
 	const configCJS = getRollupConfig( metadata, true );
@@ -49,6 +19,40 @@ function bundler( metadata ) {
 			bundles[ 1 ].write( configESM.output )
 		] );
 	} );
+}
+
+function getRollupConfig( metadata, isCJS ) {
+	const banner = generateBanner( metadata );
+	const plugins = [
+		convertCJS(),
+
+		babel( {
+			babelrc: false,
+			presets: [
+				[
+					preset,
+					{
+						targets: {
+							node: nodeTarget
+						}
+					}
+				]
+			]
+		} ),
+
+		terser()
+	];
+
+	return {
+		input: metadata.src,
+		plugins,
+		output: {
+			banner,
+			sourcemap: true,
+			format: isCJS ? 'cjs' : 'es',
+			file: isCJS ? metadata.dist.cjs : metadata.dist.esm
+		}
+	};
 }
 
 export default bundler;

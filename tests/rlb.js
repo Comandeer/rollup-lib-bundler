@@ -1,8 +1,8 @@
 import { resolve as resolvePath } from 'path';
 import { sync as rimraf } from 'rimraf';
 import { expect } from 'chai';
-import createFixtureTest from './helpers/createFixtureTest';
-import rlb from '../src/index';
+import createFixtureTest from './helpers/createFixtureTest.js';
+import rlb from '../src/index.js';
 
 const oldCwd = process.cwd();
 const fixturePath = resolvePath( __dirname, 'fixtures/testPackage' );

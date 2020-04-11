@@ -7,7 +7,8 @@ import { noCallThru } from 'proxyquire';
 import { spy } from 'sinon';
 import { stub } from 'sinon';
 import sinonChai from 'sinon-chai';
-import bundler from '../src/bundler';
+import bundler from '../src/bundler.js';
+import { node as nodeTarget } from '../src/targets.js';
 
 const proxyquire = noCallThru();
 use( sinonChai );
@@ -25,19 +26,6 @@ const bundlerConfig = Object.assign( {}, metadata, {
 		cjs: 'tests/fixtures/testPackage/dist/es5.js'
 	}
 } );
-
-function checkFiles( files ) {
-	files.forEach( ( file ) => {
-		expect( existsSync( file ) ).to.equal( true );
-	} );
-}
-
-function checkBanner( file ) {
-	const fileContent = readFileSync( file, 'utf8' );
-	const banner = fileContent.match( /^\/\*!(.+?)\*\/\n{1}/ );
-
-	expect( banner ).to.not.be.null;
-}
 
 describe( 'bundler', () => {
 	before( () => {
@@ -89,11 +77,11 @@ describe( 'bundler', () => {
 		const babelStub = stub().returns( {
 			name: 'babel'
 		} );
-		const babelMinifyStub = stub().returns( {
-			name: 'babel-minify'
+		const terserStub = stub().returns( {
+			name: 'terser'
 		} );
-		const preset = {
-			name: '@comandeer/babel-preset-rollup'
+		const presetStub = {
+			name: '@babel/preset-env'
 		};
 		const banner = 'This is banner';
 		const generateBannerStub = stub().returns( banner );
@@ -106,15 +94,19 @@ describe( 'bundler', () => {
 			babel: {
 				babelrc: false,
 				presets: [
-					[ preset ]
+					[
+						presetStub,
+
+						{
+							targets: {
+								node: nodeTarget
+							}
+						}
+					]
 				]
 			},
 
-			'babel-minify': {
-				comments: false,
-				banner,
-				bannerNewLine: true
-			}
+			'terser': undefined
 		};
 
 		function checkCalls( name, calls ) {
@@ -129,7 +121,7 @@ describe( 'bundler', () => {
 
 			expect( plugins[ 0 ].name ).to.equal( 'commonjs' );
 			expect( plugins[ 1 ].name ).to.equal( 'babel' );
-			expect( plugins[ 2 ].name ).to.equal( 'babel-minify' );
+			expect( plugins[ 2 ].name ).to.equal( 'terser' );
 		}
 
 		const { default: proxiedBundler } = proxyquire( '../src/bundler.js', {
@@ -139,8 +131,10 @@ describe( 'bundler', () => {
 
 			'rollup-plugin-commonjs': commonJSStub,
 			'rollup-plugin-babel': babelStub,
-			'rollup-plugin-babel-minify': babelMinifyStub,
-			'@comandeer/babel-preset-rollup': preset,
+			'rollup-plugin-terser': {
+				terser: terserStub
+			},
+			'@babel/preset-env': presetStub,
 			'./generateBanner.js': generateBannerStub
 		} );
 
@@ -148,11 +142,11 @@ describe( 'bundler', () => {
 			expect( rollupStub ).to.have.been.calledTwice;
 			expect( commonJSStub ).to.have.been.calledTwice;
 			expect( babelStub ).to.have.been.calledTwice;
-			expect( babelMinifyStub ).to.have.been.calledTwice;
+			expect( terserStub ).to.have.been.calledTwice;
 
 			checkCalls( 'commonjs', commonJSStub.getCalls() );
 			checkCalls( 'babel', babelStub.getCalls() );
-			checkCalls( 'babel-minify', babelMinifyStub.getCalls() );
+			checkCalls( 'terser', terserStub.getCalls() );
 
 			checkPlugins( rollupStub.firstCall.args[ 0 ] );
 			checkPlugins( rollupStub.secondCall.args[ 0 ] );
@@ -172,3 +166,16 @@ describe( 'bundler', () => {
 		} );
 	} );
 } );
+
+function checkFiles( files ) {
+	files.forEach( ( file ) => {
+		expect( existsSync( file ) ).to.equal( true );
+	} );
+}
+
+function checkBanner( file ) {
+	const fileContent = readFileSync( file, 'utf8' );
+	const banner = fileContent.match( /^\/\*!(.+?)\*\/\n{1}/ );
+
+	expect( banner ).to.not.be.null;
+}
