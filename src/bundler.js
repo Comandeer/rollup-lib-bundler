@@ -1,7 +1,7 @@
 import generateBanner from './generateBanner.js';
 import { rollup } from 'rollup';
 import convertCJS from 'rollup-plugin-commonjs';
-import minify from 'rollup-plugin-babel-minify';
+import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
 import preset from '@babel/preset-env';
 
@@ -24,11 +24,7 @@ function getRollupConfig( metadata, isCJS ) {
 			]
 		} ),
 
-		minify( {
-			comments: false,
-			banner,
-			bannerNewLine: true
-		} )
+		terser()
 	];
 
 	return {

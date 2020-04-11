@@ -89,8 +89,8 @@ describe( 'bundler', () => {
 		const babelStub = stub().returns( {
 			name: 'babel'
 		} );
-		const babelMinifyStub = stub().returns( {
-			name: 'babel-minify'
+		const terserStub = stub().returns( {
+			name: 'terser'
 		} );
 		const presetStub = {
 			name: '@babel/preset-env'
@@ -118,11 +118,7 @@ describe( 'bundler', () => {
 				]
 			},
 
-			'babel-minify': {
-				comments: false,
-				banner,
-				bannerNewLine: true
-			}
+			'terser': undefined
 		};
 
 		function checkCalls( name, calls ) {
@@ -137,7 +133,7 @@ describe( 'bundler', () => {
 
 			expect( plugins[ 0 ].name ).to.equal( 'commonjs' );
 			expect( plugins[ 1 ].name ).to.equal( 'babel' );
-			expect( plugins[ 2 ].name ).to.equal( 'babel-minify' );
+			expect( plugins[ 2 ].name ).to.equal( 'terser' );
 		}
 
 		const { default: proxiedBundler } = proxyquire( '../src/bundler.js', {
@@ -147,7 +143,9 @@ describe( 'bundler', () => {
 
 			'rollup-plugin-commonjs': commonJSStub,
 			'rollup-plugin-babel': babelStub,
-			'rollup-plugin-babel-minify': babelMinifyStub,
+			'rollup-plugin-terser': {
+				terser: terserStub
+			},
 			'@babel/preset-env': presetStub,
 			'./generateBanner.js': generateBannerStub
 		} );
@@ -156,11 +154,11 @@ describe( 'bundler', () => {
 			expect( rollupStub ).to.have.been.calledTwice;
 			expect( commonJSStub ).to.have.been.calledTwice;
 			expect( babelStub ).to.have.been.calledTwice;
-			expect( babelMinifyStub ).to.have.been.calledTwice;
+			expect( terserStub ).to.have.been.calledTwice;
 
 			checkCalls( 'commonjs', commonJSStub.getCalls() );
 			checkCalls( 'babel', babelStub.getCalls() );
-			checkCalls( 'babel-minify', babelMinifyStub.getCalls() );
+			checkCalls( 'terser', terserStub.getCalls() );
 
 			checkPlugins( rollupStub.firstCall.args[ 0 ] );
 			checkPlugins( rollupStub.secondCall.args[ 0 ] );
