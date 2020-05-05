@@ -18,7 +18,7 @@ function loadAndParseFile( path ) {
 		throw new ReferenceError( 'File with given path does not exist.' );
 	}
 
-	const contents = readFileSync( path );
+	const contents = readFileSync( path ).toString();
 	let parsed;
 
 	try {
