@@ -31,6 +31,7 @@ function getRollupConfig( metadata, isCJS ) {
 
 		babel( {
 			babelrc: false,
+			babelHelpers: 'bundled',
 			presets: [
 				[
 					preset,
