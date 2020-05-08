@@ -18,7 +18,7 @@ function loadAndParseFile( path ) {
 		throw new ReferenceError( 'File with given path does not exist.' );
 	}
 
-	const contents = readFileSync( path ).toString();
+	const contents = readFileSync( path, 'utf8' );
 	let parsed;
 
 	try {
