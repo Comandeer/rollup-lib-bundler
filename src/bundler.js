@@ -1,8 +1,8 @@
 import { rollup } from 'rollup';
-import convertCJS from 'rollup-plugin-commonjs';
+import convertCJS from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
