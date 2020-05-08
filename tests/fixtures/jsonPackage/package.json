@@ -1,0 +1,14 @@
+{
+  "name": "test-package",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Test package",
+  "main": "dist/es5.js",
+  "module": "dist/es2015.js",
+  "author": {
+    "name": "Piotr Kowalski",
+    "email": "piecioshka@gmail.com",
+    "url": "https://piecioshka.pl/"
+  },
+  "license": "ISC"
+}
