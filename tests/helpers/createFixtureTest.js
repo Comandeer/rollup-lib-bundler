@@ -1,18 +1,21 @@
-import { existsSync } from 'fs';
-import { expect } from 'chai';
+import { checkFiles } from './bundleChecks.js';
 
-function createFixtureTest( { expected = [], cmd = async () => {} } = {} ) {
+function createFixtureTest( {
+	path = process.cwd(),
+	expected = [],
+	cmd = async () => {},
+	cwd,
+	additionalCodeChecks
+} = {} ) {
 	return async () => {
+		if ( cwd ) {
+			process.chdir( cwd );
+		}
+
 		await cmd();
 
-		checkFiles( expected );
+		checkFiles( path, expected, { additionalCodeChecks } );
 	};
-}
-
-function checkFiles( files ) {
-	files.forEach( ( file ) => {
-		expect( existsSync( file ) ).to.equal( true );
-	} );
 }
 
 export default createFixtureTest;
