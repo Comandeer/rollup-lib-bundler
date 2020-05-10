@@ -1,6 +1,11 @@
+import { resolve as resolvePath } from 'path';
 import { expect } from 'chai';
 import valid from './fixtures/packageParser/valid.json';
 import packageParser from '../src/packageParser.js';
+
+const fixturesPath = resolvePath( __dirname, 'fixtures', 'packageParser' );
+const validFixturePath = resolvePath( fixturesPath, 'valid.json' );
+const invalidFixturePath = resolvePath( fixturesPath, 'invalid.json' );
 
 describe( 'packageParser', () => {
 	it( 'is a function', () => {
@@ -18,14 +23,14 @@ describe( 'packageParser', () => {
 	} );
 
 	it( 'treats string as path to JSON file', () => {
-		expect( packageParser( 'tests/fixtures/packageParser/valid.json' ) ).to.be.an( 'object' );
+		expect( packageParser( validFixturePath ) ).to.be.an( 'object' );
 
 		expect( () => {
 			packageParser( 'non-existent.json' );
 		} ).to.throw( ReferenceError, 'File with given path does not exist.' );
 
 		expect( () => {
-			packageParser( 'tests/fixtures/packageParser/invalid.json' );
+			packageParser( invalidFixturePath );
 		} ).to.throw( SyntaxError, 'Given file is not parsable as a correct JSON.' );
 	} );
 

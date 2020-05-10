@@ -1,32 +1,51 @@
 import { resolve as resolvePath } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { sync as rimraf } from 'rimraf';
+import { expect } from 'chai';
+import removeArtifacts from './helpers/removeArtifacts.js';
 import createFixtureTest from './helpers/createFixtureTest.js';
 
 const execPromise = promisify( exec );
-const binPath = resolvePath( __dirname, '../bin/bundler' );
-const fixturePath = resolvePath( __dirname, 'fixtures/testPackage' );
-const outputPath = resolvePath( fixturePath, 'dist' );
+const binPath = resolvePath( __dirname, '..', 'bin', 'bundler' );
+const fixturesPath = resolvePath( __dirname, 'fixtures' );
+const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
+const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 
 describe( 'CLI', () => {
 	before( () => {
-		rimraf( outputPath );
+		removeArtifacts( fixturesPath );
 	} );
 
 	after( () => {
-		rimraf( outputPath );
+		removeArtifacts( fixturesPath );
 	} );
 
-	it( 'bundles files based on current working directory', createFixtureTest( {
+	it( 'bundles files based on current working directory', createCLITest( basicFixturePath ) );
+
+	// #155
+	it( 'bundles package that imports JSON content', createCLITest( jsonFixturePath, {
+		additionalCodeChecks( code ) {
+			const regex = /name:\s?["']Piotr Kowalski["']/;
+
+			expect( code ).to.match( regex );
+		}
+	} ) );
+} );
+
+function createCLITest( fixturePath, { additionalCodeChecks } = {} ) {
+	const outputPath = resolvePath( fixturePath, 'dist' );
+
+	return createFixtureTest( {
 		cmd: () => {
 			return execPromise( `node ${ binPath }`, { cwd: fixturePath } );
 		},
+		path: fixturePath,
 		expected: [
 			resolvePath( outputPath, 'es5.js' ),
 			resolvePath( outputPath, 'es5.js.map' ),
 			resolvePath( outputPath, 'es2015.js' ),
 			resolvePath( outputPath, 'es2015.js.map' )
-		]
-	} ) );
-} );
+		],
+		additionalCodeChecks
+	} );
+}

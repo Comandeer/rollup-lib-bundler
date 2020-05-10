@@ -1,25 +1,25 @@
 import { rollup } from 'rollup';
-import convertCJS from 'rollup-plugin-commonjs';
+import convertCJS from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
-function bundler( metadata ) {
+async function bundler( metadata ) {
 	const configCJS = getRollupConfig( metadata, true );
 	const configESM = getRollupConfig( metadata, false );
 
-	return Promise.all( [
+	const bundles = await Promise.all( [
 		rollup( configCJS ),
 		rollup( configESM )
-	] ).then( ( bundles ) => {
-		return Promise.all( [
-			bundles[ 0 ].write( configCJS.output ),
-			bundles[ 1 ].write( configESM.output )
-		] );
-	} );
+	] );
+
+	return Promise.all( [
+		bundles[ 0 ].write( configCJS.output ),
+		bundles[ 1 ].write( configESM.output )
+	] );
 }
 
 function getRollupConfig( metadata, isCJS ) {
@@ -31,6 +31,7 @@ function getRollupConfig( metadata, isCJS ) {
 
 		babel( {
 			babelrc: false,
+			babelHelpers: 'bundled',
 			presets: [
 				[
 					preset,

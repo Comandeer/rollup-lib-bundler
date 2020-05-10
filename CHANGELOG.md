@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.11.0] – 2020-05-10
+### Added
+* [#155] Support for importing JSON files. Thanks to [Piotr Kowalski](https://github.com/piecioshka)!
+* [#171] Support for Node 14.
+
+### Changed
+* [#173] `rollup-plugin-babel` and `rollup-plugin-commonjs` dependencies are now `@rollup/plugin-babel` and `@rollup/plugin-commonjs` ones.
+
+### Fixed
+* [#168] Executable file has 644 mode. Thanks to [Piotr Kowalski](https://github.com/piecioshka)!
+
 ## [0.10.0] – 2020-04-11
 ### Changed
 * [#163] **BREAKING CHANGE**: switch from `babel-minify` to `terser`.
@@ -123,10 +134,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#111]: https://github.com/Comandeer/rollup-lib-bundler/pull/111
 [#129]: https://github.com/Comandeer/rollup-lib-bundler/issues/129
 [#128]: https://github.com/Comandeer/rollup-lib-bundler/issues/128
+[#155]: https://github.com/Comandeer/rollup-lib-bundler/issues/155
 [#162]: https://github.com/Comandeer/rollup-lib-bundler/issues/162
 [#163]: https://github.com/Comandeer/rollup-lib-bundler/issues/163
 [#164]: https://github.com/Comandeer/rollup-lib-bundler/issues/164
+[#168]: https://github.com/Comandeer/rollup-lib-bundler/issues/168
+[#171]: https://github.com/Comandeer/rollup-lib-bundler/issues/171
+[#173]: https://github.com/Comandeer/rollup-lib-bundler/issues/173
 
+[0.11.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.7.1...v0.8.0
