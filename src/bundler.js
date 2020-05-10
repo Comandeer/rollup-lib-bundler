@@ -7,19 +7,19 @@ import preset from '@babel/preset-env';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
-function bundler( metadata ) {
+async function bundler( metadata ) {
 	const configCJS = getRollupConfig( metadata, true );
 	const configESM = getRollupConfig( metadata, false );
 
-	return Promise.all( [
+	const bundles = await Promise.all( [
 		rollup( configCJS ),
 		rollup( configESM )
-	] ).then( ( bundles ) => {
-		return Promise.all( [
-			bundles[ 0 ].write( configCJS.output ),
-			bundles[ 1 ].write( configESM.output )
-		] );
-	} );
+	] );
+
+	return Promise.all( [
+		bundles[ 0 ].write( configCJS.output ),
+		bundles[ 1 ].write( configESM.output )
+	] );
 }
 
 function getRollupConfig( metadata, isCJS ) {
