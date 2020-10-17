@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.12.0] – 2020-10-17
+### Changed
+* [#176] Update dependencies, including major versions:
+	* `@rollup/plugin-commonjs` – 11.1.0 → 15.1.0;
+	* `rollup-plugin-terser` – 5.3.0 → 7.0.2;
+	* `mocha` – 7.1.2 → 8.2.0 (dev).
+
 ## [0.11.0] – 2020-05-10
 ### Added
 * [#155] Support for importing JSON files. Thanks to [Piotr Kowalski](https://github.com/piecioshka)!
@@ -141,7 +148,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#168]: https://github.com/Comandeer/rollup-lib-bundler/issues/168
 [#171]: https://github.com/Comandeer/rollup-lib-bundler/issues/171
 [#173]: https://github.com/Comandeer/rollup-lib-bundler/issues/173
+[#176]: https://github.com/Comandeer/rollup-lib-bundler/issues/176
 
+[0.12.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.8.0...v0.9.0
