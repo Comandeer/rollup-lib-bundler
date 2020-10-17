@@ -1,3 +1,5 @@
-const node = '12.0.0';
+import { engines } from '../package.json';
+
+const node = engines.node.replace( /[<=>~^]/g, '' );
 
 export { node };
