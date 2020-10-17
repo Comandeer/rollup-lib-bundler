@@ -5,6 +5,7 @@ node_modules/
 *.bac
 /.project
 coverage/
+.coverage
 dist
 docs/dist
 npm-debug.log
