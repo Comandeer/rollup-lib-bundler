@@ -1,4 +1,5 @@
-import { expect } from 'chai';
+/* globals expect */
+
 import generateBanner from '../src/generateBanner.js';
 
 describe( 'generateBanner', () => {

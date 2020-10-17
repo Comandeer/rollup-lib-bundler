@@ -1,16 +1,14 @@
+/* globals expect, sinon */
+
 import { readFileSync } from 'fs';
 import { resolve as resolvePath } from 'path';
-import { use } from 'chai';
-import { expect } from 'chai';
-import { spy } from 'sinon';
-import sinonChai from 'sinon-chai';
 import removeArtifacts from './helpers/removeArtifacts.js';
 import { checkFiles } from './helpers/bundleChecks.js';
 import { checkBanner } from './helpers/bundleChecks.js';
 import createFlowTest from './helpers/createFlowTest.js';
 import bundler from '../src/bundler.js';
 
-use( sinonChai );
+const { spy } = sinon;
 
 const metadata = {
 	name: 'test-package',

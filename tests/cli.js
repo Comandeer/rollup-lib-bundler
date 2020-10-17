@@ -1,7 +1,8 @@
+/* globals expect */
+
 import { resolve as resolvePath } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { expect } from 'chai';
 import removeArtifacts from './helpers/removeArtifacts.js';
 import createFixtureTest from './helpers/createFixtureTest.js';
 

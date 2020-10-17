@@ -1,5 +1,6 @@
+/* globals expect */
+
 import { resolve as resolvePath } from 'path';
-import { expect } from 'chai';
 import createFixtureTest from './helpers/createFixtureTest.js';
 import removeArtifacts from './helpers/removeArtifacts.js';
 import rlb from '../src/index.js';

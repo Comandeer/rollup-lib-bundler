@@ -1,9 +1,8 @@
-import { resolve as resolvePath } from 'path';
-import { expect } from 'chai';
-import { noCallThru } from 'proxyquire';
-import { stub } from 'sinon';
+/* globals expect, sinon, proxyquire */
 
-const proxyquire = noCallThru();
+import { resolve as resolvePath } from 'path';
+
+const { stub } = sinon;
 
 /**
  * Create test checking transormations flow.
