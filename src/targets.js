@@ -1,3 +1,3 @@
-const node = '10.0.0';
+const node = '12.0.0';
 
 export { node };
