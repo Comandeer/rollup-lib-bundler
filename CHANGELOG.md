@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.13.0]
+### Removed
+* [#179] **BREAKING CHANGE**: support for Node 10.
+
 ## [0.12.0] – 2020-10-17
 ### Changed
 * [#176] Update dependencies, including major versions:
@@ -149,6 +153,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#171]: https://github.com/Comandeer/rollup-lib-bundler/issues/171
 [#173]: https://github.com/Comandeer/rollup-lib-bundler/issues/173
 [#176]: https://github.com/Comandeer/rollup-lib-bundler/issues/176
+[#179]: https://github.com/Comandeer/rollup-lib-bundler/issues/179
 
 [0.12.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.10.0...v0.11.0
