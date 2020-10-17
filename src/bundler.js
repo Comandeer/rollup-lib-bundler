@@ -54,7 +54,8 @@ function getRollupConfig( metadata, isCJS ) {
 			banner,
 			sourcemap: true,
 			format: isCJS ? 'cjs' : 'es',
-			file: isCJS ? metadata.dist.cjs : metadata.dist.esm
+			file: isCJS ? metadata.dist.cjs : metadata.dist.esm,
+			exports: 'auto'
 		}
 	};
 }
