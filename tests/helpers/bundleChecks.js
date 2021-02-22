@@ -2,7 +2,6 @@ import { readFileSync } from 'fs';
 import { existsSync } from 'fs';
 import { resolve as resolvePath } from 'path';
 import { extname as getFileExtension } from 'path';
-import { expect } from 'chai';
 import validateSourcemap from 'sourcemap-validator';
 
 const checkStrategies = {

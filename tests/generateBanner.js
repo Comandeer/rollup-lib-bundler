@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import generateBanner from '../src/generateBanner.js';
 
 describe( 'generateBanner', () => {
