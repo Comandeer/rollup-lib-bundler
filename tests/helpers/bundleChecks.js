@@ -1,5 +1,3 @@
-/* globals expect */
-
 import { readFileSync } from 'fs';
 import { existsSync } from 'fs';
 import { resolve as resolvePath } from 'path';

@@ -1,5 +1,3 @@
-/* globals expect */
-
 import { engines } from '../package.json';
 import * as targets from '../src/targets.js';
 

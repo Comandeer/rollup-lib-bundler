@@ -1,5 +1,3 @@
-/* globals expect, sinon, proxyquire */
-
 import { resolve as resolvePath } from 'path';
 
 const { stub } = sinon;

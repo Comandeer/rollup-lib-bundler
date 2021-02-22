@@ -1,5 +1,3 @@
-/* globals expect */
-
 import { resolve as resolvePath } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';

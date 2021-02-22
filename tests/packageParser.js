@@ -1,5 +1,3 @@
-/* globals expect */
-
 import { resolve as resolvePath } from 'path';
 import valid from './fixtures/packageParser/valid.json';
 import packageParser from '../src/packageParser.js';

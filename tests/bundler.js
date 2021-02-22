@@ -1,5 +1,3 @@
-/* globals expect, sinon */
-
 import { readFileSync } from 'fs';
 import { resolve as resolvePath } from 'path';
 import removeArtifacts from './helpers/removeArtifacts.js';
