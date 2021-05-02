@@ -27,7 +27,8 @@
     "test": "mlt",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "version": "npm test && npm run build && git add -f dist/",
-    "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags"
+    "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
