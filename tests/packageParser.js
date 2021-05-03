@@ -153,7 +153,7 @@ describe( 'packageParser', () => {
 		const module = deepClone( validExports );
 		module.main = 'dist/es5.js';
 
-		expect( packageParser( module ).dist.esm ).to.equal( 'dist/test-package.cjs' );
+		expect( packageParser( module ).dist.cjs ).to.equal( 'dist/test-package.cjs' );
 	} );
 
 	it( 'prefers module over jsnext:main', () => {
