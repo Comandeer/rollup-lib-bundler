@@ -1,5 +1,6 @@
 import { resolve as resolvePath } from 'path';
 import valid from './fixtures/packageParser/valid.json';
+import validExports from './fixtures/packageParser/validExports.json';
 import packageParser from '../src/packageParser.js';
 
 const fixturesPath = resolvePath( __dirname, 'fixtures', 'packageParser' );
@@ -53,7 +54,7 @@ describe( 'packageParser', () => {
 				name: 'test',
 				version: '0.0.0'
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain "main" property.' );
+		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.require" or "main" property or both of them.' );
 
 		expect( () => {
 			packageParser( {
@@ -61,7 +62,7 @@ describe( 'packageParser', () => {
 				version: '0.0.0',
 				main: 'test'
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain either "module" or "jsnext:main" or both properties.' );
+		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.import", "module" or "jsnext:main" or all of them.' );
 
 		expect( () => {
 			packageParser( {
@@ -83,6 +84,32 @@ describe( 'packageParser', () => {
 		} ).to.throw( ReferenceError, 'Package metadata must contain "license" property.' );
 	} );
 
+	// #61
+	it( 'requires module or jsnext:main if exports does not contain import property', () => {
+		expect( () => {
+			packageParser( {
+				name: 'test',
+				version: '0.0.0',
+				exports: {
+					require: 'dist/whatever.js'
+				}
+			} );
+		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.import", "module" or "jsnext:main" or all of them.' );
+	} );
+
+	// #61
+	it( 'requires main if exports does not contain require property', () => {
+		expect( () => {
+			packageParser( {
+				name: 'test',
+				version: '0.0.0',
+				exports: {
+					import: 'dist/whatever.js'
+				}
+			} );
+		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.require" or "main" property or both of them.' );
+	} );
+
 	it( 'returns simplified metadata', () => {
 		expect( packageParser( valid ) ).to.deep.equal( {
 			name: 'test-package',
@@ -97,11 +124,69 @@ describe( 'packageParser', () => {
 		} );
 	} );
 
+	// #61
+	it( 'returns simplified metadata for package with "exports" field', () => {
+		expect( packageParser( validExports ) ).to.deep.equal( {
+			name: 'test-package',
+			author: 'Comandeer',
+			license: 'MIT',
+			version: '9.0.1',
+			src: 'src/index.js',
+			dist: {
+				esm: 'dist/test-package.mjs',
+				cjs: 'dist/test-package.cjs'
+			}
+		} );
+	} );
+
+	// #61
+	it( 'prefers exports.import over module', () => {
+		const module = Object.assign( {}, validExports );
+		module.module = 'dist/es2015.js';
+
+		expect( packageParser( module ).dist.esm ).to.equal( 'dist/test-package.mjs' );
+	} );
+
+	// #61
+	it( 'prefers exports.require over main', () => {
+		const module = Object.assign( {}, validExports );
+		module.main = 'dist/es5.js';
+
+		expect( packageParser( module ).dist.esm ).to.equal( 'dist/test-package.cjs' );
+	} );
+
 	it( 'prefers module over jsnext:main', () => {
 		const module = Object.assign( {}, valid );
 		module[ 'jsnext:main' ] = 'dist/esnext.js';
 
 		expect( packageParser( module ).dist.esm ).to.equal( 'dist/es2015.js' );
+	} );
+
+	// #61
+	it( 'uses module when exports.import is not available', () => {
+		const module = Object.assign( {}, validExports );
+		module.module = 'dist/module.js';
+		delete module.exports.import;
+
+		expect( packageParser( module ).dist.esm ).to.equal( 'dist/module.js' );
+	} );
+
+	// #61
+	it( 'uses jsnext:main when both exports.import and module are not available', () => {
+		const module = Object.assign( {}, validExports );
+		module[ 'jsnext:main' ] = 'dist/jsnext.js';
+		delete module.exports.import;
+
+		expect( packageParser( module ).dist.esm ).to.equal( 'dist/jsnext.js' );
+	} );
+
+	// #61
+	it( 'uses main when exports.require is not available', () => {
+		const module = Object.assign( {}, validExports );
+		module.main = 'dist/legacy.js';
+		delete module.exports.require;
+
+		expect( packageParser( module ).dist.esm ).to.equal( 'dist/legacy.js' );
 	} );
 
 	it( 'uses jsnext:main when module is not available', () => {
