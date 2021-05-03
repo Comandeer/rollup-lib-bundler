@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.13.0]
+## [0.13.0] – 2021-05-03
+### Added
+* [#61]: Support for native ESM via [`exports` field](https://nodejs.org/api/packages.html#packages_exports) in a `package.json` file.
 ### Removed
 * [#179] **BREAKING CHANGE**: support for Node 10.
 
@@ -133,6 +135,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#49]: https://github.com/Comandeer/rollup-lib-bundler/issues/49
 [#54]: https://github.com/Comandeer/rollup-lib-bundler/issues/54
 [#58]: https://github.com/Comandeer/rollup-lib-bundler/issues/58
+[#61]: https://github.com/Comandeer/rollup-lib-bundler/issues/61
 [#62]: https://github.com/Comandeer/rollup-lib-bundler/issues/62
 [#67]: https://github.com/Comandeer/rollup-lib-bundler/issues/67
 [#68]: https://github.com/Comandeer/rollup-lib-bundler/pull/68
