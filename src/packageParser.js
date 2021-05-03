@@ -93,8 +93,8 @@ function prepareMetadata( obj ) {
 		license: obj.license,
 		src: 'src/index.js',
 		dist: {
-			esm: obj.module || obj[ 'jsnext:main' ],
-			cjs: obj.main
+			esm: getESMTarget( obj ),
+			cjs: getCJSTarget( obj )
 		}
 	};
 }
@@ -105,6 +105,22 @@ function prepareAuthorMetadata( author ) {
 	}
 
 	return author.name;
+}
+
+function getESMTarget( obj ) {
+	if ( obj.exports && obj.exports.import ) {
+		return obj.exports.import;
+	}
+
+	return obj.module || obj[ 'jsnext:main' ];
+}
+
+function getCJSTarget( obj ) {
+	if ( obj.exports && obj.exports.require ) {
+		return obj.exports.require;
+	}
+
+	return obj.main;
 }
 
 export default packageParser;
