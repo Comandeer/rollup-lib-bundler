@@ -54,7 +54,7 @@ describe( 'packageParser', () => {
 				name: 'test',
 				version: '0.0.0'
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.require" or "main" property or both of them.' );
+		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.require" or "main" properties or all of them.' );
 
 		expect( () => {
 			packageParser( {
@@ -62,7 +62,7 @@ describe( 'packageParser', () => {
 				version: '0.0.0',
 				main: 'test'
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.import", "module" or "jsnext:main" or all of them.' );
+		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.import", "module" or "jsnext:main" properties or all of them.' );
 
 		expect( () => {
 			packageParser( {
@@ -94,7 +94,7 @@ describe( 'packageParser', () => {
 					require: 'dist/whatever.js'
 				}
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.import", "module" or "jsnext:main" or all of them.' );
+		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.import", "module" or "jsnext:main" properties or all of them.' );
 	} );
 
 	// #61
@@ -107,7 +107,7 @@ describe( 'packageParser', () => {
 					import: 'dist/whatever.js'
 				}
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain either "exports.require" or "main" property or both of them.' );
+		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.require" or "main" properties or all of them.' );
 	} );
 
 	it( 'returns simplified metadata', () => {
