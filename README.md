@@ -9,7 +9,7 @@ Super opinionated library bundler using [Rollup](https://github.com/rollup/rollu
 It gets `package.json` from the current working directory, parses it and get neeeded info:
 
 * `name`, `author`, `version` and `license` to create beautiful banner comment,
-* `exports.requirq` or `main` to get path for saving CJS bundle,
+* `exports.require` or `main` to get path for saving CJS bundle,
 * `exports.import`, `module` or `jsnext:main` for saving ESM bundle.
 
 Of course it treats `src/index.js` as the only entry point for Rollup.
