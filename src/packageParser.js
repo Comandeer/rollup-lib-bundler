@@ -33,8 +33,8 @@ function loadAndParseFile( path ) {
 function lintObject( obj ) {
 	checkProperty( 'name' );
 	checkProperty( 'version' );
-	checkProperty( 'main' );
-	checkProperties( 'module', 'jsnext:main' );
+	checkProperties( 'exports.require', 'main' );
+	checkProperties( 'exports.import', 'module', 'jsnext:main' );
 	checkProperty( 'author' );
 	checkProperty( 'license' );
 
@@ -44,10 +44,44 @@ function lintObject( obj ) {
 		}
 	}
 
-	function checkProperties( name1, name2 ) {
-		if ( typeof obj[ name1 ] === 'undefined' && typeof obj[ name2 ] === 'undefined' ) {
-			throw new ReferenceError( `Package metadata must contain either "${ name1 }" or "${ name2 }" or both properties.` );
+	function checkProperties( ...properties ) {
+		const isAtLeastOnePresent = properties.some( ( property ) => {
+			const propertyPath = property.split( '.' );
+
+			return checkPropertyExistence( obj, propertyPath );
+		} );
+
+		if ( !isAtLeastOnePresent ) {
+			throw new ReferenceError( `Package metadata must contain one of ${ prepareNamesForError( properties ) } properties or all of them.` );
 		}
+	}
+
+	function checkPropertyExistence( obj, propertyPath ) {
+		const currentProperty = propertyPath.shift();
+
+		if ( typeof obj[ currentProperty ] === 'undefined' ) {
+			return false;
+		}
+
+		if ( propertyPath.length === 0 ) {
+			return true;
+		}
+
+		return checkPropertyExistence( obj[ currentProperty ], propertyPath );
+	}
+
+	function prepareNamesForError( names ) {
+		return names.map( ( name, i ) => {
+			const quotedName = `"${ name }"`;
+
+			if ( i === 0 ) {
+				return quotedName;
+			}
+
+			const conjuction = ( i === names.length - 1 ) ? ' or ' : ', ';
+
+			return `${ conjuction}${ quotedName }`;
+		} ).join( '' );
 	}
 }
 
