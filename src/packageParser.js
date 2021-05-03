@@ -31,6 +31,13 @@ function loadAndParseFile( path ) {
 }
 
 function lintObject( obj ) {
+	checkProperty( 'name' );
+	checkProperty( 'version' );
+	checkProperty( 'main' );
+	checkProperties( 'module', 'jsnext:main' );
+	checkProperty( 'author' );
+	checkProperty( 'license' );
+
 	function checkProperty( name ) {
 		if ( typeof obj[ name ] === 'undefined' ) {
 			throw new ReferenceError( `Package metadata must contain "${ name }" property.` );
@@ -42,21 +49,6 @@ function lintObject( obj ) {
 			throw new ReferenceError( `Package metadata must contain either "${ name1 }" or "${ name2 }" or both properties.` );
 		}
 	}
-
-	checkProperty( 'name' );
-	checkProperty( 'version' );
-	checkProperty( 'main' );
-	checkProperties( 'module', 'jsnext:main' );
-	checkProperty( 'author' );
-	checkProperty( 'license' );
-}
-
-function prepareAuthorMetadata( author ) {
-	if ( typeof author !== 'object' ) {
-		return String( author );
-	}
-
-	return author.name;
 }
 
 function prepareMetadata( obj ) {
@@ -71,6 +63,14 @@ function prepareMetadata( obj ) {
 			cjs: obj.main
 		}
 	};
+}
+
+function prepareAuthorMetadata( author ) {
+	if ( typeof author !== 'object' ) {
+		return String( author );
+	}
+
+	return author.name;
 }
 
 export default packageParser;
