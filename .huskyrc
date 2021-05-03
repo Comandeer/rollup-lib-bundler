@@ -1,5 +1,0 @@
-{
-  "hooks": {
-    "commit-msg": "commitplease .git/COMMIT_EDITMSG"
-  }
-}

@@ -31,32 +31,58 @@ function loadAndParseFile( path ) {
 }
 
 function lintObject( obj ) {
+	checkProperty( 'name' );
+	checkProperty( 'version' );
+	checkProperties( 'exports.require', 'main' );
+	checkProperties( 'exports.import', 'module', 'jsnext:main' );
+	checkProperty( 'author' );
+	checkProperty( 'license' );
+
 	function checkProperty( name ) {
 		if ( typeof obj[ name ] === 'undefined' ) {
 			throw new ReferenceError( `Package metadata must contain "${ name }" property.` );
 		}
 	}
 
-	function checkProperties( name1, name2 ) {
-		if ( typeof obj[ name1 ] === 'undefined' && typeof obj[ name2 ] === 'undefined' ) {
-			throw new ReferenceError( `Package metadata must contain either "${ name1 }" or "${ name2 }" or both properties.` );
+	function checkProperties( ...properties ) {
+		const isAtLeastOnePresent = properties.some( ( property ) => {
+			const propertyPath = property.split( '.' );
+
+			return checkPropertyExistence( obj, propertyPath );
+		} );
+
+		if ( !isAtLeastOnePresent ) {
+			throw new ReferenceError( `Package metadata must contain one of ${ prepareNamesForError( properties ) } properties or all of them.` );
 		}
 	}
 
-	checkProperty( 'name' );
-	checkProperty( 'version' );
-	checkProperty( 'main' );
-	checkProperties( 'module', 'jsnext:main' );
-	checkProperty( 'author' );
-	checkProperty( 'license' );
-}
+	function checkPropertyExistence( obj, propertyPath ) {
+		const currentProperty = propertyPath.shift();
 
-function prepareAuthorMetadata( author ) {
-	if ( typeof author !== 'object' ) {
-		return String( author );
+		if ( typeof obj[ currentProperty ] === 'undefined' ) {
+			return false;
+		}
+
+		if ( propertyPath.length === 0 ) {
+			return true;
+		}
+
+		return checkPropertyExistence( obj[ currentProperty ], propertyPath );
 	}
 
-	return author.name;
+	function prepareNamesForError( names ) {
+		return names.map( ( name, i ) => {
+			const quotedName = `"${ name }"`;
+
+			if ( i === 0 ) {
+				return quotedName;
+			}
+
+			const conjuction = ( i === names.length - 1 ) ? ' or ' : ', ';
+
+			return `${ conjuction}${ quotedName }`;
+		} ).join( '' );
+	}
 }
 
 function prepareMetadata( obj ) {
@@ -67,10 +93,34 @@ function prepareMetadata( obj ) {
 		license: obj.license,
 		src: 'src/index.js',
 		dist: {
-			esm: obj.module || obj[ 'jsnext:main' ],
-			cjs: obj.main
+			esm: getESMTarget( obj ),
+			cjs: getCJSTarget( obj )
 		}
 	};
+}
+
+function prepareAuthorMetadata( author ) {
+	if ( typeof author !== 'object' ) {
+		return String( author );
+	}
+
+	return author.name;
+}
+
+function getESMTarget( obj ) {
+	if ( obj.exports && obj.exports.import ) {
+		return obj.exports.import;
+	}
+
+	return obj.module || obj[ 'jsnext:main' ];
+}
+
+function getCJSTarget( obj ) {
+	if ( obj.exports && obj.exports.require ) {
+		return obj.exports.require;
+	}
+
+	return obj.main;
 }
 
 export default packageParser;

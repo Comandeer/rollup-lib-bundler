@@ -9,6 +9,7 @@ const binPath = resolvePath( __dirname, '..', 'bin', 'bundler' );
 const fixturesPath = resolvePath( __dirname, 'fixtures' );
 const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
+const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
 
 describe( 'CLI', () => {
 	before( () => {
@@ -29,6 +30,9 @@ describe( 'CLI', () => {
 			expect( code ).to.match( regex );
 		}
 	} ) );
+
+	// #61
+	it( 'bundles package based on exports fields', createCLITest( exportsFixturePath ) );
 } );
 
 function createCLITest( fixturePath, { additionalCodeChecks } = {} ) {
