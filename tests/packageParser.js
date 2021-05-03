@@ -2,6 +2,7 @@ import { resolve as resolvePath } from 'path';
 import valid from './fixtures/packageParser/valid.json';
 import validExports from './fixtures/packageParser/validExports.json';
 import packageParser from '../src/packageParser.js';
+import { deepClone } from './helpers/utils';
 
 const fixturesPath = resolvePath( __dirname, 'fixtures', 'packageParser' );
 const validFixturePath = resolvePath( fixturesPath, 'valid.json' );
@@ -141,7 +142,7 @@ describe( 'packageParser', () => {
 
 	// #61
 	it( 'prefers exports.import over module', () => {
-		const module = Object.assign( {}, validExports );
+		const module = deepClone( validExports );
 		module.module = 'dist/es2015.js';
 
 		expect( packageParser( module ).dist.esm ).to.equal( 'dist/test-package.mjs' );
@@ -149,14 +150,14 @@ describe( 'packageParser', () => {
 
 	// #61
 	it( 'prefers exports.require over main', () => {
-		const module = Object.assign( {}, validExports );
+		const module = deepClone( validExports );
 		module.main = 'dist/es5.js';
 
 		expect( packageParser( module ).dist.esm ).to.equal( 'dist/test-package.cjs' );
 	} );
 
 	it( 'prefers module over jsnext:main', () => {
-		const module = Object.assign( {}, valid );
+		const module = deepClone( valid );
 		module[ 'jsnext:main' ] = 'dist/esnext.js';
 
 		expect( packageParser( module ).dist.esm ).to.equal( 'dist/es2015.js' );
@@ -164,7 +165,7 @@ describe( 'packageParser', () => {
 
 	// #61
 	it( 'uses module when exports.import is not available', () => {
-		const module = Object.assign( {}, validExports );
+		const module = deepClone( validExports );
 		module.module = 'dist/module.js';
 		delete module.exports.import;
 
@@ -173,7 +174,7 @@ describe( 'packageParser', () => {
 
 	// #61
 	it( 'uses jsnext:main when both exports.import and module are not available', () => {
-		const module = Object.assign( {}, validExports );
+		const module = deepClone( validExports );
 		module[ 'jsnext:main' ] = 'dist/jsnext.js';
 		delete module.exports.import;
 
@@ -182,15 +183,15 @@ describe( 'packageParser', () => {
 
 	// #61
 	it( 'uses main when exports.require is not available', () => {
-		const module = Object.assign( {}, validExports );
+		const module = deepClone( validExports );
 		module.main = 'dist/legacy.js';
 		delete module.exports.require;
-
-		expect( packageParser( module ).dist.esm ).to.equal( 'dist/legacy.js' );
+		console.log( module ); // eslint-disable-line
+		expect( packageParser( module ).dist.cjs ).to.equal( 'dist/legacy.js' );
 	} );
 
 	it( 'uses jsnext:main when module is not available', () => {
-		const jsnext = Object.assign( {}, valid );
+		const jsnext = deepClone( valid );
 		jsnext[ 'jsnext:main' ] = 'dist/esnext.js';
 		delete jsnext.module;
 
@@ -198,7 +199,7 @@ describe( 'packageParser', () => {
 	} );
 
 	it( 'parses author object into string', () => {
-		const author = Object.assign( {}, valid );
+		const author = deepClone( valid );
 		author.author = {
 			name: 'Tester'
 		};
