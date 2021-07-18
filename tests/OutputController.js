@@ -3,7 +3,7 @@ import consoleControlStrings from 'console-control-strings';
 import createDummyStream from './helpers/createDummyStream.js';
 import OutputController from '../src/OutputController.js';
 
-describe( 'OutputController', () => { //eslint-disable-line
+describe( 'OutputController', () => {
 	let sandbox;
 
 	beforeEach( () => {

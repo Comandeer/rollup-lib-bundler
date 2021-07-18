@@ -186,7 +186,7 @@ describe( 'packageParser', () => {
 		const module = deepClone( validExports );
 		module.main = 'dist/legacy.js';
 		delete module.exports.require;
-		console.log( module ); // eslint-disable-line
+
 		expect( packageParser( module ).dist.cjs ).to.equal( 'dist/legacy.js' );
 	} );
 
