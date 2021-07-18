@@ -59,7 +59,7 @@ function getRollupInputConfig( metadata, outputController ) {
 		input: metadata.src,
 		/* istanbul ignore next */
 		onwarn( warning ) {
-			outputController.addLog( warning );
+			outputController.addWarning( warning );
 		},
 		plugins
 	};
