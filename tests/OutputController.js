@@ -132,6 +132,48 @@ describe( 'OutputController', () => {
 		} );
 	} );
 
+	describe( '#addWarning()', () => {
+		it( 'creates and pushes a warning to pending logs array', () => {
+			const expected = [
+				[
+					`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`
+				]
+			];
+			const outputController = new OutputController();
+
+			outputController.addWarning( 'hublabubla' );
+
+			expect( outputController.pending ).to.deep.equal( expected );
+		} );
+
+		it( 'uses warning#message property as a warning content', () => {
+			const expected = [
+				[
+					`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`
+				]
+			];
+			const warning = {
+				message: 'hublabubla'
+			};
+			const outputController = new OutputController();
+
+			outputController.addWarning( warning );
+
+			expect( outputController.pending ).to.deep.equal( expected );
+		} );
+
+		it( 'supresses external dependencies warning', () => {
+			const warning = {
+				code: 'UNRESOLVED_IMPORT'
+			};
+			const outputController = new OutputController();
+
+			outputController.addWarning( warning );
+
+			expect( outputController.pending ).to.deep.equal( [] );
+		} );
+	} );
+
 	describe( '#display()', () => {
 		it( 'displays all pending logs in order', () => {
 			const logs = [
