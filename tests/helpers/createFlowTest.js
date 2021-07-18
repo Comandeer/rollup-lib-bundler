@@ -28,7 +28,8 @@ function createFlowTest( {
 		} );
 		const stubs = new Map( pluginsToStubs );
 		const rollupStub = stub().returns( {
-			write() {}
+			write() {},
+			close() {}
 		} );
 		const proxyquireConfig = Object.entries( plugins ).reduce( ( config, [ plugin, exportName ] ) => {
 			const stub = stubs.get( plugin );
@@ -52,12 +53,10 @@ function createFlowTest( {
 		pluginsNames.forEach( ( plugin ) => {
 			const stub = stubs.get( plugin );
 
-			// Twice, because transformations are done twice: for CJS and ESM.
-			expect( stub, plugin ).to.have.been.calledTwice;
+			expect( stub, plugin ).to.have.been.calledOnce;
 		} );
 
 		checkPlugins( rollupStub.firstCall.args[ 0 ], pluginsNames );
-		checkPlugins( rollupStub.secondCall.args[ 0 ], pluginsNames );
 	};
 }
 

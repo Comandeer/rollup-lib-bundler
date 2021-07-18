@@ -8,22 +8,20 @@ import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
 async function bundler( metadata ) {
-	const configCJS = getRollupConfig( metadata, true );
-	const configESM = getRollupConfig( metadata, false );
+	const inputConfig = getRollupInputConfig( metadata );
+	const outputConfigCJS = getRollupOutputConfig( metadata, 'cjs' );
+	const otuputConfigESM = getRollupOutputConfig( metadata, 'esm' );
+	const bundle = await rollup( inputConfig );
 
-	const bundles = await Promise.all( [
-		rollup( configCJS ),
-		rollup( configESM )
+	await Promise.all( [
+		bundle.write( outputConfigCJS ),
+		bundle.write( otuputConfigESM )
 	] );
 
-	return Promise.all( [
-		bundles[ 0 ].write( configCJS.output ),
-		bundles[ 1 ].write( configESM.output )
-	] );
+	return bundle.close();
 }
 
-function getRollupConfig( metadata, isCJS ) {
-	const banner = generateBanner( metadata );
+function getRollupInputConfig( metadata ) {
 	const plugins = [
 		convertCJS(),
 
@@ -49,14 +47,19 @@ function getRollupConfig( metadata, isCJS ) {
 
 	return {
 		input: metadata.src,
-		plugins,
-		output: {
-			banner,
-			sourcemap: true,
-			format: isCJS ? 'cjs' : 'es',
-			file: isCJS ? metadata.dist.cjs : metadata.dist.esm,
-			exports: 'auto'
-		}
+		plugins
+	};
+}
+
+function getRollupOutputConfig( metadata, format = 'esm' ) {
+	const banner = generateBanner( metadata );
+
+	return {
+		banner,
+		sourcemap: true,
+		format,
+		file: metadata.dist[ format ],
+		exports: 'auto'
 	};
 }
 
