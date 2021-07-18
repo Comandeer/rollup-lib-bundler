@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.14.0]
 ### Added
 * [#189]: Support for Node 16.
+### Changed
+* [#191]: **BREAKING CHANGE**: update `@rollup/plugin-commonjs` from `^18.0.0` to `^19.0.1` and other dependencies.
 
 ## [0.13.0] – 2021-05-03
 ### Added
@@ -162,6 +164,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#176]: https://github.com/Comandeer/rollup-lib-bundler/issues/176
 [#179]: https://github.com/Comandeer/rollup-lib-bundler/issues/179
 [#189]: https://github.com/Comandeer/rollup-lib-bundler/issues/189
+[#191]: https://github.com/Comandeer/rollup-lib-bundler/issues/191
 
 [0.14.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.12.0...v0.13.0
