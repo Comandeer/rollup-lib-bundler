@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import consoleControlStrings from 'console-control-strings';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';

@@ -48,6 +48,7 @@ class OutputController {
 		this.pending = [];
 	}
 
+	/* istanbul ignore next */
 	showGauge() {
 		const pulse = () => {
 			this[ gaugeSymbol ].pulse();
@@ -58,6 +59,7 @@ class OutputController {
 		pulse();
 	}
 
+	/* istanbul ignore next */
 	hideGauge() {
 		clearTimeout( this[ gaugeTimeoutSymbol ] );
 		this[ gaugeSymbol ].hide();
