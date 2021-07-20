@@ -11,3 +11,4 @@ docs/dist
 npm-debug.log
 /.nyc_output
 /.vscode
+.DS_STORE
