@@ -4,43 +4,26 @@ import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
-import consoleControlStrings from 'console-control-strings';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
-import OutputController from './OutputController.js';
 
-async function bundler( metadata ) {
-	const outputController = new OutputController();
-	const inputConfig = getRollupInputConfig( metadata, outputController );
-	const outputConfigCJS = getRollupOutputConfig( metadata, 'cjs' );
-	const otuputConfigESM = getRollupOutputConfig( metadata, 'esm' );
-	let bundle;
+async function bundler( {
+	outputController: onWarn,
+	config
+} ) {
+	const inputConfig = getRollupInputConfig( config, onWarn );
+	const outputConfigCJS = getRollupOutputConfig( config, 'cjs' );
+	const otuputConfigESM = getRollupOutputConfig( config, 'esm' );
 
-	try {
-		outputController.showGauge();
+	const bundle = await rollup( inputConfig );
 
-		bundle = await rollup( inputConfig );
-
-		await Promise.all( [
-			bundle.write( outputConfigCJS ),
-			bundle.write( otuputConfigESM )
-		] );
-
-		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'green' ] ) }Bundling complete!${ consoleControlStrings.color( 'reset' ) }` );
-	} catch ( error ) {
-		outputController.displayError( error );
-		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }Bundling failed!${ consoleControlStrings.color( 'reset' ) }` );
-	} finally {
-		outputController.hideGauge();
-		outputController.display();
-
-		if ( bundle ) {
-			return bundle.close(); // eslint-disable-line no-unsafe-finally
-		}
-	}
+	await Promise.all( [
+		bundle.write( outputConfigCJS ),
+		bundle.write( otuputConfigESM )
+	] );
 }
 
-function getRollupInputConfig( metadata, outputController ) {
+function getRollupInputConfig( metadata, onwarn = () => {} ) {
 	const plugins = [
 		convertCJS(),
 
@@ -67,9 +50,7 @@ function getRollupInputConfig( metadata, outputController ) {
 	return {
 		input: metadata.src,
 		/* istanbul ignore next */
-		onwarn( warning ) {
-			outputController.addWarning( warning );
-		},
+		onwarn,
 		plugins
 	};
 }

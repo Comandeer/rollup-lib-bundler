@@ -48,7 +48,9 @@ function createFlowTest( {
 		const bundlerPath = resolvePath( __dirname, '..', '..', 'src', 'bundler.js' );
 		const { default: proxiedBundler } = proxyquire( bundlerPath, proxyquireConfig );
 
-		await proxiedBundler( bundlerConfig );
+		await proxiedBundler( {
+			config: bundlerConfig
+		} );
 
 		pluginsNames.forEach( ( plugin ) => {
 			const stub = stubs.get( plugin );

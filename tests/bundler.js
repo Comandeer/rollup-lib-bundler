@@ -32,7 +32,9 @@ describe( 'bundler', () => {
 	it( 'bundles files based on passed metadata', async () => {
 		const bundlerConfig = configureBundler();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			config: bundlerConfig
+		} );
 
 		const packagePath = resolvePath( fixturesPath, 'testPackage' );
 
@@ -47,7 +49,9 @@ describe( 'bundler', () => {
 	it( 'produces correct banner', async () => {
 		const bundlerConfig = configureBundler();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			config: bundlerConfig
+		} );
 
 		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
 		const ES5Path = resolvePath( distPath, 'es5.js' );
@@ -64,7 +68,9 @@ describe( 'bundler', () => {
 		const consoleSpy = spy( console, 'warn' );
 		const bundlerConfig = configureBundler();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			config: bundlerConfig
+		} );
 
 		consoleSpy.restore();
 
@@ -89,7 +95,9 @@ describe( 'bundler', () => {
 	it( 'generates non-empty sourcemap', async () => {
 		const bundlerConfig = configureBundler();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			config: bundlerConfig
+		} );
 
 		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
 		const correctMappingsRegex = /;[a-z0-9]+,/i;
@@ -108,7 +116,9 @@ describe( 'bundler', () => {
 		const consoleSpy = spy( console, 'error' );
 		const bundlerConfig = configureBundler( 'jsonPackage' );
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			config: bundlerConfig
+		} );
 
 		consoleSpy.restore();
 
@@ -135,7 +145,9 @@ describe( 'bundler', () => {
 		const stderrSpy = spy( process.stderr, '_write' );
 		const bundlerConfig = configureBundler( 'errorPackage' );
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			config: bundlerConfig
+		} );
 
 		stderrSpy.restore();
 
