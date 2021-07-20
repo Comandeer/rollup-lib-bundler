@@ -129,6 +129,18 @@ describe( 'bundler', () => {
 			expect( code ).to.match( regex );
 		}
 	} );
+
+	// #156
+	it( 'displays error when any error is encountered', async () => {
+		const stderrSpy = spy( process.stderr, '_write' );
+		const bundlerConfig = configureBundler( 'errorPackage' );
+
+		await bundler( bundlerConfig );
+
+		stderrSpy.restore();
+
+		expect( stderrSpy ).to.have.been.called;
+	} );
 } );
 
 function configureBundler( packageName = 'testPackage' ) {
