@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.14.0]
+## [0.14.0] – 2021-07-21
 ### Added
 * [#189]: Support for Node 16.
+* [#156]: User-friendly error handling.
 ### Changed
+* [#197]: **BREAKING CHANGE**: public API has changed to be always asynchronous.
 * [#191]: **BREAKING CHANGE**: update `@rollup/plugin-commonjs` from `^18.0.0` to `^19.0.1` and other dependencies.
 * [#193]: New, better output.
 
@@ -156,6 +158,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#129]: https://github.com/Comandeer/rollup-lib-bundler/issues/129
 [#128]: https://github.com/Comandeer/rollup-lib-bundler/issues/128
 [#155]: https://github.com/Comandeer/rollup-lib-bundler/issues/155
+[#156]: https://github.com/Comandeer/rollup-lib-bundler/issues/156
 [#162]: https://github.com/Comandeer/rollup-lib-bundler/issues/162
 [#163]: https://github.com/Comandeer/rollup-lib-bundler/issues/163
 [#164]: https://github.com/Comandeer/rollup-lib-bundler/issues/164
@@ -167,6 +170,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#189]: https://github.com/Comandeer/rollup-lib-bundler/issues/189
 [#191]: https://github.com/Comandeer/rollup-lib-bundler/issues/191
 [#193]: https://github.com/Comandeer/rollup-lib-bundler/issues/193
+[#197]: https://github.com/Comandeer/rollup-lib-bundler/issues/197
 
 [0.14.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.12.0...v0.13.0
