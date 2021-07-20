@@ -35,6 +35,15 @@ describe( 'CLI', () => {
 	// #61
 	it( 'bundles package based on exports fields', createCLITest( exportsFixturePath ) );
 
+	// #193
+	it( 'displays output for valid package', createCLITest( basicFixturePath, {
+		performFileCheck: false,
+		cmdResultCheck: ( { stdout, stderr } ) => {
+			expect( stdout ).to.include( 'Bundling complete!' );
+			expect( stderr ).to.equal( '' );
+		}
+	} ) );
+
 	// #156
 	it( 'displays error for invalid package', createCLITest( errorFixturePath, {
 		performFileCheck: false,
