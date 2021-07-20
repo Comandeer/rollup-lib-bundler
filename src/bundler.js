@@ -14,21 +14,30 @@ async function bundler( metadata ) {
 	const inputConfig = getRollupInputConfig( metadata, outputController );
 	const outputConfigCJS = getRollupOutputConfig( metadata, 'cjs' );
 	const otuputConfigESM = getRollupOutputConfig( metadata, 'esm' );
+	let bundle;
 
-	outputController.showGauge();
+	try {
+		outputController.showGauge();
 
-	const bundle = await rollup( inputConfig );
+		bundle = await rollup( inputConfig );
 
-	await Promise.all( [
-		bundle.write( outputConfigCJS ),
-		bundle.write( otuputConfigESM )
-	] );
+		await Promise.all( [
+			bundle.write( outputConfigCJS ),
+			bundle.write( otuputConfigESM )
+		] );
 
-	outputController.hideGauge();
-	outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'green' ] ) }Bundling complete!${ consoleControlStrings.color( 'reset' ) }` );
-	outputController.display();
+		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'green' ] ) }Bundling complete!${ consoleControlStrings.color( 'reset' ) }` );
+	} catch ( error ) {
+		outputController.displayError( error );
+		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }Bundling failed!${ consoleControlStrings.color( 'reset' ) }` );
+	} finally {
+		outputController.hideGauge();
+		outputController.display();
 
-	return bundle.close();
+		if ( bundle ) {
+			return bundle.close(); // eslint-disable-line no-unsafe-finally
+		}
+	}
 }
 
 function getRollupInputConfig( metadata, outputController ) {
