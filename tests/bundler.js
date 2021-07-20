@@ -6,8 +6,6 @@ import { checkBanner } from './helpers/bundleChecks.js';
 import createFlowTest from './helpers/createFlowTest.js';
 import bundler from '../src/bundler.js';
 
-const { spy } = sinon;
-
 const metadata = {
 	name: 'test-package',
 	author: 'Comandeer',
@@ -63,20 +61,6 @@ describe( 'bundler', () => {
 		checkBanner( ES2015Code );
 	} );
 
-	// #58
-	it( 'does not emit warning about deprecated options', async () => {
-		const consoleSpy = spy( console, 'warn' );
-		const bundlerConfig = configureBundler();
-
-		await bundler( {
-			config: bundlerConfig
-		} );
-
-		consoleSpy.restore();
-
-		expect( consoleSpy.callCount ).to.equal( 0 );
-	} );
-
 	// #67, #78
 	// This test seems like it tests implementation – and that's right…
 	// Yet I didn't find any other _sensible_ way to test if code is passed
@@ -113,16 +97,12 @@ describe( 'bundler', () => {
 
 	// #155
 	it( 'should load JSON file', async () => {
-		const consoleSpy = spy( console, 'error' );
 		const bundlerConfig = configureBundler( 'jsonPackage' );
 
+		// Thrown error will fail the test.
 		await bundler( {
 			config: bundlerConfig
 		} );
-
-		consoleSpy.restore();
-
-		expect( consoleSpy.callCount ).to.equal( 0 );
 
 		const distPath = resolvePath( fixturesPath, 'jsonPackage', 'dist' );
 
@@ -141,17 +121,18 @@ describe( 'bundler', () => {
 	} );
 
 	// #156
-	it( 'displays error when any error is encountered', async () => {
-		const stderrSpy = spy( process.stderr, '_write' );
+	it( 'throws error when any error is encountered', async () => {
 		const bundlerConfig = configureBundler( 'errorPackage' );
 
-		await bundler( {
-			config: bundlerConfig
-		} );
+		try {
+			await bundler( {
+				config: bundlerConfig
+			} );
+		} catch {
+			return;
+		}
 
-		stderrSpy.restore();
-
-		expect( stderrSpy ).to.have.been.called;
+		expect.fail( 'Error was not thrown' );
 	} );
 } );
 
