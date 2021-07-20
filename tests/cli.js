@@ -10,6 +10,7 @@ const fixturesPath = resolvePath( __dirname, 'fixtures' );
 const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
+const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
 	before( () => {
@@ -33,9 +34,18 @@ describe( 'CLI', () => {
 
 	// #61
 	it( 'bundles package based on exports fields', createCLITest( exportsFixturePath ) );
+
+	// #156
+	it( 'displays error for invalid package', createCLITest( errorFixturePath, {
+		performFileCheck: false,
+		cmdResultCheck: ( { stdout, stderr } ) => {
+			expect( stdout ).to.include( 'Bundling failed!' );
+			expect( stderr ).to.include( '🚨Error🚨' );
+		}
+	} ) );
 } );
 
-function createCLITest( fixturePath, { additionalCodeChecks } = {} ) {
+function createCLITest( fixturePath, options = {} ) {
 	const outputPath = resolvePath( fixturePath, 'dist' );
 
 	return createFixtureTest( {
@@ -49,6 +59,6 @@ function createCLITest( fixturePath, { additionalCodeChecks } = {} ) {
 			resolvePath( outputPath, 'es2015.js' ),
 			resolvePath( outputPath, 'es2015.js.map' )
 		],
-		additionalCodeChecks
+		...options
 	} );
 }

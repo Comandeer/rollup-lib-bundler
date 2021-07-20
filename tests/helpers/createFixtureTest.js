@@ -4,17 +4,18 @@ function createFixtureTest( {
 	path = process.cwd(),
 	expected = [],
 	cmd = async () => {},
-	cwd,
+	performFileCheck = true,
+	cmdResultCheck = async () => {},
 	additionalCodeChecks
 } = {} ) {
 	return async () => {
-		if ( cwd ) {
-			process.chdir( cwd );
+		const cmdResult = await cmd();
+
+		await cmdResultCheck( cmdResult );
+
+		if ( performFileCheck ) {
+			checkFiles( path, expected, { additionalCodeChecks } );
 		}
-
-		await cmd();
-
-		checkFiles( path, expected, { additionalCodeChecks } );
 	};
 }
 
