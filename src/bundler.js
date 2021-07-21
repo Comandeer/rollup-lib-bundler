@@ -8,7 +8,7 @@ import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
 async function bundler( {
-	outputController: onWarn,
+	onWarn,
 	config
 } ) {
 	const inputConfig = getRollupInputConfig( config, onWarn );

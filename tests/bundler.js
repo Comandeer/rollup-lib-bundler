@@ -15,11 +15,16 @@ const metadata = {
 const fixturesPath = resolvePath( __dirname, 'fixtures' );
 
 describe( 'bundler', () => {
+	let sandbox;
+
 	before( () => {
+		sandbox = sinon.createSandbox();
+
 		removeArtifacts( fixturesPath );
 	} );
 
 	after( () => {
+		sandbox.restore();
 		removeArtifacts( fixturesPath );
 	} );
 
@@ -133,6 +138,19 @@ describe( 'bundler', () => {
 		}
 
 		expect.fail( 'Error was not thrown' );
+	} );
+
+	// #193
+	it( 'handle warnings', async () => {
+		const bundlerConfig = configureBundler( 'externalDepPackage' );
+		const onWarnSpy = sandbox.spy();
+
+		await bundler( {
+			config: bundlerConfig,
+			onWarn: onWarnSpy
+		} );
+
+		expect( onWarnSpy ).to.have.been.called;
 	} );
 } );
 
