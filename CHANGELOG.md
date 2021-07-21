@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.15.0]
+
 ## [0.14.0] – 2021-07-21
 ### Added
 * [#189]: Support for Node 16.
@@ -172,6 +174,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#193]: https://github.com/Comandeer/rollup-lib-bundler/issues/193
 [#197]: https://github.com/Comandeer/rollup-lib-bundler/issues/197
 
+[0.15.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.11.0...v0.12.0
