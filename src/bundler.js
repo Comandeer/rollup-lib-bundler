@@ -49,7 +49,6 @@ function getRollupInputConfig( metadata, onwarn = () => {} ) {
 
 	return {
 		input: metadata.src,
-		/* istanbul ignore next */
 		onwarn,
 		plugins
 	};
