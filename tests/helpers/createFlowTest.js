@@ -11,7 +11,7 @@ const { stub } = sinon;
  * @returns {Function} Test function.
  */
 function createFlowTest( {
-	bundlerConfig =  {},
+	packageInfo =  {},
 	plugins = {}
 } = {} ) {
 	return async () => {
@@ -49,7 +49,7 @@ function createFlowTest( {
 		const { default: proxiedBundler } = proxyquire( bundlerPath, proxyquireConfig );
 
 		await proxiedBundler( {
-			config: bundlerConfig
+			packageInfo
 		} );
 
 		pluginsNames.forEach( ( plugin ) => {

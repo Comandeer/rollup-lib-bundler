@@ -33,10 +33,10 @@ describe( 'bundler', () => {
 	} );
 
 	it( 'bundles files based on passed metadata', async () => {
-		const bundlerConfig = configureBundler();
+		const packageInfo = createPackageInfo();
 
 		await bundler( {
-			config: bundlerConfig
+			packageInfo
 		} );
 
 		const packagePath = resolvePath( fixturesPath, 'testPackage' );
@@ -50,10 +50,10 @@ describe( 'bundler', () => {
 	} );
 
 	it( 'produces correct banner', async () => {
-		const bundlerConfig = configureBundler();
+		const packageInfo = createPackageInfo();
 
 		await bundler( {
-			config: bundlerConfig
+			packageInfo
 		} );
 
 		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
@@ -71,7 +71,7 @@ describe( 'bundler', () => {
 	// Yet I didn't find any other _sensible_ way to test if code is passed
 	// through all necessary transformations in correct order.
 	it( 'passes code through specified plugins in correct order', createFlowTest( {
-		bundlerConfig: configureBundler(),
+		packageInfo: createPackageInfo(),
 		plugins: {
 			'@rollup/plugin-commonjs': 'default',
 			'@rollup/plugin-json': 'default',
@@ -82,10 +82,10 @@ describe( 'bundler', () => {
 
 	// #105
 	it( 'generates non-empty sourcemap', async () => {
-		const bundlerConfig = configureBundler();
+		const packageInfo = createPackageInfo();
 
 		await bundler( {
-			config: bundlerConfig
+			packageInfo
 		} );
 
 		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
@@ -102,11 +102,11 @@ describe( 'bundler', () => {
 
 	// #155
 	it( 'should load JSON file', async () => {
-		const bundlerConfig = configureBundler( 'jsonPackage' );
+		const packageInfo = createPackageInfo( 'jsonPackage' );
 
 		// Thrown error will fail the test.
 		await bundler( {
-			config: bundlerConfig
+			packageInfo
 		} );
 
 		const distPath = resolvePath( fixturesPath, 'jsonPackage', 'dist' );
@@ -127,11 +127,11 @@ describe( 'bundler', () => {
 
 	// #156
 	it( 'throws error when any error is encountered', async () => {
-		const bundlerConfig = configureBundler( 'errorPackage' );
+		const packageInfo = createPackageInfo( 'errorPackage' );
 
 		try {
 			await bundler( {
-				config: bundlerConfig
+				packageInfo
 			} );
 		} catch {
 			return;
@@ -142,11 +142,11 @@ describe( 'bundler', () => {
 
 	// #193
 	it( 'handle warnings', async () => {
-		const bundlerConfig = configureBundler( 'externalDepPackage' );
+		const packageInfo = createPackageInfo( 'externalDepPackage' );
 		const onWarnSpy = sandbox.spy();
 
 		await bundler( {
-			config: bundlerConfig,
+			packageInfo,
 			onWarn: onWarnSpy
 		} );
 
@@ -154,7 +154,7 @@ describe( 'bundler', () => {
 	} );
 } );
 
-function configureBundler( packageName = 'testPackage' ) {
+function createPackageInfo( packageName = 'testPackage' ) {
 	const packagePath = resolvePath( fixturesPath, packageName );
 
 	return Object.assign( {}, metadata, {

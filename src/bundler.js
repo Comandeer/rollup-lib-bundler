@@ -9,11 +9,11 @@ import { node as nodeTarget } from './targets.js';
 
 async function bundler( {
 	onWarn,
-	config
+	packageInfo
 } ) {
-	const inputConfig = getRollupInputConfig( config, onWarn );
-	const outputConfigCJS = getRollupOutputConfig( config, 'cjs' );
-	const otuputConfigESM = getRollupOutputConfig( config, 'esm' );
+	const inputConfig = getRollupInputConfig( packageInfo, onWarn );
+	const outputConfigCJS = getRollupOutputConfig( packageInfo, 'cjs' );
+	const otuputConfigESM = getRollupOutputConfig( packageInfo, 'esm' );
 
 	const bundle = await rollup( inputConfig );
 

@@ -10,13 +10,13 @@ async function rlb() {
 	try {
 		outputController.showGauge();
 
-		const bundlerConfig = packageParser( 'package.json' );
+		const packageInfo = packageParser( 'package.json' );
 
 		await bundler( {
 			onWarn( warning ) {
 				outputController.addWarning( warning );
 			},
-			config: bundlerConfig
+			packageInfo
 		} );
 
 		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'green' ] ) }Bundling complete!${ consoleControlStrings.color( 'reset' ) }` );
