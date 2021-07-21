@@ -6,8 +6,6 @@ import { checkBanner } from './helpers/bundleChecks.js';
 import createFlowTest from './helpers/createFlowTest.js';
 import bundler from '../src/bundler.js';
 
-const { spy } = sinon;
-
 const metadata = {
 	name: 'test-package',
 	author: 'Comandeer',
@@ -17,11 +15,16 @@ const metadata = {
 const fixturesPath = resolvePath( __dirname, 'fixtures' );
 
 describe( 'bundler', () => {
+	let sandbox;
+
 	before( () => {
+		sandbox = sinon.createSandbox();
+
 		removeArtifacts( fixturesPath );
 	} );
 
 	after( () => {
+		sandbox.restore();
 		removeArtifacts( fixturesPath );
 	} );
 
@@ -30,9 +33,11 @@ describe( 'bundler', () => {
 	} );
 
 	it( 'bundles files based on passed metadata', async () => {
-		const bundlerConfig = configureBundler();
+		const packageInfo = createPackageInfo();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			packageInfo
+		} );
 
 		const packagePath = resolvePath( fixturesPath, 'testPackage' );
 
@@ -45,9 +50,11 @@ describe( 'bundler', () => {
 	} );
 
 	it( 'produces correct banner', async () => {
-		const bundlerConfig = configureBundler();
+		const packageInfo = createPackageInfo();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			packageInfo
+		} );
 
 		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
 		const ES5Path = resolvePath( distPath, 'es5.js' );
@@ -59,24 +66,12 @@ describe( 'bundler', () => {
 		checkBanner( ES2015Code );
 	} );
 
-	// #58
-	it( 'does not emit warning about deprecated options', async () => {
-		const consoleSpy = spy( console, 'warn' );
-		const bundlerConfig = configureBundler();
-
-		await bundler( bundlerConfig );
-
-		consoleSpy.restore();
-
-		expect( consoleSpy.callCount ).to.equal( 0 );
-	} );
-
 	// #67, #78
 	// This test seems like it tests implementation – and that's right…
 	// Yet I didn't find any other _sensible_ way to test if code is passed
 	// through all necessary transformations in correct order.
 	it( 'passes code through specified plugins in correct order', createFlowTest( {
-		bundlerConfig: configureBundler(),
+		packageInfo: createPackageInfo(),
 		plugins: {
 			'@rollup/plugin-commonjs': 'default',
 			'@rollup/plugin-json': 'default',
@@ -87,9 +82,11 @@ describe( 'bundler', () => {
 
 	// #105
 	it( 'generates non-empty sourcemap', async () => {
-		const bundlerConfig = configureBundler();
+		const packageInfo = createPackageInfo();
 
-		await bundler( bundlerConfig );
+		await bundler( {
+			packageInfo
+		} );
 
 		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
 		const correctMappingsRegex = /;[a-z0-9]+,/i;
@@ -105,14 +102,12 @@ describe( 'bundler', () => {
 
 	// #155
 	it( 'should load JSON file', async () => {
-		const consoleSpy = spy( console, 'error' );
-		const bundlerConfig = configureBundler( 'jsonPackage' );
+		const packageInfo = createPackageInfo( 'jsonPackage' );
 
-		await bundler( bundlerConfig );
-
-		consoleSpy.restore();
-
-		expect( consoleSpy.callCount ).to.equal( 0 );
+		// Thrown error will fail the test.
+		await bundler( {
+			packageInfo
+		} );
 
 		const distPath = resolvePath( fixturesPath, 'jsonPackage', 'dist' );
 
@@ -129,9 +124,37 @@ describe( 'bundler', () => {
 			expect( code ).to.match( regex );
 		}
 	} );
+
+	// #156
+	it( 'throws error when any error is encountered', async () => {
+		const packageInfo = createPackageInfo( 'errorPackage' );
+
+		try {
+			await bundler( {
+				packageInfo
+			} );
+		} catch {
+			return;
+		}
+
+		expect.fail( 'Error was not thrown' );
+	} );
+
+	// #193
+	it( 'handle warnings', async () => {
+		const packageInfo = createPackageInfo( 'externalDepPackage' );
+		const onWarnSpy = sandbox.spy();
+
+		await bundler( {
+			packageInfo,
+			onWarn: onWarnSpy
+		} );
+
+		expect( onWarnSpy ).to.have.been.called;
+	} );
 } );
 
-function configureBundler( packageName = 'testPackage' ) {
+function createPackageInfo( packageName = 'testPackage' ) {
 	const packagePath = resolvePath( fixturesPath, packageName );
 
 	return Object.assign( {}, metadata, {

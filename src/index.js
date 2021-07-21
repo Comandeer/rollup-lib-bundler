@@ -1,10 +1,3 @@
-import packageParser from './packageParser.js';
-import bundler from './bundler.js';
-
-function rlb() {
-	const metadata = packageParser( 'package.json' );
-
-	return bundler( metadata );
-}
+import rlb from './rlb.js';
 
 export default rlb;

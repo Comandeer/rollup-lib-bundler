@@ -48,6 +48,7 @@ class OutputController {
 		this.pending = [];
 	}
 
+	/* istanbul ignore next */
 	showGauge() {
 		const pulse = () => {
 			this[ gaugeSymbol ].pulse();
@@ -58,6 +59,7 @@ class OutputController {
 		pulse();
 	}
 
+	/* istanbul ignore next */
 	hideGauge() {
 		clearTimeout( this[ gaugeTimeoutSymbol ] );
 		this[ gaugeSymbol ].hide();
@@ -84,6 +86,12 @@ class OutputController {
 			this.console.log( ...log );
 		} );
 	}
+
+	displayError( error ) {
+		const errorLog = createError( error );
+
+		this.console.error( errorLog );
+	}
 }
 
 function isValidStream( value ) {
@@ -100,6 +108,18 @@ function createWarning( warning ) {
 	}
 
 	return `${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ ${ warning }${ consoleControlStrings.color( 'reset' ) }`;
+}
+
+function createError( { name, message, stack } ) {
+	const stackParts = stack.split( '\n' );
+
+	stackParts.shift();
+
+	const newStack = stackParts.join( '\n' );
+
+	return `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }🚨Error🚨
+${ name }: ${ message }${ consoleControlStrings.color( 'reset' ) }
+${ newStack }`;
 }
 
 export default OutputController;

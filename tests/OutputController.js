@@ -198,4 +198,19 @@ describe( 'OutputController', () => {
 			} );
 		} );
 	} );
+
+	describe( '#displayError()', () => {
+		it( 'outputs error into stderr', () => {
+			const { stream: dummyStderr, output } = createDummyStream();
+			const error = new Error( 'whatever' );
+			const outputController = new OutputController( {
+				stderr: dummyStderr
+			} );
+
+			outputController.displayError( error );
+
+			// Just check if there's anything in stderr.
+			expect( output ).to.have.lengthOf.above( 0 );
+		} );
+	} );
 } );
