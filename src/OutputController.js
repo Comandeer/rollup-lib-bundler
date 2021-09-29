@@ -1,13 +1,12 @@
 import { Console } from 'console';
 import { Writable as WritableStream } from 'stream';
 import { Duplex as DuplexStream } from 'stream';
-import Gauge from 'gauge';
+import Spinner from '@comandeer/cli-spinner';
 import consoleControlStrings from 'console-control-strings';
 
 const stdoutSymbol = Symbol( 'stdout' );
 const stderrSymbol = Symbol( 'stderr' );
-const gaugeSymbol = Symbol( 'gauge' );
-const gaugeTimeoutSymbol = Symbol( 'gaugeTimeout' );
+const spinnerSymbol = Symbol( 'spinner' );
 
 class OutputController {
 	constructor( {
@@ -28,43 +27,20 @@ class OutputController {
 			stdout,
 			stderr
 		} );
-		this[ gaugeSymbol ] = new Gauge( stdout, {
-			enabled: true,
-			template: [
-				{
-					type: 'activityIndicator',
-					kerning: 1,
-					length: 1
-				},
-
-				{
-					type: 'section',
-					kerning: 1,
-					default: 'Working…'
-				}
-			]
+		this[ spinnerSymbol ] = new Spinner( {
+			label: 'Working…'
 		} );
-		this[ gaugeTimeoutSymbol ] = null;
 		this.pending = [];
 	}
 
 	/* istanbul ignore next */
-	showGauge() {
-		const pulse = () => {
-			this[ gaugeSymbol ].pulse();
-			this[ gaugeTimeoutSymbol ] = setTimeout( pulse, 50 );
-		};
-
-		this[ gaugeSymbol ].show( 'Working…' );
-		pulse();
+	showSpinner() {
+		this[ spinnerSymbol ].show();
 	}
 
 	/* istanbul ignore next */
-	hideGauge() {
-		clearTimeout( this[ gaugeTimeoutSymbol ] );
-		this[ gaugeSymbol ].hide();
-
-		this[ gaugeTimeoutSymbol ] = null;
+	hideSpinner() {
+		this[ spinnerSymbol ].hide();
 	}
 
 	addLog( ...args ) {
