@@ -78,30 +78,30 @@ describe( 'OutputController', () => {
 		} );
 	} );
 
-	describe( '#showGauge()', () => {
-		it.skip( 'shows gauge', async () => {  // eslint-disable-line mocha/no-skipped-tests
+	describe( '#showSpinner()', () => {
+		it.skip( 'shows spinner', async () => {  // eslint-disable-line mocha/no-skipped-tests
 			const { stream: dummyStdout, output: stdoutLog } = createDummyStream();
 			const outputController = new OutputController( {
 				stdout: dummyStdout
 			} );
 
-			outputController.showGauge();
+			outputController.showSpinner();
 
-			// Let's assume that displaying anything means that the gauge was displayed correctly.
+			// Let's assume that displaying anything means that the spinner was displayed correctly.
 			expect( stdoutLog ).to.have.lengthOf( 1 );
 		} );
 	} );
 
-	describe( '#hideGauge()', () => {
-		it.skip( 'emits correct control strings for hiding gauge', async () => {  // eslint-disable-line mocha/no-skipped-tests
+	describe( '#hideSpinner()', () => {
+		it.skip( 'emits correct control strings for hiding spinner', async () => {  // eslint-disable-line mocha/no-skipped-tests
 			const { stream: dummyStdout, output: stdoutLog } = createDummyStream();
 			const outputController = new OutputController( {
 				stdout: dummyStdout
 			} );
 			const expected = consoleControlStrings. gotoSOL() + consoleControlStrings.eraseLine();
 
-			outputController.showGauge();
-			outputController.hideGauge();
+			outputController.showSpinner();
+			outputController.hideSpinner();
 
 			expect( stdoutLog.pop() ).to.equal( expected );
 		} );
