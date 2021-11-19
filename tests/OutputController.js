@@ -71,7 +71,9 @@ describe( 'OutputController', () => {
 
 			expect( () => {
 				const { stream: dummyStdout } = createDummyStream();
-				const { stream: dummyStderr } = createDummyStream( 'duplex' );
+				const { stream: dummyStderr } = createDummyStream( {
+					type: 'duplex'
+				} );
 
 				new OutputController( dummyStdout, dummyStderr );
 			} ).not.to.throw( TypeError );
@@ -79,31 +81,31 @@ describe( 'OutputController', () => {
 	} );
 
 	describe( '#showSpinner()', () => {
-		it.skip( 'shows spinner', async () => {  // eslint-disable-line mocha/no-skipped-tests
-			const { stream: dummyStdout, output: stdoutLog } = createDummyStream();
+		it( 'shows spinner', async () => {
+			const { stream: dummyStderr, output: stderrLog } = createDummyStream();
 			const outputController = new OutputController( {
-				stdout: dummyStdout
+				stderr: dummyStderr
 			} );
 
-			outputController.showSpinner();
+			await outputController.showSpinner();
 
 			// Let's assume that displaying anything means that the spinner was displayed correctly.
-			expect( stdoutLog ).to.have.lengthOf( 1 );
+			expect( stderrLog ).to.have.lengthOf( 1 );
 		} );
 	} );
 
 	describe( '#hideSpinner()', () => {
-		it.skip( 'emits correct control strings for hiding spinner', async () => {  // eslint-disable-line mocha/no-skipped-tests
-			const { stream: dummyStdout, output: stdoutLog } = createDummyStream();
+		it( 'emits correct control strings for hiding spinner', async () => {
+			const { stream: dummyStderr, output: stderrLog } = createDummyStream();
 			const outputController = new OutputController( {
-				stdout: dummyStdout
+				stderr: dummyStderr
 			} );
 			const expected = consoleControlStrings. gotoSOL() + consoleControlStrings.eraseLine();
 
-			outputController.showSpinner();
-			outputController.hideSpinner();
+			await outputController.showSpinner();
+			await outputController.hideSpinner();
 
-			expect( stdoutLog.pop() ).to.equal( expected );
+			expect( stderrLog.pop() ).to.equal( expected );
 		} );
 	} );
 
