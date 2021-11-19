@@ -74,24 +74,24 @@
     ]
   },
   "devDependencies": {
-    "@comandeer/mocha-lib-tester": "^0.5.0",
+    "@comandeer/mocha-lib-tester": "^0.6.0",
     "@comandeer/rollup-lib-bundler": "^0.14.0",
     "commitplease": "^3.2.0",
     "cz-conventional-changelog": "^3.3.0",
-    "husky": "^7.0.1",
+    "husky": "^7.0.4",
     "rimraf": "^3.0.2",
     "sourcemap-validator": "^2.1.0"
   },
   "dependencies": {
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.8",
-    "@comandeer/cli-spinner": "^0.1.0",
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "@comandeer/cli-spinner": "^0.3.1",
     "@rollup/plugin-babel": "^5.3.0",
-    "@rollup/plugin-commonjs": "^19.0.1",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
     "console-control-strings": "^1.1.0",
     "object-assign": "^4.1.1",
-    "rollup": "^2.53.3",
+    "rollup": "^2.60.0",
     "rollup-plugin-terser": "^7.0.2"
   }
 }
