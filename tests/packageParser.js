@@ -1,10 +1,10 @@
 import { resolve as resolvePath } from 'path';
-import valid from './fixtures/packageParser/valid.json';
-import validExports from './fixtures/packageParser/validExports.json';
+import valid from './__fixtures__/packageParser/valid.json';
+import validExports from './__fixtures__/packageParser/validExports.json';
 import packageParser from '../src/packageParser.js';
-import { deepClone } from './helpers/utils';
+import { deepClone } from './__helpers__/utils';
 
-const fixturesPath = resolvePath( __dirname, 'fixtures', 'packageParser' );
+const fixturesPath = resolvePath( __dirname, '__fixtures__', 'packageParser' );
 const validFixturePath = resolvePath( fixturesPath, 'valid.json' );
 const invalidFixturePath = resolvePath( fixturesPath, 'invalid.json' );
 

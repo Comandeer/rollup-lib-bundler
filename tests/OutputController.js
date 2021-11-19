@@ -1,6 +1,6 @@
 import { Console } from 'console';
 import consoleControlStrings from 'console-control-strings';
-import createDummyStream from './helpers/createDummyStream.js';
+import createDummyStream from './__helpers__/createDummyStream.js';
 import OutputController from '../src/OutputController.js';
 
 describe( 'OutputController', () => {
