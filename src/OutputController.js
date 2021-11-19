@@ -28,19 +28,20 @@ class OutputController {
 			stderr
 		} );
 		this[ spinnerSymbol ] = new Spinner( {
-			label: 'Working…'
+			label: 'Working…',
+			stdout: stderr
 		} );
 		this.pending = [];
 	}
 
 	/* istanbul ignore next */
-	showSpinner() {
-		this[ spinnerSymbol ].show();
+	async showSpinner() {
+		return this[ spinnerSymbol ].show();
 	}
 
 	/* istanbul ignore next */
-	hideSpinner() {
-		this[ spinnerSymbol ].hide();
+	async hideSpinner() {
+		return this[ spinnerSymbol ].hide();
 	}
 
 	addLog( ...args ) {

@@ -8,7 +8,7 @@ async function rlb() {
 	const outputController = new OutputController();
 
 	try {
-		outputController.showSpinner();
+		await outputController.showSpinner();
 
 		const packageInfo = packageParser( 'package.json' );
 
@@ -24,7 +24,7 @@ async function rlb() {
 		outputController.displayError( error );
 		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }Bundling failed!${ consoleControlStrings.color( 'reset' ) }` );
 	} finally {
-		outputController.hideSpinner();
+		await outputController.hideSpinner();
 		outputController.display();
 	}
 }
