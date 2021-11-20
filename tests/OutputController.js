@@ -80,46 +80,6 @@ describe( 'OutputController', () => {
 		} );
 	} );
 
-	describe( '#showSpinner()', () => {
-		let outputController;
-
-		afterEach( async () => {
-			outputController.hideSpinner();
-		} );
-
-		it( 'shows spinner', async () => {
-			const { stream: dummyStderr, output: stderrLog } = createDummyStream();
-			outputController = new OutputController( {
-				stderr: dummyStderr
-			} );
-
-			await outputController.showSpinner();
-
-			// Let's assume that displaying anything means that the spinner was displayed correctly.
-			expect( stderrLog ).to.have.lengthOf( 1 );
-		} );
-	} );
-
-	describe.skip( '#hideSpinner()', () => { // eslint-disable-line mocha/no-skipped-tests
-		it( 'emits correct control strings for hiding spinner', async () => {
-			const { stream: dummyStderr, output: stderrLog } = createDummyStream();
-			const outputController = new OutputController( {
-				stderr: dummyStderr
-			} );
-			const expectedOutput = [
-				consoleControlStrings.gotoSOL() + consoleControlStrings.eraseLine() + consoleControlStrings.showCursor()
-			];
-
-			await outputController.showSpinner();
-
-			stderrLog.length = 0;
-
-			await outputController.hideSpinner();
-
-			expect( stderrLog ).to.deep.equal( expectedOutput );
-		} );
-	} );
-
 	describe( '#addLog()', () => {
 		it( 'pushes all passed arguments to pending logs array', () => {
 			const args = [
