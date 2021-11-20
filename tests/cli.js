@@ -1,12 +1,12 @@
 import { resolve as resolvePath } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import removeArtifacts from './helpers/removeArtifacts.js';
-import createFixtureTest from './helpers/createFixtureTest.js';
+import removeArtifacts from './__helpers__/removeArtifacts.js';
+import createFixtureTest from './__helpers__/createFixtureTest.js';
 
 const execPromise = promisify( exec );
 const binPath = resolvePath( __dirname, '..', 'bin', 'bundler' );
-const fixturesPath = resolvePath( __dirname, 'fixtures' );
+const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );

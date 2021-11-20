@@ -1,9 +1,9 @@
 import { readFileSync } from 'fs';
 import { resolve as resolvePath } from 'path';
-import removeArtifacts from './helpers/removeArtifacts.js';
-import { checkFiles } from './helpers/bundleChecks.js';
-import { checkBanner } from './helpers/bundleChecks.js';
-import createFlowTest from './helpers/createFlowTest.js';
+import removeArtifacts from './__helpers__/removeArtifacts.js';
+import { checkFiles } from './__helpers__/bundleChecks.js';
+import { checkBanner } from './__helpers__/bundleChecks.js';
+import createFlowTest from './__helpers__/createFlowTest.js';
 import bundler from '../src/bundler.js';
 
 const metadata = {
@@ -12,7 +12,7 @@ const metadata = {
 	license: 'MIT',
 	version: '9.0.1'
 };
-const fixturesPath = resolvePath( __dirname, 'fixtures' );
+const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 
 describe( 'bundler', () => {
 	let sandbox;
