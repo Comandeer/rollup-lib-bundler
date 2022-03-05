@@ -12,7 +12,37 @@ It gets `package.json` from the current working directory, parses it and get nee
 * `exports.require` or `main` to get path for saving CJS bundle,
 * `exports.import`, `module` or `jsnext:main` for saving ESM bundle.
 
-Of course it treats `src/index.js` as the only entry point for Rollup.
+The default entry point for Rollup is `src/index.js`.
+
+### Multiple bundles
+
+By default, `src/index.js` is treated as the only entry point. However, using [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) you can create several bundled chunks/files. Example:
+
+```json
+"exports": {
+	".": {
+		"require": "./dist/es5.cjs",
+		"import": "./dist/es6.mjs"
+	},
+
+	"./chunk": {
+		"require": "./dist/chunk.cjs",
+		"import": "./dist/chunk.mjs"
+	}
+}
+```
+
+In this case two source files will be bundled:
+* `src/index.js`:
+	* ESM output: `dist/es6.mjs`,
+	* CJS output: `dist/es5.cjs`,
+* `src/chunk.js`:
+	* ESM output: `dist/chunk.mjs`,
+	* CJS output: `dist/chunk.cjs`.
+
+Although Node.js supports several different syntaxes for subpath exports, this bundler supports only the form presented on the example above (so each subpath needs two properties – `require` for CJS bundle and `import` for ESM bundle).
+
+Each subpath is translated to appropriate file in `src` directory. Basically, `./` at the beginning is translated to `src/` and the name of the subpath is translated to `<subpath>.js` (e.g. `./chunk` → `src/chunk.js`). The only exception is the `.` subpath, which is translated to `src/index.js`.
 
 ## Installation
 
