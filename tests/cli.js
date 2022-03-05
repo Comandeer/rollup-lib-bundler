@@ -10,7 +10,7 @@ const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
-const subExportsFixturePath = resolvePath( fixturesPath, 'subExportsPackage' );
+const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
@@ -38,9 +38,9 @@ describe( 'CLI', () => {
 
 	// #185
 	it( 'bundles package based on subexports fields', () => {
-		const outputPath = resolvePath( subExportsFixturePath, 'dist' );
+		const outputPath = resolvePath( subPathExportsFixturePath, 'dist' );
 
-		return createCLITest( subExportsFixturePath, {
+		return createCLITest( subPathExportsFixturePath, {
 			expected: [
 				resolvePath( outputPath, 'es5.cjs' ),
 				resolvePath( outputPath, 'es6.mjs' ),
