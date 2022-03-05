@@ -1,0 +1,18 @@
+{
+	"name": "test-package",
+	"private": true,
+	"version": "1.0.0",
+	"description": "Test package",
+	"exports": {
+	  ".": {
+		"require": "./dist/es5.cjs",
+		"import": "./dist/es6.mjs"
+	  },
+	  "./chunk": {
+		"require": "./dist/not-related-name.cjs",
+		"import": "./dist/also-not-related-name.js"
+	  }
+	},
+	"author": "Comandeer",
+	"license": "ISC"
+  }

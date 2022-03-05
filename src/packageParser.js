@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { readFileSync } from 'fs';
+import { join as joinPath } from 'path';
 
 function packageParser( metadata ) {
 	if ( typeof metadata === 'string' ) {
@@ -111,17 +112,13 @@ function lintObject( obj ) {
 	}
 }
 
-function prepareMetadata( obj ) {
+function prepareMetadata( metadata ) {
 	return {
-		name: obj.name,
-		version: obj.version,
-		author: prepareAuthorMetadata( obj.author ),
-		license: obj.license,
-		src: 'src/index.js',
-		dist: {
-			esm: getESMTarget( obj ),
-			cjs: getCJSTarget( obj )
-		}
+		name: metadata.name,
+		version: metadata.version,
+		author: prepareAuthorMetadata( metadata.author ),
+		license: metadata.license,
+		dist: prepareDistMetadata( metadata )
 	};
 }
 
@@ -133,30 +130,83 @@ function prepareAuthorMetadata( author ) {
 	return author.name;
 }
 
-function getESMTarget( metadata ) {
-	const exportsTarget = getExportsTarget( metadata, '.', 'import' );
+function prepareDistMetadata( metadata ) {
+	const subpaths = getSubPaths( metadata );
 
-	return exportsTarget || metadata.module || metadata[ 'jsnext:main' ];
+	return subpaths.reduce( ( targets, subpath ) => {
+		const currentTargets = prepareExportMetadata( metadata, subpath );
+
+		return { ...targets, ...currentTargets };
+	}, {} );
 }
 
-function getCJSTarget( metadata ) {
-	const exportsTarget = getExportsTarget( metadata, '.', 'require' );
+function getSubPaths( metadata ) {
+	const exports = metadata.exports;
 
-	return exportsTarget || metadata.main;
+	if ( !exports ) {
+		return [
+			'.'
+		];
+	}
+
+	const subpaths = Object.keys( exports ).filter( ( subpath ) => {
+		return subpath.startsWith( '.' );
+	} );
+
+	if ( !subpaths.includes( '.' ) ) {
+		subpaths.unshift( '.' );
+	}
+
+	return subpaths;
 }
 
-function getExportsTarget( metadata, subpath, type ) {
+function prepareExportMetadata( metadata, subPath ) {
+	const subPathFileName = subPath === '.' ? 'index' : subPath;
+	const subPathFilePath = subPathFileName.endsWith( '.js' ) ? subPathFileName : `${ subPathFileName }.js`;
+	const srcPath = joinPath( 'src', subPathFilePath );
+	const esmTarget = getESMTarget( metadata, subPath );
+	const cjsTarget = getCJSTarget( metadata, subPath );
+
+	return {
+		[ srcPath ]: {
+			esm: esmTarget,
+			cjs: cjsTarget
+		}
+	};
+}
+
+function getESMTarget( metadata, subPath ) {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'import' );
+
+	if ( subPath === '.' ) {
+		return exportsTarget || metadata.module || metadata[ 'jsnext:main' ];
+	}
+
+	return exportsTarget;
+}
+
+function getCJSTarget( metadata, subPath ) {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'require' );
+
+	if ( subPath === '.' ) {
+		return exportsTarget || metadata.main;
+	}
+
+	return exportsTarget;
+}
+
+function getExportsTarget( metadata, subPath, type ) {
 	if ( !metadata.exports ) {
 		return null;
 	}
 
 	const exports = metadata.exports;
 
-	if ( exports[ subpath ] ) {
-		return exports[ subpath ][ type ];
+	if ( exports[ subPath ] ) {
+		return exports[ subPath ][ type ];
 	}
 
-	if ( !exports[ subpath ] && subpath === '.' ) {
+	if ( !exports[ subPath ] && subPath === '.' ) {
 		return exports[ type ];
 	}
 
