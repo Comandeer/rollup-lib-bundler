@@ -10,7 +10,7 @@ const checkStrategies = {
 		checkSourceMapReference( code );
 
 		if ( typeof additionalCodeChecks === 'function' ) {
-			additionalCodeChecks( code );
+			additionalCodeChecks( path, code );
 		}
 	},
 

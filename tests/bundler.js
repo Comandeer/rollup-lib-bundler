@@ -118,7 +118,7 @@ describe( 'bundler', () => {
 			'es2015.js.map'
 		], { additionalCodeChecks } );
 
-		function additionalCodeChecks( code ) {
+		function additionalCodeChecks( path, code ) {
 			const regex = /name:\s?["']Piotr Kowalski["']/;
 
 			expect( code ).to.match( regex );
