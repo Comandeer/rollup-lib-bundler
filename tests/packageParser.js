@@ -7,6 +7,8 @@ import { deepClone } from './__helpers__/utils';
 const fixturesPath = resolvePath( __dirname, '__fixtures__', 'packageParser' );
 const validFixturePath = resolvePath( fixturesPath, 'valid.json' );
 const invalidFixturePath = resolvePath( fixturesPath, 'invalid.json' );
+const invalidCJSMetdataError = 'Package metadata must contain one of "exports[ \'.\' ].require", "exports.require" or "main" properties or all of them.';
+const invalidESMMetdataError = 'Package metadata must contain one of "exports[ \'.\' ].import", "exports.import", "module" or "jsnext:main" properties or all of them.';
 
 describe( 'packageParser', () => {
 	it( 'is a function', () => {
@@ -55,7 +57,7 @@ describe( 'packageParser', () => {
 				name: 'test',
 				version: '0.0.0'
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.require" or "main" properties or all of them.' );
+		} ).to.throw( ReferenceError, invalidCJSMetdataError );
 
 		expect( () => {
 			packageParser( {
@@ -63,7 +65,7 @@ describe( 'packageParser', () => {
 				version: '0.0.0',
 				main: 'test'
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.import", "module" or "jsnext:main" properties or all of them.' );
+		} ).to.throw( ReferenceError, invalidESMMetdataError );
 
 		expect( () => {
 			packageParser( {
@@ -95,7 +97,7 @@ describe( 'packageParser', () => {
 					require: 'dist/whatever.js'
 				}
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.import", "module" or "jsnext:main" properties or all of them.' );
+		} ).to.throw( ReferenceError, invalidESMMetdataError );
 	} );
 
 	// #61
@@ -108,7 +110,7 @@ describe( 'packageParser', () => {
 					import: 'dist/whatever.js'
 				}
 			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain one of "exports.require" or "main" properties or all of them.' );
+		} ).to.throw( ReferenceError, invalidCJSMetdataError );
 	} );
 
 	it( 'returns simplified metadata', () => {
@@ -138,6 +140,28 @@ describe( 'packageParser', () => {
 				cjs: 'dist/test-package.cjs'
 			}
 		} );
+	} );
+
+	// #61
+	it( 'prefers exports[ \'.\' ].import over exports.import', () => {
+		const distPath = 'dist/subpath.mjs';
+		const module = deepClone( validExports );
+		module.exports[ '.' ] = {
+			import: distPath
+		};
+
+		expect( packageParser( module ).dist.esm ).to.equal( distPath );
+	} );
+
+	// #61
+	it( 'prefers exports[ \'.\' ].require over exports.require', () => {
+		const distPath = 'dist/subpath.cjs';
+		const module = deepClone( validExports );
+		module.exports[ '.' ] = {
+			require: distPath
+		};
+
+		expect( packageParser( module ).dist.cjs ).to.equal( distPath );
 	} );
 
 	// #61

@@ -33,8 +33,8 @@ function loadAndParseFile( path ) {
 function lintObject( obj ) {
 	checkProperty( 'name' );
 	checkProperty( 'version' );
-	checkProperties( 'exports.require', 'main' );
-	checkProperties( 'exports.import', 'module', 'jsnext:main' );
+	checkProperties( 'exports/./require', 'exports/require', 'main' );
+	checkProperties( 'exports/./import', 'exports/import', 'module', 'jsnext:main' );
 	checkProperty( 'author' );
 	checkProperty( 'license' );
 
@@ -46,7 +46,7 @@ function lintObject( obj ) {
 
 	function checkProperties( ...properties ) {
 		const isAtLeastOnePresent = properties.some( ( property ) => {
-			const propertyPath = property.split( '.' );
+			const propertyPath = property.split( '/' );
 
 			return checkPropertyExistence( obj, propertyPath );
 		} );
@@ -72,7 +72,8 @@ function lintObject( obj ) {
 
 	function prepareNamesForError( names ) {
 		return names.map( ( name, i ) => {
-			const quotedName = `"${ name }"`;
+			const formattedName = formatName( name );
+			const quotedName = `"${ formattedName }"`;
 
 			if ( i === 0 ) {
 				return quotedName;
@@ -82,6 +83,31 @@ function lintObject( obj ) {
 
 			return `${ conjuction}${ quotedName }`;
 		} ).join( '' );
+
+		function formatName( name ) {
+			// Thanks to using capturing groups, the separator will be preserved
+			// in the splitted string.
+			const separatorRegex = /(\/)/g;
+			const nameParts = name.split( separatorRegex );
+
+			return nameParts.reduce( ( parts, part ) => {
+				const lastPart = parts[ parts.length - 1 ];
+
+				if ( part.startsWith( '.' ) && lastPart === '.' ) {
+					return [ ...parts.slice( 0, -1 ), '[ \'', part ];
+				}
+
+				if ( part === '/' && lastPart.startsWith( '.' ) ) {
+					return [ ...parts, '\' ].' ];
+				}
+
+				if ( part === '/' ) {
+					return [ ...parts, '.' ];
+				}
+
+				return [ ...parts, part ];
+			}, [] ).join( '' );
+		}
 	}
 }
 
@@ -107,20 +133,34 @@ function prepareAuthorMetadata( author ) {
 	return author.name;
 }
 
-function getESMTarget( obj ) {
-	if ( obj.exports && obj.exports.import ) {
-		return obj.exports.import;
-	}
+function getESMTarget( metadata ) {
+	const exportsTarget = getExportsTarget( metadata, '.', 'import' );
 
-	return obj.module || obj[ 'jsnext:main' ];
+	return exportsTarget || metadata.module || metadata[ 'jsnext:main' ];
 }
 
-function getCJSTarget( obj ) {
-	if ( obj.exports && obj.exports.require ) {
-		return obj.exports.require;
+function getCJSTarget( metadata ) {
+	const exportsTarget = getExportsTarget( metadata, '.', 'require' );
+
+	return exportsTarget || metadata.main;
+}
+
+function getExportsTarget( metadata, subpath, type ) {
+	if ( !metadata.exports ) {
+		return null;
 	}
 
-	return obj.main;
+	const exports = metadata.exports;
+
+	if ( exports[ subpath ] ) {
+		return exports[ subpath ][ type ];
+	}
+
+	if ( !exports[ subpath ] && subpath === '.' ) {
+		return exports[ type ];
+	}
+
+	return null;
 }
 
 export default packageParser;
