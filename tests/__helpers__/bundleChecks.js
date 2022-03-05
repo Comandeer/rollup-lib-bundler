@@ -5,21 +5,11 @@ import { extname as getFileExtension } from 'path';
 import validateSourcemap from 'sourcemap-validator';
 
 const checkStrategies = {
-	[ '.js' ]( path, code, { additionalCodeChecks } ) {
-		checkBanner( code );
-		checkSourceMapReference( code );
+	'.js': checkJSFile,
+	'.cjs': checkJSFile,
+	'.mjs': checkJSFile,
 
-		if ( typeof additionalCodeChecks === 'function' ) {
-			additionalCodeChecks( path, code );
-		}
-	},
-
-	[ '.map' ]( path, sourcemap ) {
-		const jsFilePath = path.replace( /\.map$/, '' );
-		const jsCode = readFileSync( jsFilePath, 'utf8' );
-
-		validateSourcemap( jsCode, sourcemap );
-	}
+	'.map': checkSourceMapFile
 };
 
 function checkFiles( path, files, {
@@ -46,10 +36,26 @@ function checkBanner( fileContent ) {
 	expect( match ).to.have.lengthOf( 1 );
 }
 
+function checkJSFile( path, code, { additionalCodeChecks } ) {
+	checkBanner( code );
+	checkSourceMapReference( code );
+
+	if ( typeof additionalCodeChecks === 'function' ) {
+		additionalCodeChecks( path, code );
+	}
+}
+
 function checkSourceMapReference( fileContent ) {
 	const sourceMapReferenceRegex = /\n\/\/# sourceMappingURL=.+?\.map\n$/g;
 
 	expect( fileContent, 'sourcemap reference' ).to.match( sourceMapReferenceRegex );
+}
+
+function checkSourceMapFile( path, sourcemap ) {
+	const jsFilePath = path.replace( /\.map$/, '' );
+	const jsCode = readFileSync( jsFilePath, 'utf8' );
+
+	validateSourcemap( jsCode, sourcemap );
 }
 
 function checkBundledContent( path, {
