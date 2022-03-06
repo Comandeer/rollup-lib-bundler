@@ -3,7 +3,6 @@
   "version": "0.14.0",
   "description": "Simple library bundler",
   "main": "dist/rollup-lib-bundler.js",
-  "jsnext:main": "dist/rollup-lib-bundler.es2015.js",
   "module": "dist/rollup-lib-bundler.es2015.js",
   "engines": {
     "node": ">=12.0.0"
@@ -21,11 +20,9 @@
     }
   },
   "scripts": {
-    "lint": "eslint src/**/*.js tests/*.js tests/helpers/**/*.js",
     "build": "rlb",
     "pretest": "npm run build",
     "test": "mlt",
-    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "version": "npm test && npm run build && git add -f dist/",
     "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags",
     "prepare": "husky install"
@@ -63,15 +60,6 @@
       "revert"
     ],
     "scope": "\\S+.*"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
-    "exclude": [
-      "dist/**/*.js",
-      "tests/**/*.js"
-    ]
   },
   "devDependencies": {
     "@comandeer/mocha-lib-tester": "^0.6.0",
