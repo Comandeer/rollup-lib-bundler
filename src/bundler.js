@@ -11,9 +11,22 @@ async function bundler( {
 	onWarn,
 	packageInfo
 } ) {
-	const inputConfig = getRollupInputConfig( packageInfo, onWarn );
-	const outputConfigCJS = getRollupOutputConfig( packageInfo, 'cjs' );
-	const otuputConfigESM = getRollupOutputConfig( packageInfo, 'esm' );
+	await Promise.all( bundleChunks( packageInfo, onWarn ) );
+}
+
+function bundleChunks( packageInfo, onWarn = () => {} ) {
+	const distInfo = Object.entries( packageInfo.dist );
+
+	return distInfo.map( ( [ source, output ] ) => {
+		return bundleChunk( packageInfo, source, output, { onWarn } );
+	} );
+}
+
+async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } = {} ) {
+	const banner = generateBanner( packageInfo );
+	const inputConfig = getRollupInputConfig( source, onWarn );
+	const outputConfigCJS = getRollupOutputConfig( output.cjs, banner, 'cjs' );
+	const otuputConfigESM = getRollupOutputConfig( output.esm, banner, 'esm' );
 
 	const bundle = await rollup( inputConfig );
 
@@ -23,7 +36,7 @@ async function bundler( {
 	] );
 }
 
-function getRollupInputConfig( metadata, onwarn = () => {} ) {
+function getRollupInputConfig( input, onwarn = () => {} ) {
 	const plugins = [
 		convertCJS(),
 
@@ -48,20 +61,18 @@ function getRollupInputConfig( metadata, onwarn = () => {} ) {
 	];
 
 	return {
-		input: metadata.src,
+		input,
 		onwarn,
 		plugins
 	};
 }
 
-function getRollupOutputConfig( metadata, format = 'esm' ) {
-	const banner = generateBanner( metadata );
-
+function getRollupOutputConfig( outputPath, banner, format = 'esm' ) {
 	return {
 		banner,
 		sourcemap: true,
 		format,
-		file: metadata.dist[ format ],
+		file: outputPath,
 		exports: 'auto'
 	};
 }

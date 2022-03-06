@@ -1,5 +1,6 @@
 import { existsSync } from 'fs';
 import { readFileSync } from 'fs';
+import { join as joinPath } from 'path';
 
 function packageParser( metadata ) {
 	if ( typeof metadata === 'string' ) {
@@ -33,8 +34,8 @@ function loadAndParseFile( path ) {
 function lintObject( obj ) {
 	checkProperty( 'name' );
 	checkProperty( 'version' );
-	checkProperties( 'exports.require', 'main' );
-	checkProperties( 'exports.import', 'module', 'jsnext:main' );
+	checkProperties( 'exports/./require', 'exports/require', 'main' );
+	checkProperties( 'exports/./import', 'exports/import', 'module', 'jsnext:main' );
 	checkProperty( 'author' );
 	checkProperty( 'license' );
 
@@ -46,7 +47,7 @@ function lintObject( obj ) {
 
 	function checkProperties( ...properties ) {
 		const isAtLeastOnePresent = properties.some( ( property ) => {
-			const propertyPath = property.split( '.' );
+			const propertyPath = property.split( '/' );
 
 			return checkPropertyExistence( obj, propertyPath );
 		} );
@@ -72,7 +73,8 @@ function lintObject( obj ) {
 
 	function prepareNamesForError( names ) {
 		return names.map( ( name, i ) => {
-			const quotedName = `"${ name }"`;
+			const formattedName = formatName( name );
+			const quotedName = `"${ formattedName }"`;
 
 			if ( i === 0 ) {
 				return quotedName;
@@ -82,20 +84,41 @@ function lintObject( obj ) {
 
 			return `${ conjuction}${ quotedName }`;
 		} ).join( '' );
+
+		function formatName( name ) {
+			// Thanks to using capturing groups, the separator will be preserved
+			// in the splitted string.
+			const separatorRegex = /(\/)/g;
+			const nameParts = name.split( separatorRegex );
+
+			return nameParts.reduce( ( parts, part ) => {
+				const lastPart = parts[ parts.length - 1 ];
+
+				if ( part.startsWith( '.' ) && lastPart === '.' ) {
+					return [ ...parts.slice( 0, -1 ), '[ \'', part ];
+				}
+
+				if ( part === '/' && lastPart.startsWith( '.' ) ) {
+					return [ ...parts, '\' ].' ];
+				}
+
+				if ( part === '/' ) {
+					return [ ...parts, '.' ];
+				}
+
+				return [ ...parts, part ];
+			}, [] ).join( '' );
+		}
 	}
 }
 
-function prepareMetadata( obj ) {
+function prepareMetadata( metadata ) {
 	return {
-		name: obj.name,
-		version: obj.version,
-		author: prepareAuthorMetadata( obj.author ),
-		license: obj.license,
-		src: 'src/index.js',
-		dist: {
-			esm: getESMTarget( obj ),
-			cjs: getCJSTarget( obj )
-		}
+		name: metadata.name,
+		version: metadata.version,
+		author: prepareAuthorMetadata( metadata.author ),
+		license: metadata.license,
+		dist: prepareDistMetadata( metadata )
 	};
 }
 
@@ -107,20 +130,87 @@ function prepareAuthorMetadata( author ) {
 	return author.name;
 }
 
-function getESMTarget( obj ) {
-	if ( obj.exports && obj.exports.import ) {
-		return obj.exports.import;
-	}
+function prepareDistMetadata( metadata ) {
+	const subpaths = getSubPaths( metadata );
 
-	return obj.module || obj[ 'jsnext:main' ];
+	return subpaths.reduce( ( targets, subpath ) => {
+		const currentTargets = prepareExportMetadata( metadata, subpath );
+
+		return { ...targets, ...currentTargets };
+	}, {} );
 }
 
-function getCJSTarget( obj ) {
-	if ( obj.exports && obj.exports.require ) {
-		return obj.exports.require;
+function getSubPaths( metadata ) {
+	const exports = metadata.exports;
+
+	if ( !exports ) {
+		return [
+			'.'
+		];
 	}
 
-	return obj.main;
+	const subpaths = Object.keys( exports ).filter( ( subpath ) => {
+		return subpath.startsWith( '.' );
+	} );
+
+	if ( !subpaths.includes( '.' ) ) {
+		subpaths.unshift( '.' );
+	}
+
+	return subpaths;
+}
+
+function prepareExportMetadata( metadata, subPath ) {
+	const subPathFileName = subPath === '.' ? 'index' : subPath;
+	const subPathFilePath = subPathFileName.endsWith( '.js' ) ? subPathFileName : `${ subPathFileName }.js`;
+	const srcPath = joinPath( 'src', subPathFilePath );
+	const esmTarget = getESMTarget( metadata, subPath );
+	const cjsTarget = getCJSTarget( metadata, subPath );
+
+	return {
+		[ srcPath ]: {
+			esm: esmTarget,
+			cjs: cjsTarget
+		}
+	};
+}
+
+function getESMTarget( metadata, subPath ) {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'import' );
+
+	if ( subPath === '.' ) {
+		return exportsTarget || metadata.module || metadata[ 'jsnext:main' ];
+	}
+
+	return exportsTarget;
+}
+
+function getCJSTarget( metadata, subPath ) {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'require' );
+
+	if ( subPath === '.' ) {
+		return exportsTarget || metadata.main;
+	}
+
+	return exportsTarget;
+}
+
+function getExportsTarget( metadata, subPath, type ) {
+	if ( !metadata.exports ) {
+		return null;
+	}
+
+	const exports = metadata.exports;
+
+	if ( exports[ subPath ] ) {
+		return exports[ subPath ][ type ];
+	}
+
+	if ( !exports[ subPath ] && subPath === '.' ) {
+		return exports[ type ];
+	}
+
+	return null;
 }
 
 export default packageParser;

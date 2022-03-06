@@ -13,6 +13,8 @@ const metadata = {
 	version: '9.0.1'
 };
 const fixturesPath = resolvePath( __dirname, '__fixtures__' );
+const testPackageFixture = resolvePath( fixturesPath, 'testPackage' );
+const subPathExportsFixture = resolvePath( fixturesPath, 'subPathExportsPackage' );
 
 describe( 'bundler', () => {
 	let sandbox;
@@ -39,13 +41,44 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		const packagePath = resolvePath( fixturesPath, 'testPackage' );
-
-		checkFiles( packagePath, [
+		checkFiles( testPackageFixture, [
 			'dist/es5.js',
 			'dist/es5.js.map',
 			'dist/es2015.js',
 			'dist/es2015.js.map'
+		] );
+	} );
+
+	// #185
+	it( 'bundles files based on passed metadata with several chunks metadata', async () => {
+		const srcPath = resolvePath( subPathExportsFixture, 'src' );
+		const distPath = resolvePath( subPathExportsFixture, 'dist' );
+		const indexPath = resolvePath( srcPath, 'index.js' );
+		const chunkPath = resolvePath( srcPath, 'chunk.js' );
+		const packageInfo = createPackageInfo( subPathExportsFixture, {
+			[ indexPath ]: {
+				cjs: resolvePath( distPath, 'es5.cjs' ),
+				esm: resolvePath( distPath, 'es6.mjs' )
+			},
+			[ chunkPath ]: {
+				cjs: resolvePath( distPath, 'not-related-name.cjs' ),
+				esm: resolvePath( distPath, 'also-not-related-name.js' )
+			}
+		} );
+
+		await bundler( {
+			packageInfo
+		} );
+
+		checkFiles( subPathExportsFixture, [
+			'dist/es5.cjs',
+			'dist/es5.cjs.map',
+			'dist/es6.mjs',
+			'dist/es6.mjs.map',
+			'dist/not-related-name.cjs',
+			'dist/not-related-name.cjs.map',
+			'dist/also-not-related-name.js',
+			'dist/also-not-related-name.js.map'
 		] );
 	} );
 
@@ -56,14 +89,44 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
-		const ES5Path = resolvePath( distPath, 'es5.js' );
-		const ES2015Path = resolvePath( distPath, 'es2015.js' );
-		const ES5Code = readFileSync( ES5Path, 'utf8' );
-		const ES2015Code = readFileSync( ES2015Path, 'utf8' );
+		const distPath = resolvePath( testPackageFixture, 'dist' );
+		const cjsPath = resolvePath( distPath, 'es5.js' );
+		const esmPath = resolvePath( distPath, 'es2015.js' );
+		const cjsCode = readFileSync( cjsPath, 'utf8' );
+		const esmCode = readFileSync( esmPath, 'utf8' );
 
-		checkBanner( ES5Code );
-		checkBanner( ES2015Code );
+		checkBanner( cjsCode );
+		checkBanner( esmCode );
+	} );
+
+	// #185
+	it( 'produces correct banner in chunk', async () => {
+		const srcPath = resolvePath( subPathExportsFixture, 'src' );
+		const distPath = resolvePath( subPathExportsFixture, 'dist' );
+		const indexPath = resolvePath( srcPath, 'index.js' );
+		const chunkPath = resolvePath( srcPath, 'chunk.js' );
+		const packageInfo = createPackageInfo( subPathExportsFixture, {
+			[ indexPath ]: {
+				cjs: resolvePath( distPath, 'es5.cjs' ),
+				esm: resolvePath( distPath, 'es6.mjs' )
+			},
+			[ chunkPath ]: {
+				cjs: resolvePath( distPath, 'not-related-name.cjs' ),
+				esm: resolvePath( distPath, 'also-not-related-name.js' )
+			}
+		} );
+
+		await bundler( {
+			packageInfo
+		} );
+
+		const cjsPath = resolvePath( distPath, 'not-related-name.cjs' );
+		const esmPath = resolvePath( distPath, 'also-not-related-name.js' );
+		const cjsCode = readFileSync( cjsPath, 'utf8' );
+		const esmCode = readFileSync( esmPath, 'utf8' );
+
+		checkBanner( cjsCode );
+		checkBanner( esmCode );
 	} );
 
 	// #67, #78
@@ -88,7 +151,7 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		const distPath = resolvePath( fixturesPath, 'testPackage', 'dist' );
+		const distPath = resolvePath( testPackageFixture, 'dist' );
 		const correctMappingsRegex = /;[a-z0-9]+,/i;
 
 		const mapES5Path = resolvePath( distPath, 'es5.js.map' );
@@ -118,7 +181,7 @@ describe( 'bundler', () => {
 			'es2015.js.map'
 		], { additionalCodeChecks } );
 
-		function additionalCodeChecks( code ) {
+		function additionalCodeChecks( path, code ) {
 			const regex = /name:\s?["']Piotr Kowalski["']/;
 
 			expect( code ).to.match( regex );
@@ -154,14 +217,19 @@ describe( 'bundler', () => {
 	} );
 } );
 
-function createPackageInfo( packageName = 'testPackage' ) {
+function createPackageInfo( packageName = 'testPackage', distMetadata = {} ) {
 	const packagePath = resolvePath( fixturesPath, packageName );
+	const indexPath = resolvePath( packagePath, 'src', 'index.js' );
 
 	return Object.assign( {}, metadata, {
-		src: resolvePath( packagePath, 'src', 'index.js' ),
 		dist: {
-			esm: resolvePath( packagePath, 'dist', 'es2015.js' ),
-			cjs: resolvePath( packagePath, 'dist', 'es5.js' )
+			// Full path needs to be used here. Otherwise all tests would
+			// have to be run in appropriate CWD.
+			[ indexPath ]: {
+				esm: resolvePath( packagePath, 'dist', 'es2015.js' ),
+				cjs: resolvePath( packagePath, 'dist', 'es5.js' )
+			},
+			...distMetadata
 		}
 	} );
 }

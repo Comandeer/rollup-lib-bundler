@@ -10,6 +10,7 @@ const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
+const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
@@ -25,7 +26,7 @@ describe( 'CLI', () => {
 
 	// #155
 	it( 'bundles package that imports JSON content', createCLITest( jsonFixturePath, {
-		additionalCodeChecks( code ) {
+		additionalCodeChecks( path, code ) {
 			const regex = /name:\s?["']Piotr Kowalski["']/;
 
 			expect( code ).to.match( regex );
@@ -34,6 +35,30 @@ describe( 'CLI', () => {
 
 	// #61
 	it( 'bundles package based on exports fields', createCLITest( exportsFixturePath ) );
+
+	// #185
+	it( 'bundles package based on subpath exports fields', () => {
+		const outputPath = resolvePath( subPathExportsFixturePath, 'dist' );
+
+		return createCLITest( subPathExportsFixturePath, {
+			expected: [
+				resolvePath( outputPath, 'es5.cjs' ),
+				resolvePath( outputPath, 'es5.cjs.map' ),
+				resolvePath( outputPath, 'es6.mjs' ),
+				resolvePath( outputPath, 'es6.mjs.map' ),
+				resolvePath( outputPath, 'not-related-name.cjs' ),
+				resolvePath( outputPath, 'not-related-name.cjs.map' ),
+				resolvePath( outputPath, 'also-not-related-name.js' ),
+				resolvePath( outputPath, 'also-not-related-name.js.map' )
+			],
+			additionalCodeChecks( path, code ) {
+				const isChunk = path.includes( 'related-name' );
+				const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
+
+				expect( code ).to.include( expectedString );
+			}
+		} )(); // createCLITest() creates a test function, so it needs to be called.
+	} );
 
 	// #193
 	it( 'displays output for valid package', createCLITest( basicFixturePath, {
