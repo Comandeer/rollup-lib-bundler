@@ -1,8 +1,12 @@
 import { resolve as resolvePath } from 'path';
+import { existsSync } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import createFixtureTest from './__helpers__/createFixtureTest.js';
+
+const { mkdir, writeFile } = fsPromises;
 
 const execPromise = promisify( exec );
 const binPath = resolvePath( __dirname, '..', 'bin', 'bundler' );
@@ -77,6 +81,16 @@ describe( 'CLI', () => {
 			expect( stderr ).to.include( '🚨Error🚨' );
 		}
 	} ) );
+
+	// #204
+	it( 'cleans dist directory before bundling', async () => {
+		const dummyFilePath = await createDummyDist( basicFixturePath );
+		await createCLITest( basicFixturePath )();
+
+		const isDummyFileAlive = existsSync( dummyFilePath );
+
+		expect( isDummyFileAlive ).to.equal( false );
+	} );
 } );
 
 function createCLITest( fixturePath, options = {} ) {
@@ -95,4 +109,20 @@ function createCLITest( fixturePath, options = {} ) {
 		],
 		...options
 	} );
+}
+
+async function createDummyDist( packagePath ) {
+	const distPath = resolvePath( packagePath, 'dist' );
+	const dummyFilePath = resolvePath( distPath, 'dummy.js' );
+
+	// If creating the dir fails, it's most probably already there.
+	try {
+		await mkdir( distPath );
+	} catch {
+		// Just silent the error;
+	}
+
+	await writeFile( dummyFilePath, 'hublabubla', 'utf-8' );
+
+	return dummyFilePath;
 }
