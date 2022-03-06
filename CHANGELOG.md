@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.15.0]
+## [0.15.0] – 2022-03-07
 ### Added
 * [#204]: **BREAKING CHANGE**: clearing the `dist/` directory before bundling.
 * [#185]: Support for subpath exports.
