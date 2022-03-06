@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.15.1] – 2022-03-07
+### Fixed
+* [#212]: `rimraf` is incorrectly marked as a dev dependency instead of a production one.
+
 ## [0.15.0] – 2022-03-07
 ### Added
 * [#204]: **BREAKING CHANGE**: clearing the `dist/` directory before bundling.
@@ -187,7 +191,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#202]: https://github.com/Comandeer/rollup-lib-bundler/issues/202
 [#204]: https://github.com/Comandeer/rollup-lib-bundler/issues/204
 [#208]: https://github.com/Comandeer/rollup-lib-bundler/issues/208
+[#212]: https://github.com/Comandeer/rollup-lib-bundler/issues/212
 
+[0.15.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.12.0...v0.13.0
