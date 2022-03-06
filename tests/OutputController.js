@@ -3,7 +3,7 @@ import consoleControlStrings from 'console-control-strings';
 import createDummyStream from './__helpers__/createDummyStream.js';
 import OutputController from '../src/OutputController.js';
 
-describe.only( 'OutputController', () => {
+describe( 'OutputController', () => {
 	let sandbox;
 
 	beforeEach( () => {
