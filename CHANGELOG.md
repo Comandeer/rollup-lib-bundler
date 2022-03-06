@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.15.0]
 ### Added
+* [#204]: **BREAKING CHANGE**: clearing the `dist/` directory before bundling.
 * [#185]: Support for subpath exports.
 ### Changed
 * [#199]: **BREAKING CHANGE**: update dependencies including major versions of:
@@ -182,6 +183,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#197]: https://github.com/Comandeer/rollup-lib-bundler/issues/197
 [#199]: https://github.com/Comandeer/rollup-lib-bundler/issues/199
 [#202]: https://github.com/Comandeer/rollup-lib-bundler/issues/202
+[#204]: https://github.com/Comandeer/rollup-lib-bundler/issues/204
 
 [0.15.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.13.0...v0.14.0
