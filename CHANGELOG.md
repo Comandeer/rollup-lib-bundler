@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [#199]: **BREAKING CHANGE**: update dependencies including major versions of:
 	* `@rollup/plugin-commonjs` from 19.x to `^21.0.0`.
 * [#202]: spinner provided by `gauge` is replaced by `@comandeer/cli-spinner`.
+### Fixed
+* [#208]: warnings are logged to the `stdout` instead of `stderr`.
 
 ## [0.14.0] – 2021-07-21
 ### Added
@@ -184,6 +186,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#199]: https://github.com/Comandeer/rollup-lib-bundler/issues/199
 [#202]: https://github.com/Comandeer/rollup-lib-bundler/issues/202
 [#204]: https://github.com/Comandeer/rollup-lib-bundler/issues/204
+[#208]: https://github.com/Comandeer/rollup-lib-bundler/issues/208
 
 [0.15.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.13.0...v0.14.0

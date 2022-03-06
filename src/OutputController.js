@@ -31,7 +31,8 @@ class OutputController {
 			label: 'Working…',
 			stdout: stderr
 		} );
-		this.pending = [];
+		this.pendingLogs = [];
+		this.pendingWarnings = [];
 	}
 
 	/* istanbul ignore next */
@@ -45,21 +46,25 @@ class OutputController {
 	}
 
 	addLog( ...args ) {
-		this.pending.push( args );
+		this.pendingLogs.push( args );
 	}
 
-	addWarning( log ) {
-		if ( isExternalDepWarning( log ) ) {
+	addWarning( warningMessage ) {
+		if ( isExternalDepWarning( warningMessage ) ) {
 			return;
 		}
 
-		const warning = createWarning( log );
+		const warning = createWarning( warningMessage );
 
-		this.pending.push( [ warning ] );
+		this.pendingWarnings.push( [ warning ] );
 	}
 
 	display() {
-		this.pending.forEach( ( log ) => {
+		this.pendingWarnings.forEach( ( warning ) => {
+			this.console.warn( ...warning );
+		} );
+
+		this.pendingLogs.forEach( ( log ) => {
 			this.console.log( ...log );
 		} );
 	}

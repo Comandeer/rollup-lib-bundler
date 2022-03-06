@@ -10,6 +10,8 @@ function createDummyStream( {
 	const stream = new StreamConstructor( {
 		write( chunk ) {
 			output.push( chunk.toString() );
+
+			return true;
 		}
 	} );
 
