@@ -1,4 +1,5 @@
 import { resolve as resolvePath } from 'path';
+import { sep as pathSeparator } from 'path';
 import valid from './__fixtures__/packageParser/valid.json';
 import validExports from './__fixtures__/packageParser/validExports.json';
 import validSubPathExports from './__fixtures__/packageParser/validSubPathExports.json';
@@ -121,7 +122,7 @@ describe( 'packageParser', () => {
 			license: 'MIT',
 			version: '9.0.1',
 			dist: {
-				'src/index.js': {
+				[ `src${ pathSeparator }index.js` ]: {
 					esm: 'dist/es2015.js',
 					cjs: 'dist/es5.js'
 				}
@@ -137,7 +138,7 @@ describe( 'packageParser', () => {
 			license: 'MIT',
 			version: '9.0.1',
 			dist: {
-				'src/index.js': {
+				[ `src${ pathSeparator }index.js` ]: {
 					esm: 'dist/test-package.mjs',
 					cjs: 'dist/test-package.cjs'
 				}
@@ -153,11 +154,11 @@ describe( 'packageParser', () => {
 			license: 'ISC',
 			version: '1.0.0',
 			dist: {
-				'src/index.js': {
+				[ `src${ pathSeparator }index.js` ]: {
 					cjs: './dist/es5.cjs',
 					esm: './dist/es6.mjs'
 				},
-				'src/chunk.js': {
+				[ `src${ pathSeparator }chunk.js` ]: {
 					cjs: './dist/not-related-name.cjs',
 					esm: './dist/also-not-related-name.js'
 				}
@@ -179,7 +180,7 @@ describe( 'packageParser', () => {
 
 	// #185
 	it( 'prefers exports[ \'.\' ].require over exports.require', () => {
-		const distPath = 'dist/subpath.cjs';
+		const distPath = `dist${ pathSeparator }subpath.cjs`;
 		const module = deepClone( validExports );
 		module.exports[ '.' ] = {
 			require: distPath
@@ -264,7 +265,7 @@ describe( 'packageParser', () => {
 	} );
 } );
 
-function parseMetadataAndGetDistInfo( metadata, srcFile = 'src/index.js' ) {
+function parseMetadataAndGetDistInfo( metadata, srcFile = `src${ pathSeparator }index.js` ) {
 	const parsedMetadata = packageParser( metadata );
 
 	return parsedMetadata.dist[ srcFile ];
