@@ -3,7 +3,7 @@ import consoleControlStrings from 'console-control-strings';
 import createDummyStream from './__helpers__/createDummyStream.js';
 import OutputController from '../src/OutputController.js';
 
-describe( 'OutputController', () => {
+describe.only( 'OutputController', () => {
 	let sandbox;
 
 	beforeEach( () => {
@@ -101,7 +101,7 @@ describe( 'OutputController', () => {
 				outputController.addLog( ...arg );
 			} );
 
-			expect( outputController.pending ).to.deep.equal( args );
+			expect( outputController.pendingLogs ).to.deep.equal( args );
 		} );
 	} );
 
@@ -116,7 +116,7 @@ describe( 'OutputController', () => {
 
 			outputController.addWarning( 'hublabubla' );
 
-			expect( outputController.pending ).to.deep.equal( expected );
+			expect( outputController.pendingWarnings ).to.deep.equal( expected );
 		} );
 
 		it( 'uses warning#message property as a warning content', () => {
@@ -132,7 +132,7 @@ describe( 'OutputController', () => {
 
 			outputController.addWarning( warning );
 
-			expect( outputController.pending ).to.deep.equal( expected );
+			expect( outputController.pendingWarnings ).to.deep.equal( expected );
 		} );
 
 		it( 'supresses external dependencies warning', () => {
@@ -143,7 +143,7 @@ describe( 'OutputController', () => {
 
 			outputController.addWarning( warning );
 
-			expect( outputController.pending ).to.deep.equal( [] );
+			expect( outputController.pendingWarnings ).to.deep.equal( [] );
 		} );
 	} );
 
@@ -160,7 +160,7 @@ describe( 'OutputController', () => {
 			} );
 			const spy = sandbox.spy( outputController.console, 'log' );
 
-			outputController.pending = [ ...logs ];
+			outputController.pendingLogs = [ ...logs ];
 
 			outputController.display();
 
@@ -169,6 +169,57 @@ describe( 'OutputController', () => {
 			logs.forEach( ( log, i ) => {
 				expect( spy.getCall( i ) ).to.have.been.calledWithExactly( ...log );
 			} );
+		} );
+
+		// #208
+		it( 'displays all pending warnings in order', () => {
+			const warnings = [
+				[ 5, 'hublabubla', { a: 3 } ],
+				[ 'whatever', false ],
+				[ { b: 123 } ]
+			];
+			const { stream: dummyStderr } = createDummyStream();
+			const outputController = new OutputController( {
+				stderr: dummyStderr
+			} );
+			const spy = sandbox.spy( outputController.console, 'warn' );
+
+			outputController.pendingWarnings = [ ...warnings ];
+
+			outputController.display();
+
+			expect( spy ).to.have.been.calledThrice;
+
+			warnings.forEach( ( warning, i ) => {
+				expect( spy.getCall( i ) ).to.have.been.calledWithExactly( ...warning );
+			} );
+		} );
+
+		it( 'displays warnings before logs', async () => {
+			const logs = [
+				[ 'log1' ],
+				[ 'log2' ]
+			];
+			const warnings = [
+				[ 'warning1' ],
+				[ 'warning2' ]
+			];
+			const { stream: dummyStdout } = createDummyStream();
+			const outputController = new OutputController( {
+				stdout: dummyStdout,
+				stderr: dummyStdout
+			} );
+			const warnSpy = sandbox.spy( outputController.console, 'warn' );
+			const logSpy = sandbox.spy( outputController.console, 'log' );
+
+			outputController.pendingLogs = [ ...logs ];
+			outputController.pendingWarnings = [ ...warnings ];
+
+			outputController.display();
+
+			expect( warnSpy ).to.have.been.calledTwice;
+			expect( warnSpy ).to.have.been.calledBefore( logSpy );
+			expect( logSpy ).to.have.been.calledTwice;
 		} );
 	} );
 
