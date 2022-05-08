@@ -34,7 +34,6 @@ function loadAndParseFile( path ) {
 function lintObject( obj ) {
 	checkProperty( 'name' );
 	checkProperty( 'version' );
-	checkProperties( 'exports/./require', 'exports/require', 'main' );
 	checkProperties( 'exports/./import', 'exports/import', 'module', 'jsnext:main' );
 	checkProperty( 'author' );
 	checkProperty( 'license' );
@@ -166,12 +165,16 @@ function prepareExportMetadata( metadata, subPath ) {
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const esmTarget = getESMTarget( metadata, subPath );
 	const cjsTarget = getCJSTarget( metadata, subPath );
+	const exportMetadata = {
+		esm: esmTarget
+	};
+
+	if ( cjsTarget ) {
+		exportMetadata.cjs = cjsTarget;
+	}
 
 	return {
-		[ srcPath ]: {
-			esm: esmTarget,
-			cjs: cjsTarget
-		}
+		[ srcPath ]: exportMetadata
 	};
 }
 
