@@ -25,15 +25,23 @@ function bundleChunks( packageInfo, onWarn = () => {} ) {
 async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } = {} ) {
 	const banner = generateBanner( packageInfo );
 	const inputConfig = getRollupInputConfig( source, onWarn );
-	const outputConfigCJS = getRollupOutputConfig( output.cjs, banner, 'cjs' );
+
 	const otuputConfigESM = getRollupOutputConfig( output.esm, banner, 'esm' );
 
 	const bundle = await rollup( inputConfig );
-
-	await Promise.all( [
-		bundle.write( outputConfigCJS ),
+	const bundlesPromises = [
 		bundle.write( otuputConfigESM )
-	] );
+	];
+
+	if ( output.cjs ) {
+		const outputConfigCJS = getRollupOutputConfig( output.cjs, banner, 'cjs' );
+
+		bundlesPromises.push( bundle.write( outputConfigCJS ) );
+	} else {
+		onWarn( `Skipping CJS build for ${ source }` );
+	}
+
+	await Promise.all( bundlesPromises );
 }
 
 function getRollupInputConfig( input, onwarn = () => {} ) {
