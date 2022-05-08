@@ -9,6 +9,8 @@ import { deepClone } from './__helpers__/utils';
 const fixturesPath = resolvePath( __dirname, '__fixtures__', 'packageParser' );
 const validFixturePath = resolvePath( fixturesPath, 'valid.json' );
 const invalidFixturePath = resolvePath( fixturesPath, 'invalid.json' );
+const noCJSExportsFixturePath = resolvePath( fixturesPath, 'noCJSExports.json' );
+const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExports.json' );
 const invalidCJSMetdataError = 'Package metadata must contain one of "exports[ \'.\' ].require", "exports.require" or "main" properties or all of them.';
 const invalidESMMetdataError = 'Package metadata must contain one of "exports[ \'.\' ].import", "exports.import", "module" or "jsnext:main" properties or all of them.';
 
@@ -160,6 +162,39 @@ describe( 'packageParser', () => {
 				},
 				[ `src${ pathSeparator }chunk.js` ]: {
 					cjs: './dist/not-related-name.cjs',
+					esm: './dist/also-not-related-name.js'
+				}
+			}
+		} );
+	} );
+
+	// #215
+	it( 'returns simplified metadata for package with no-CJS "exports" field', () => {
+		expect( packageParser( noCJSExportsFixturePath ) ).to.deep.equal( {
+			name: 'test-package',
+			author: 'Comandeer',
+			license: 'MIT',
+			version: '9.0.1',
+			dist: {
+				[ `src${ pathSeparator }index.js` ]: {
+					esm: './dist/test-package.mjs'
+				}
+			}
+		} );
+	} );
+
+	// #215
+	it( 'returns simplified metadata for package with no-CJS subpath "exports" field', () => {
+		expect( packageParser( noCJSSubPathExportsFixturePath ) ).to.deep.equal( {
+			name: 'test-package',
+			author: 'Comandeer',
+			license: 'ISC',
+			version: '1.0.0',
+			dist: {
+				[ `src${ pathSeparator }index.js` ]: {
+					esm: './dist/es6.mjs'
+				},
+				[ `src${ pathSeparator }chunk.js` ]: {
 					esm: './dist/also-not-related-name.js'
 				}
 			}
