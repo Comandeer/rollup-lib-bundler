@@ -15,6 +15,8 @@ const metadata = {
 const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 const testPackageFixture = resolvePath( fixturesPath, 'testPackage' );
 const subPathExportsFixture = resolvePath( fixturesPath, 'subPathExportsPackage' );
+const noCJSPackageFixture = resolvePath( fixturesPath, 'noCJSPackage' );
+const noCJSSubPathExportsFixture = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
 
 describe( 'bundler', () => {
 	let sandbox;
@@ -214,6 +216,52 @@ describe( 'bundler', () => {
 		} );
 
 		expect( onWarnSpy ).to.have.been.called;
+	} );
+
+	// #215
+	it( 'allows builds without CJS target', async () => {
+		const indexPath = resolvePath( noCJSPackageFixture, 'src', 'index.js' );
+		const packageInfo = createPackageInfo( 'noCJSPackage', {
+			[ indexPath ]: {
+				esm: resolvePath( noCJSPackageFixture, 'dist', 'package.mjs' )
+			}
+		} );
+
+		await bundler( {
+			packageInfo
+		} );
+
+		checkFiles( noCJSPackageFixture, [
+			'dist/package.mjs',
+			'dist/package.mjs.map'
+		] );
+	} );
+
+	// #215
+	it( 'allows builds with subpath exports without CJS target', async () => {
+		const srcPath = resolvePath( noCJSSubPathExportsFixture, 'src' );
+		const distPath = resolvePath( noCJSSubPathExportsFixture, 'dist' );
+		const indexPath = resolvePath( srcPath, 'index.js' );
+		const chunkPath = resolvePath( srcPath, 'chunk.js' );
+		const packageInfo = createPackageInfo( noCJSSubPathExportsFixture, {
+			[ indexPath ]: {
+				esm: resolvePath( distPath, 'es6.mjs' )
+			},
+			[ chunkPath ]: {
+				esm: resolvePath( distPath, 'also-not-related-name.js' )
+			}
+		} );
+
+		await bundler( {
+			packageInfo
+		} );
+
+		checkFiles( noCJSSubPathExportsFixture, [
+			'dist/es6.mjs',
+			'dist/es6.mjs.map',
+			'dist/also-not-related-name.js',
+			'dist/also-not-related-name.js.map'
+		] );
 	} );
 } );
 

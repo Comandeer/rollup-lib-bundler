@@ -15,6 +15,8 @@ const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
 const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPackage' );
+const noCJSPackageFixturePath = resolvePath( fixturesPath, 'noCJSPackage' );
+const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
@@ -60,6 +62,48 @@ describe( 'CLI', () => {
 				const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
 
 				expect( code ).to.include( expectedString );
+			}
+		} )(); // createCLITest() creates a test function, so it needs to be called.
+	} );
+
+	// #215
+	it( 'bundles ESM-only package based on exports fields', () => {
+		const outputPath = resolvePath( noCJSPackageFixturePath, 'dist' );
+
+		return createCLITest( noCJSPackageFixturePath, {
+			expected: [
+				resolvePath( outputPath, 'package.mjs' ),
+				resolvePath( outputPath, 'package.mjs.map' )
+			],
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
+				expect( stderr ).to.include( 'Skipping CJS build for' );
+			}
+		} )(); // createCLITest() creates a test function, so it needs to be called.
+	} );
+
+	// #215
+	it( 'bundles ESM-only package based on subpath exports fields', () => {
+		const outputPath = resolvePath( noCJSSubPathExportsFixturePath, 'dist' );
+
+		return createCLITest( noCJSSubPathExportsFixturePath, {
+			expected: [
+				resolvePath( outputPath, 'es6.mjs' ),
+				resolvePath( outputPath, 'es6.mjs.map' ),
+				resolvePath( outputPath, 'also-not-related-name.js' ),
+				resolvePath( outputPath, 'also-not-related-name.js.map' )
+			],
+			additionalCodeChecks( path, code ) {
+				const isChunk = path.includes( 'related-name' );
+				const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
+
+				expect( code ).to.include( expectedString );
+			},
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
+				expect( stderr ).to.include( 'Skipping CJS build for' );
 			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
