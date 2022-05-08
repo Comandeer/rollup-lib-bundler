@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [0.16.0]
+### Added
+* [#214]: Support for Node 18.
 ### Changed
 * [#216]: **BREAKING CHANGE**: update dependencies including major versions of:
 	* `@rollup/plugin-commonjs` from 21.x to `^22.0.0`.
+### Removed
+* [#214]: **BREAKING CHANGE**: support for Node 12 and 14.
 
 ## [0.15.1] – 2022-03-07
 ### Fixed
@@ -197,6 +201,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#204]: https://github.com/Comandeer/rollup-lib-bundler/issues/204
 [#208]: https://github.com/Comandeer/rollup-lib-bundler/issues/208
 [#212]: https://github.com/Comandeer/rollup-lib-bundler/issues/212
+[#214]: https://github.com/Comandeer/rollup-lib-bundler/issues/214
 [#216]: https://github.com/Comandeer/rollup-lib-bundler/issues/216
 
 [0.16.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.1...v0.16.0
