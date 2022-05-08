@@ -74,7 +74,11 @@ describe( 'CLI', () => {
 			expected: [
 				resolvePath( outputPath, 'package.mjs' ),
 				resolvePath( outputPath, 'package.mjs.map' )
-			]
+			],
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
+			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
 
@@ -94,6 +98,10 @@ describe( 'CLI', () => {
 				const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
 
 				expect( code ).to.include( expectedString );
+			},
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
 			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
