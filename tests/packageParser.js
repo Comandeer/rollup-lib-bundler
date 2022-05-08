@@ -11,7 +11,6 @@ const validFixturePath = resolvePath( fixturesPath, 'valid.json' );
 const invalidFixturePath = resolvePath( fixturesPath, 'invalid.json' );
 const noCJSExportsFixturePath = resolvePath( fixturesPath, 'noCJSExports.json' );
 const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExports.json' );
-const invalidCJSMetdataError = 'Package metadata must contain one of "exports[ \'.\' ].require", "exports.require" or "main" properties or all of them.';
 const invalidESMMetdataError = 'Package metadata must contain one of "exports[ \'.\' ].import", "exports.import", "module" or "jsnext:main" properties or all of them.';
 
 describe( 'packageParser', () => {
@@ -59,13 +58,6 @@ describe( 'packageParser', () => {
 		expect( () => {
 			packageParser( {
 				name: 'test',
-				version: '0.0.0'
-			} );
-		} ).to.throw( ReferenceError, invalidCJSMetdataError );
-
-		expect( () => {
-			packageParser( {
-				name: 'test',
 				version: '0.0.0',
 				main: 'test'
 			} );
@@ -102,19 +94,6 @@ describe( 'packageParser', () => {
 				}
 			} );
 		} ).to.throw( ReferenceError, invalidESMMetdataError );
-	} );
-
-	// #61
-	it( 'requires main if exports does not contain require property', () => {
-		expect( () => {
-			packageParser( {
-				name: 'test',
-				version: '0.0.0',
-				exports: {
-					import: 'dist/whatever.js'
-				}
-			} );
-		} ).to.throw( ReferenceError, invalidCJSMetdataError );
 	} );
 
 	it( 'returns simplified metadata', () => {
