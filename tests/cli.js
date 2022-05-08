@@ -78,6 +78,7 @@ describe( 'CLI', () => {
 			cmdResultCheck( { stderr } ) {
 				expect( stderr ).not.to.include( 'Bundling failed!' );
 				expect( stderr ).not.to.include( '🚨Error🚨' );
+				expect( stderr ).to.include( 'Skipping CJS build for' );
 			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
@@ -102,6 +103,7 @@ describe( 'CLI', () => {
 			cmdResultCheck( { stderr } ) {
 				expect( stderr ).not.to.include( 'Bundling failed!' );
 				expect( stderr ).not.to.include( '🚨Error🚨' );
+				expect( stderr ).to.include( 'Skipping CJS build for' );
 			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
