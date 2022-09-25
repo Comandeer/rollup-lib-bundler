@@ -63,22 +63,22 @@
   },
   "devDependencies": {
     "@comandeer/mocha-lib-tester": "^0.6.0",
-    "@comandeer/rollup-lib-bundler": "^0.15.1",
+    "@comandeer/rollup-lib-bundler": "^0.16.0",
     "commitplease": "^3.2.0",
     "cz-conventional-changelog": "^3.3.0",
-    "husky": "^7.0.4",
+    "husky": "^8.0.1",
     "sourcemap-validator": "^2.1.0"
   },
   "dependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
+    "@babel/core": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
     "@comandeer/cli-spinner": "^0.3.2",
     "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-commonjs": "^22.0.2",
     "@rollup/plugin-json": "^4.1.0",
     "console-control-strings": "^1.1.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.72.1",
+    "rollup": "^2.79.1",
     "rollup-plugin-terser": "^7.0.2"
   }
 }
