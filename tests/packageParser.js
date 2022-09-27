@@ -18,86 +18,69 @@ describe( 'packageParser', () => {
 		expect( packageParser ).to.be.a( 'function' );
 	} );
 
-	it( 'expects string or object', () => {
-		expect( () => {
-			packageParser();
-		} ).to.throw( TypeError, 'Provide string or object.' );
+	it( 'expects string or object', async () => {
+		await expect( packageParser() ).to.be.rejectedWith( TypeError, 'Provide string or object.' );
 
-		expect( () => {
-			packageParser( 1 );
-		} ).to.throw( TypeError, 'Provide string or object.' );
+		await expect( packageParser( 1 ) ).to.be.rejectedWith( TypeError, 'Provide string or object.' );
 	} );
 
-	it( 'treats string as path to JSON file', () => {
-		expect( packageParser( validFixturePath ) ).to.be.an( 'object' );
+	it( 'treats string as path to JSON file', async () => {
+		await expect( await packageParser( validFixturePath ) ).to.be.an( 'object' );
 
-		expect( () => {
-			packageParser( 'non-existent.json' );
-		} ).to.throw( ReferenceError, 'File with given path does not exist.' );
+		await expect( packageParser( 'non-existent.json' ) ).to.be.rejectedWith(
+			ReferenceError, 'File with given path does not exist.' );
 
-		expect( () => {
-			packageParser( invalidFixturePath );
-		} ).to.throw( SyntaxError, 'Given file is not parsable as a correct JSON.' );
+		await expect( packageParser( invalidFixturePath ) ).to.be.rejectedWith(
+			SyntaxError, 'Given file is not parsable as a correct JSON.' );
 	} );
 
-	it( 'treats object as loaded package.json file', () => {
-		expect( packageParser( valid ) ).to.be.an( 'object' );
+	it( 'treats object as loaded package.json file', async () => {
+		expect( await packageParser( valid ) ).to.be.an( 'object' );
 	} );
 
-	it( 'requires certain properties', () => {
-		expect( () => {
-			packageParser( {} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain "name" property.' );
+	it( 'requires certain properties', async () => {
+		await expect( packageParser( {} ) ).to.be.rejectedWith(
+			ReferenceError, 'Package metadata must contain "name" property.' );
 
-		expect( () => {
-			packageParser( {
-				name: 'test'
-			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain "version" property.' );
+		await expect( packageParser( {
+			name: 'test'
+		} ) ).to.be.rejectedWith( ReferenceError, 'Package metadata must contain "version" property.' );
 
-		expect( () => {
-			packageParser( {
-				name: 'test',
-				version: '0.0.0',
-				main: 'test'
-			} );
-		} ).to.throw( ReferenceError, invalidESMMetdataError );
+		await expect( packageParser( {
+			name: 'test',
+			version: '0.0.0',
+			main: 'test'
+		} ) ).to.be.rejectedWith( ReferenceError, invalidESMMetdataError );
 
-		expect( () => {
-			packageParser( {
-				name: 'test',
-				version: '0.0.0',
-				main: 'test',
-				module: 'test'
-			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain "author" property.' );
+		await expect( packageParser( {
+			name: 'test',
+			version: '0.0.0',
+			main: 'test',
+			module: 'test'
+		} ) ).to.be.rejectedWith( ReferenceError, 'Package metadata must contain "author" property.' );
 
-		expect( () => {
-			packageParser( {
-				name: 'test',
-				version: '0.0.0',
-				main: 'test',
-				module: 'test',
-				author: 'test'
-			} );
-		} ).to.throw( ReferenceError, 'Package metadata must contain "license" property.' );
+		await expect( packageParser( {
+			name: 'test',
+			version: '0.0.0',
+			main: 'test',
+			module: 'test',
+			author: 'test'
+		} ) ).to.be.rejectedWith( ReferenceError, 'Package metadata must contain "license" property.' );
 	} );
 
 	// #61
-	it( 'requires module or jsnext:main if exports does not contain import property', () => {
-		expect( () => {
-			packageParser( {
-				name: 'test',
-				version: '0.0.0',
-				exports: {
-					require: 'dist/whatever.js'
-				}
-			} );
-		} ).to.throw( ReferenceError, invalidESMMetdataError );
+	it( 'requires module or jsnext:main if exports does not contain import property', async () => {
+		await expect( packageParser( {
+			name: 'test',
+			version: '0.0.0',
+			exports: {
+				require: 'dist/whatever.js'
+			}
+		} ) ).to.be.rejectedWith( ReferenceError, invalidESMMetdataError );
 	} );
 
-	it( 'returns simplified metadata', () => {
-		expect( packageParser( valid ) ).to.deep.equal( {
+	it( 'returns simplified metadata', async () => {
+		expect( await packageParser( valid ) ).to.deep.equal( {
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'MIT',
@@ -112,8 +95,8 @@ describe( 'packageParser', () => {
 	} );
 
 	// #61
-	it( 'returns simplified metadata for package with "exports" field', () => {
-		expect( packageParser( validExports ) ).to.deep.equal( {
+	it( 'returns simplified metadata for package with "exports" field', async () => {
+		expect( await packageParser( validExports ) ).to.deep.equal( {
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'MIT',
@@ -128,8 +111,8 @@ describe( 'packageParser', () => {
 	} );
 
 	// #185
-	it( 'returns simplified metadata for package with subpath "exports" field', () => {
-		expect( packageParser( validSubPathExports ) ).to.deep.equal( {
+	it( 'returns simplified metadata for package with subpath "exports" field', async () => {
+		expect( await packageParser( validSubPathExports ) ).to.deep.equal( {
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'ISC',
@@ -148,8 +131,8 @@ describe( 'packageParser', () => {
 	} );
 
 	// #215
-	it( 'returns simplified metadata for package with no-CJS "exports" field', () => {
-		expect( packageParser( noCJSExportsFixturePath ) ).to.deep.equal( {
+	it( 'returns simplified metadata for package with no-CJS "exports" field', async () => {
+		expect( await packageParser( noCJSExportsFixturePath ) ).to.deep.equal( {
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'MIT',
@@ -163,8 +146,8 @@ describe( 'packageParser', () => {
 	} );
 
 	// #215
-	it( 'returns simplified metadata for package with no-CJS subpath "exports" field', () => {
-		expect( packageParser( noCJSSubPathExportsFixturePath ) ).to.deep.equal( {
+	it( 'returns simplified metadata for package with no-CJS subpath "exports" field', async () => {
+		expect( await packageParser( noCJSSubPathExportsFixturePath ) ).to.deep.equal( {
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'ISC',
@@ -181,106 +164,108 @@ describe( 'packageParser', () => {
 	} );
 
 	// #185
-	it( 'prefers exports[ \'.\' ].import over exports.import', () => {
+	it( 'prefers exports[ \'.\' ].import over exports.import', async () => {
 		const distPath = 'dist/subpath.mjs';
 		const module = deepClone( validExports );
 		module.exports[ '.' ] = {
 			import: distPath
 		};
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.esm ).to.equal( distPath );
 	} );
 
 	// #185
-	it( 'prefers exports[ \'.\' ].require over exports.require', () => {
+	it( 'prefers exports[ \'.\' ].require over exports.require', async () => {
 		const distPath = `dist${ pathSeparator }subpath.cjs`;
 		const module = deepClone( validExports );
 		module.exports[ '.' ] = {
 			require: distPath
 		};
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.cjs ).to.equal( distPath );
 	} );
 
 	// #61
-	it( 'prefers exports.import over module', () => {
+	it( 'prefers exports.import over module', async () => {
 		const module = deepClone( validExports );
 		module.module = 'dist/es2015.js';
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.esm ).to.equal( 'dist/test-package.mjs' );
 	} );
 
 	// #61
-	it( 'prefers exports.require over main', () => {
+	it( 'prefers exports.require over main', async () => {
 		const module = deepClone( validExports );
 		module.main = 'dist/es5.js';
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.cjs ).to.equal( 'dist/test-package.cjs' );
 	} );
 
-	it( 'prefers module over jsnext:main', () => {
+	it( 'prefers module over jsnext:main', async () => {
 		const module = deepClone( valid );
 		module[ 'jsnext:main' ] = 'dist/esnext.js';
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.esm ).to.equal( 'dist/es2015.js' );
 	} );
 
 	// #61
-	it( 'uses module when exports.import is not available', () => {
+	it( 'uses module when exports.import is not available', async () => {
 		const module = deepClone( validExports );
 		module.module = 'dist/module.js';
 		delete module.exports.import;
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.esm ).to.equal( 'dist/module.js' );
 	} );
 
 	// #61
-	it( 'uses jsnext:main when both exports.import and module are not available', () => {
+	it( 'uses jsnext:main when both exports.import and module are not available', async () => {
 		const module = deepClone( validExports );
 		module[ 'jsnext:main' ] = 'dist/jsnext.js';
 		delete module.exports.import;
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.esm ).to.equal( 'dist/jsnext.js' );
 	} );
 
 	// #61
-	it( 'uses main when exports.require is not available', () => {
+	it( 'uses main when exports.require is not available', async () => {
 		const module = deepClone( validExports );
 		module.main = 'dist/legacy.js';
 		delete module.exports.require;
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.cjs ).to.equal( 'dist/legacy.js' );
 	} );
 
-	it( 'uses jsnext:main when module is not available', () => {
+	it( 'uses jsnext:main when module is not available', async () => {
 		const module = deepClone( valid );
 		module[ 'jsnext:main' ] = 'dist/esnext.js';
 		delete module.module;
-		const indexDistMetadata = parseMetadataAndGetDistInfo( module );
+		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
 
 		expect( indexDistMetadata.esm ).to.equal( 'dist/esnext.js' );
 	} );
 
-	it( 'parses author object into string', () => {
+	it( 'parses author object into string', async () => {
 		const author = deepClone( valid );
 		author.author = {
 			name: 'Tester'
 		};
 
-		expect( packageParser( author ).author ).to.equal( 'Tester' );
+		const parsedMetadata = await packageParser( author );
+
+		expect( parsedMetadata.author ).to.equal( 'Tester' );
 	} );
 } );
 
-function parseMetadataAndGetDistInfo( metadata, srcFile = `src${ pathSeparator }index.js` ) {
-	const parsedMetadata = packageParser( metadata );
+async function parseMetadataAndGetDistInfo( metadata, srcFile = `src${ pathSeparator }index.js` ) {
+	const parsedMetadata = await packageParser( metadata );
 
 	return parsedMetadata.dist[ srcFile ];
 }

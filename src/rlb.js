@@ -16,7 +16,7 @@ async function rlb() {
 
 		await rimrafPromise( distPath );
 
-		const packageInfo = packageParser( 'package.json' );
+		const packageInfo = await packageParser( 'package.json' );
 
 		await bundler( {
 			onWarn( warning ) {

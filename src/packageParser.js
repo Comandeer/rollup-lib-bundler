@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { readFileSync } from 'fs';
 import { join as joinPath } from 'path';
 
-function packageParser( metadata ) {
+async function packageParser( metadata ) {
 	if ( typeof metadata === 'string' ) {
 		metadata = loadAndParseFile( metadata );
 	} else if ( typeof metadata !== 'object' ) {
