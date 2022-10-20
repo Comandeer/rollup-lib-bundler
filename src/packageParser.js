@@ -3,20 +3,21 @@ import { readFileSync } from 'fs';
 import { join as joinPath } from 'path';
 
 async function packageParser( metadata ) {
-	if ( typeof metadata === 'string' ) {
-		metadata = loadAndParseFile( metadata );
-	} else if ( typeof metadata !== 'object' ) {
-		throw new TypeError( 'Provide string or object.' );
+	if ( typeof metadata !== 'string' ) {
+		throw new TypeError( 'Provide a path to a package directory.' );
 	}
 
+	metadata = loadAndParsePackageJSONFile( metadata );
 	lintObject( metadata );
 
 	return prepareMetadata( metadata );
 }
 
-function loadAndParseFile( path ) {
+function loadAndParsePackageJSONFile( dirPath ) {
+	const path = joinPath( dirPath, 'package.json' );
+
 	if ( !existsSync( path ) ) {
-		throw new ReferenceError( 'File with given path does not exist.' );
+		throw new ReferenceError( 'The package.json does not exist in the provided location.' );
 	}
 
 	const contents = readFileSync( path, 'utf8' );
@@ -25,7 +26,7 @@ function loadAndParseFile( path ) {
 	try {
 		parsed = JSON.parse( contents );
 	} catch ( e ) {
-		throw new SyntaxError( 'Given file is not parsable as a correct JSON.' );
+		throw new SyntaxError( 'The package.json file is not parsable as a correct JSON.' );
 	}
 
 	return parsed;

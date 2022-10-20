@@ -12,11 +12,12 @@ async function rlb() {
 	try {
 		await outputController.showSpinner();
 
-		const distPath = resolvePath( process.cwd(), 'dist' );
+		const packageDirectory = process.cwd();
+		const distPath = resolvePath( packageDirectory, 'dist' );
 
 		await rimrafPromise( distPath );
 
-		const packageInfo = await packageParser( 'package.json' );
+		const packageInfo = await packageParser( packageDirectory );
 
 		await bundler( {
 			onWarn( warning ) {
