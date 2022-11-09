@@ -50,6 +50,15 @@ function getRollupInputConfig( input, onwarn = () => {} ) {
 
 		json(),
 
+		{
+			renderDynamicImport() {
+				return {
+					left: 'import(',
+					right: ');'
+				};
+			}
+		},
+
 		babel( {
 			babelrc: false,
 			babelHelpers: 'bundled',
