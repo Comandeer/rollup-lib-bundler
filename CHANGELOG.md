@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.16.1] – 2022-11-10
+### Fixed
+* [#222]: dynamic external imports aren't preserved.
+
 ## [0.16.0] – 2022-05-08
 ### Added
 * [#214]: Support for Node 18.
@@ -205,7 +209,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#214]: https://github.com/Comandeer/rollup-lib-bundler/issues/214
 [#215]: https://github.com/Comandeer/rollup-lib-bundler/issues/215
 [#216]: https://github.com/Comandeer/rollup-lib-bundler/issues/216
+[#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 
+[0.16.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.14.0...v0.15.0

@@ -3,7 +3,6 @@ import { resolve as resolvePath } from 'path';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import { checkFiles } from './__helpers__/bundleChecks.js';
 import { checkBanner } from './__helpers__/bundleChecks.js';
-import createFlowTest from './__helpers__/createFlowTest.js';
 import bundler from '../src/bundler.js';
 
 const metadata = {
@@ -131,20 +130,6 @@ describe( 'bundler', () => {
 		checkBanner( esmCode );
 	} );
 
-	// #67, #78
-	// This test seems like it tests implementation – and that's right…
-	// Yet I didn't find any other _sensible_ way to test if code is passed
-	// through all necessary transformations in correct order.
-	it( 'passes code through specified plugins in correct order', createFlowTest( {
-		packageInfo: createPackageInfo(),
-		plugins: {
-			'@rollup/plugin-commonjs': 'default',
-			'@rollup/plugin-json': 'default',
-			'@rollup/plugin-babel': 'default',
-			'rollup-plugin-terser': 'terser'
-		}
-	} ) );
-
 	// #105
 	it( 'generates non-empty sourcemap', async () => {
 		const packageInfo = createPackageInfo();
@@ -262,6 +247,30 @@ describe( 'bundler', () => {
 			'dist/also-not-related-name.js',
 			'dist/also-not-related-name.js.map'
 		] );
+	} );
+
+	// #222
+	it( 'preserves dynamic external imports', async () => {
+		const packageInfo = createPackageInfo( 'dynamicExternalImport' );
+
+		await bundler( {
+			packageInfo
+		} );
+
+		const distPath = resolvePath( fixturesPath, 'dynamicExternalImport', 'dist' );
+
+		checkFiles( distPath, [
+			'es5.js',
+			'es5.js.map',
+			'es2015.js',
+			'es2015.js.map'
+		], { additionalCodeChecks } );
+
+		function additionalCodeChecks( path, code ) {
+			const dynamicImportRegex = /await import\(\s*['"]node:fs['"]\s*\)/;
+
+			expect( code ).to.match( dynamicImportRegex );
+		}
 	} );
 } );
 
