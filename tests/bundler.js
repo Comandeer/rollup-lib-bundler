@@ -248,6 +248,30 @@ describe( 'bundler', () => {
 			'dist/also-not-related-name.js.map'
 		] );
 	} );
+
+	// #222
+	it( 'preserves dynamic external imports', async () => {
+		const packageInfo = createPackageInfo( 'dynamicExternalImport' );
+
+		await bundler( {
+			packageInfo
+		} );
+
+		const distPath = resolvePath( fixturesPath, 'dynamicExternalImport', 'dist' );
+
+		checkFiles( distPath, [
+			'es5.js',
+			'es5.js.map',
+			'es2015.js',
+			'es2015.js.map'
+		], { additionalCodeChecks } );
+
+		function additionalCodeChecks( path, code ) {
+			const dynamicImportRegex = /await import\(\s*['"]node:fs['"]\s*\)/;
+
+			expect( code ).to.match( dynamicImportRegex );
+		}
+	} );
 } );
 
 function createPackageInfo( packageName = 'testPackage', distMetadata = {} ) {
