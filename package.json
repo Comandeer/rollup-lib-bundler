@@ -62,7 +62,7 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
-    "@comandeer/mocha-lib-tester": "^0.6.0",
+    "@comandeer/mocha-lib-tester": "^0.7.0",
     "@comandeer/rollup-lib-bundler": "^0.16.1",
     "commitplease": "^3.2.0",
     "cz-conventional-changelog": "^3.3.0",
