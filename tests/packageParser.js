@@ -88,30 +88,105 @@ const fixtures = {
 		},
 		'author': 'Comandeer',
 		'license': 'ISC'
+	},
+
+	tsProject: {
+		'name': 'test-package',
+		'version': '9.0.1',
+		'author': 'Comandeer',
+		'license': 'MIT',
+		'exports': {
+			'types': 'dist/test-package.d.ts',
+			'import': 'dist/test-package.mjs',
+			'require': 'dist/test-package.cjs'
+		}
+	},
+
+	tsFallbacks: {
+		'name': 'test-package',
+		'version': '9.0.1',
+		'author': 'Comandeer',
+		'license': 'MIT',
+		'types': 'dist/test-package.d.ts',
+		'module': 'dist/test-package.mjs',
+		'main': 'dist/test-package.cjs'
+	},
+
+	mixedProject: {
+		'name': 'test-package',
+		'private': true,
+		'version': '1.0.0',
+		'description': 'Test package',
+		'exports': {
+			'.': {
+				require: './dist/test-package.cjs',
+				import: './dist/test-package.mjs',
+				types: './dist/test-package.d.ts'
+			},
+			'./chunk': {
+				require: './dist/chunk.cjs',
+				import: './dist/chunk.mjs'
+			}
+		},
+		'author': 'Comandeer',
+		'license': 'ISC'
 	}
 };
 const srcFixtures = {
 	js: {
-		'index.js': ''
+		src: {
+			'index.js': ''
+		}
 	},
 	mjs: {
-		'index.mjs': ''
+		src: {
+			'index.mjs': ''
+		}
 	},
 	ts: {
-		'index.ts': ''
+		src: {
+			'index.ts': ''
+		},
+		'tsconfig.json': ''
 	},
 	mts: {
-		'index.mts': ''
+		src: {
+			'index.mts': ''
+		},
+		'tsconfig.json': ''
+	},
+	tsConfig: {
+		src: {
+			'index.ts': ''
+		},
+		'tsconfig.json': '',
+		'tsconfig.rlb.json': ''
+	},
+	noTSConfig: {
+		src: {
+			'index.ts': ''
+		}
 	},
 	subPath: {
-		'index.js': '',
-		'chunk.mjs': ''
-	},
-	nestedSubPath: {
-		'index.js': '',
-		'test': {
+		src: {
+			'index.js': '',
 			'chunk.mjs': ''
 		}
+	},
+	nestedSubPath: {
+		src: {
+			'index.js': '',
+			'test': {
+				'chunk.mjs': ''
+			}
+		}
+	},
+	mixedProject: {
+		src: {
+			'index.ts': '',
+			'chunk.mjs': ''
+		},
+		'tsconfig.json': ''
 	}
 };
 
@@ -528,6 +603,128 @@ describe( 'packageParser', () => {
 				}
 			} );
 		} );
+
+		it( 'correctly detects TS type with single .ts entry point', async () => {
+			mockPackage( JSON.stringify( fixtures.tsProject ), srcFixtures.ts );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.ts` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					tsConfig: 'tsconfig.json',
+					types: 'dist/test-package.d.ts',
+					type: 'ts'
+				}
+			} );
+		} );
+
+		it( 'correctly detects TS type with single .mts entry point', async () => {
+			mockPackage( JSON.stringify( fixtures.tsProject ), srcFixtures.mts );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.mts` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					tsConfig: 'tsconfig.json',
+					types: 'dist/test-package.d.ts',
+					type: 'ts'
+				}
+			} );
+		} );
+
+		it( 'correctly detects mixed JS/TS projects', async () => {
+			mockPackage( JSON.stringify( fixtures.mixedProject ), srcFixtures.mixedProject );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.ts` ]: {
+					esm: './dist/test-package.mjs',
+					cjs: './dist/test-package.cjs',
+					types: './dist/test-package.d.ts',
+					tsConfig: 'tsconfig.json',
+					type: 'ts'
+				},
+
+				[ `src${ pathSeparator }chunk.mjs` ]: {
+					esm: './dist/chunk.mjs',
+					cjs: './dist/chunk.cjs',
+					type: 'js'
+				}
+			} );
+		} );
+	} );
+
+	describe( 'parsing TS metadata', () => {
+		it( 'prefers ts.config.rlb.json file over tsconfig.json one', async () => {
+			mockPackage( JSON.stringify( fixtures.tsProject ), srcFixtures.tsConfig );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.ts` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					tsConfig: 'tsconfig.rlb.json',
+					types: 'dist/test-package.d.ts',
+					type: 'ts'
+				}
+			} );
+		} );
+
+		it( 'skips tsConfig metadata if there is no tsconfig?(.rlb).json file', async () => {
+			mockPackage( JSON.stringify( fixtures.tsProject ), srcFixtures.noTSConfig );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.ts` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					types: 'dist/test-package.d.ts',
+					type: 'ts'
+				}
+			} );
+		} );
+
+		it( 'skips types metadata if there is no exports.types field', async () => {
+			const noTypesFixture = { ...fixtures.tsProject };
+
+			delete noTypesFixture.exports.types;
+
+			mockPackage( JSON.stringify( noTypesFixture ), srcFixtures.ts );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.ts` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					tsConfig: 'tsconfig.json',
+					type: 'ts'
+				}
+			} );
+		} );
+
+		it( 'correctly parses TS project with fallback values', async () => {
+			mockPackage( JSON.stringify( fixtures.tsFallbacks ), srcFixtures.ts );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.ts` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					tsConfig: 'tsconfig.json',
+					types: 'dist/test-package.d.ts',
+					type: 'ts'
+				}
+			} );
+		} );
 	} );
 } );
 
@@ -545,7 +742,7 @@ function mockPackage( packageJSON, srcFixture = srcFixtures.js ) {
 		'node_modules': mockFS.load( resolvePath( __dirname, '../node_modules' ) ),
 		[ mockedPackagePath ]: {
 			'package.json': packageJSON,
-			src: srcFixture
+			...srcFixture
 		}
 	} );
 }

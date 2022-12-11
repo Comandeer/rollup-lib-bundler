@@ -169,13 +169,27 @@ async function prepareExportMetadata( packageDir, metadata, subPath ) {
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const esmTarget = getESMTarget( metadata, subPath );
 	const cjsTarget = getCJSTarget( metadata, subPath );
+	const exportType = getEntryPointType( srcPath );
 	const exportMetadata = {
 		esm: esmTarget,
-		type: getEntryPointType( srcPath )
+		type: exportType
 	};
 
 	if ( cjsTarget ) {
 		exportMetadata.cjs = cjsTarget;
+	}
+
+	if ( exportType === 'ts' ) {
+		const typesTarget = getTypesTarget( metadata, subPath );
+		const tsConfigPath = await getTSConfigPath( packageDir );
+
+		if ( typesTarget ) {
+			exportMetadata.types = typesTarget;
+		}
+
+		if ( tsConfigPath ) {
+			exportMetadata.tsConfig = tsConfigPath;
+		}
 	}
 
 	return {
@@ -246,6 +260,16 @@ function getCJSTarget( metadata, subPath ) {
 	return exportsTarget;
 }
 
+function getTypesTarget( metadata, subPath ) {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'types' );
+
+	if ( subPath === '.' ) {
+		return exportsTarget || metadata.types;
+	}
+
+	return exportsTarget;
+}
+
 function getExportsTarget( metadata, subPath, type ) {
 	if ( !metadata.exports ) {
 		return null;
@@ -262,6 +286,24 @@ function getExportsTarget( metadata, subPath, type ) {
 	}
 
 	return null;
+}
+
+async function getTSConfigPath( packageDir ) {
+	const tsConfigGlobPattern = 'tsconfig?(.rlb).json';
+	const matchedFiles = await globby( tsConfigGlobPattern, {
+		cwd: packageDir
+	} );
+
+	if ( matchedFiles.length === 0 ) {
+		return null;
+	}
+
+	const rlbSpecificPath = matchedFiles.find( ( path ) => {
+		return path.endsWith( '.rlb.json' );
+	} );
+	const tsConfigPath = rlbSpecificPath || matchedFiles[ 0 ];
+
+	return tsConfigPath;
 }
 
 export default packageParser;
