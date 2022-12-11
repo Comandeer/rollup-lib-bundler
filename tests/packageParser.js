@@ -1,5 +1,6 @@
+import { resolve as resolvePath } from 'path';
 import { sep as pathSeparator } from 'path';
-import mockFs from 'mock-fs';
+import mockFS from 'mock-fs';
 import packageParser from '../src/packageParser.js';
 import { deepClone } from './__helpers__/utils';
 
@@ -43,6 +44,25 @@ const fixtures = {
 		'license': 'ISC'
 	},
 
+	nestedSubPathExports: {
+		'name': 'test-package',
+		'private': true,
+		'version': '1.0.0',
+		'description': 'Test package',
+		'exports': {
+			'.': {
+				'require': './dist/index.cjs',
+				'import': './dist/index.mjs'
+			},
+			'./test/chunk': {
+				'require': './dist/nested/chunk.cjs',
+				'import': './dist/nested/chunk.mjs'
+			}
+		},
+		'author': 'Comandeer',
+		'license': 'ISC'
+	},
+
 	noCJSExports: {
 		'name': 'test-package',
 		'version': '9.0.1',
@@ -70,6 +90,30 @@ const fixtures = {
 		'license': 'ISC'
 	}
 };
+const srcFixtures = {
+	js: {
+		'index.js': ''
+	},
+	mjs: {
+		'index.mjs': ''
+	},
+	ts: {
+		'index.ts': ''
+	},
+	mts: {
+		'index.mts': ''
+	},
+	subPath: {
+		'index.js': '',
+		'chunk.mjs': ''
+	},
+	nestedSubPath: {
+		'index.js': '',
+		'test': {
+			'chunk.mjs': ''
+		}
+	}
+};
 
 const mockedPackagePath = '/some-package';
 
@@ -79,7 +123,7 @@ const INVALID_PACKAGE_JSON_ERROR = 'The package.json file is not parsable as a c
 const INVALID_ESM_METADATA_ERROR = 'Package metadata must contain one of "exports[ \'.\' ].import", "exports.import", "module" or "jsnext:main" properties or all of them.';
 
 describe( 'packageParser', () => {
-	afterEach( mockFs.restore );
+	afterEach( mockFS.restore );
 
 	it( 'is a function', () => {
 		expect( packageParser ).to.be.a( 'function' );
@@ -189,7 +233,8 @@ describe( 'packageParser', () => {
 			dist: {
 				[ `src${ pathSeparator }index.js` ]: {
 					esm: 'dist/es2015.js',
-					cjs: 'dist/es5.js'
+					cjs: 'dist/es5.js',
+					type: 'js'
 				}
 			}
 		} );
@@ -207,7 +252,8 @@ describe( 'packageParser', () => {
 			dist: {
 				[ `src${ pathSeparator }index.js` ]: {
 					esm: 'dist/test-package.mjs',
-					cjs: 'dist/test-package.cjs'
+					cjs: 'dist/test-package.cjs',
+					type: 'js'
 				}
 			}
 		} );
@@ -215,7 +261,7 @@ describe( 'packageParser', () => {
 
 	// #185
 	it( 'returns simplified metadata for package with subpath "exports" field', async () => {
-		mockPackage( JSON.stringify( fixtures.validSubPathExports ) );
+		mockPackage( JSON.stringify( fixtures.validSubPathExports ), srcFixtures.subPath );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
 			name: 'test-package',
@@ -225,11 +271,13 @@ describe( 'packageParser', () => {
 			dist: {
 				[ `src${ pathSeparator }index.js` ]: {
 					cjs: './dist/es5.cjs',
-					esm: './dist/es6.mjs'
+					esm: './dist/es6.mjs',
+					type: 'js'
 				},
-				[ `src${ pathSeparator }chunk.js` ]: {
+				[ `src${ pathSeparator }chunk.mjs` ]: {
 					cjs: './dist/not-related-name.cjs',
-					esm: './dist/also-not-related-name.js'
+					esm: './dist/also-not-related-name.js',
+					type: 'js'
 				}
 			}
 		} );
@@ -246,7 +294,8 @@ describe( 'packageParser', () => {
 			version: '9.0.1',
 			dist: {
 				[ `src${ pathSeparator }index.js` ]: {
-					esm: './dist/test-package.mjs'
+					esm: './dist/test-package.mjs',
+					type: 'js'
 				}
 			}
 		} );
@@ -254,7 +303,7 @@ describe( 'packageParser', () => {
 
 	// #215
 	it( 'returns simplified metadata for package with no-CJS subpath "exports" field', async () => {
-		mockPackage( JSON.stringify( fixtures.noCJSSubPathExports ) );
+		mockPackage( JSON.stringify( fixtures.noCJSSubPathExports ), srcFixtures.subPath );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
 			name: 'test-package',
@@ -263,10 +312,12 @@ describe( 'packageParser', () => {
 			version: '1.0.0',
 			dist: {
 				[ `src${ pathSeparator }index.js` ]: {
-					esm: './dist/es6.mjs'
+					esm: './dist/es6.mjs',
+					type: 'js'
 				},
-				[ `src${ pathSeparator }chunk.js` ]: {
-					esm: './dist/also-not-related-name.js'
+				[ `src${ pathSeparator }chunk.mjs` ]: {
+					esm: './dist/also-not-related-name.js',
+					type: 'js'
 				}
 			}
 		} );
@@ -392,6 +443,92 @@ describe( 'packageParser', () => {
 
 		expect( parsedMetadata.author ).to.equal( 'Tester' );
 	} );
+
+	// #220
+	describe( 'detecting entrypoints type', () => {
+		it( 'correctly detects JS type with single .js entry point', async () => {
+			mockPackage( JSON.stringify( fixtures.validExports ) );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.js` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					type: 'js'
+				}
+			} );
+		} );
+
+		it( 'correctly detects JS type with single .mjs entry point', async () => {
+			mockPackage( JSON.stringify( fixtures.validExports ), srcFixtures.mjs );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.mjs` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					type: 'js'
+				}
+			} );
+		} );
+
+		it( 'correctly detects JS type with .mjs and .js entry point', async () => {
+			const mixedJSSrcFixture = { ...srcFixtures.js, ...srcFixtures.mjs };
+			mockPackage( JSON.stringify( fixtures.validExports ), mixedJSSrcFixture );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.mjs` ]: {
+					esm: 'dist/test-package.mjs',
+					cjs: 'dist/test-package.cjs',
+					type: 'js'
+				}
+			} );
+		} );
+
+		it( 'correctly detects JS type with single .js entry point and single .mjs subexport', async () => {
+			mockPackage( JSON.stringify( fixtures.validSubPathExports ), srcFixtures.subPath );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.js` ]: {
+					esm: './dist/es6.mjs',
+					cjs: './dist/es5.cjs',
+					type: 'js'
+				},
+
+				[ `src${ pathSeparator }chunk.mjs` ]: {
+					esm: './dist/also-not-related-name.js',
+					cjs: './dist/not-related-name.cjs',
+					type: 'js'
+				}
+			} );
+		} );
+
+		it( 'correctly detects JS type with single .js entry point and single .mjs nested subexport', async () => {
+			mockPackage( JSON.stringify( fixtures.nestedSubPathExports ), srcFixtures.nestedSubPath );
+
+			const { dist } = await packageParser( mockedPackagePath );
+
+			expect( dist ).to.deep.equal( {
+				[ `src${ pathSeparator }index.js` ]: {
+					esm: './dist/index.mjs',
+					cjs: './dist/index.cjs',
+					type: 'js'
+				},
+
+				[ `src${ pathSeparator }test${ pathSeparator }chunk.mjs` ]: {
+					esm: './dist/nested/chunk.mjs',
+					cjs: './dist/nested/chunk.cjs',
+					type: 'js'
+				}
+			} );
+		} );
+	} );
 } );
 
 async function parseMetadataAndGetDistInfo( metadata, srcFile = `src${ pathSeparator }index.js` ) {
@@ -402,10 +539,13 @@ async function parseMetadataAndGetDistInfo( metadata, srcFile = `src${ pathSepar
 	return parsedMetadata.dist[ srcFile ];
 }
 
-function mockPackage( packageJSON ) {
-	mockFs( {
+function mockPackage( packageJSON, srcFixture = srcFixtures.js ) {
+	mockFS( {
+		// We need to load node_modules to make sure that we can resolve dependencies.
+		'node_modules': mockFS.load( resolvePath( __dirname, '../node_modules' ) ),
 		[ mockedPackagePath ]: {
-			'package.json': packageJSON
+			'package.json': packageJSON,
+			src: srcFixture
 		}
 	} );
 }

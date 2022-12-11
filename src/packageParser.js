@@ -1,16 +1,19 @@
 import { existsSync } from 'fs';
 import { readFileSync } from 'fs';
+import { extname } from 'path';
 import { join as joinPath } from 'path';
 
-async function packageParser( metadata ) {
-	if ( typeof metadata !== 'string' ) {
+let globby;
+
+async function packageParser( packageDir ) {
+	if ( typeof packageDir !== 'string' ) {
 		throw new TypeError( 'Provide a path to a package directory.' );
 	}
 
-	metadata = loadAndParsePackageJSONFile( metadata );
+	const metadata = loadAndParsePackageJSONFile( packageDir );
 	lintObject( metadata );
 
-	return prepareMetadata( metadata );
+	return prepareMetadata( packageDir, metadata );
 }
 
 function loadAndParsePackageJSONFile( dirPath ) {
@@ -112,13 +115,13 @@ function lintObject( obj ) {
 	}
 }
 
-function prepareMetadata( metadata ) {
+async function prepareMetadata( packageDir, metadata ) {
 	return {
 		name: metadata.name,
 		version: metadata.version,
 		author: prepareAuthorMetadata( metadata.author ),
 		license: metadata.license,
-		dist: prepareDistMetadata( metadata )
+		dist: await prepareDistMetadata( packageDir, metadata )
 	};
 }
 
@@ -130,12 +133,13 @@ function prepareAuthorMetadata( author ) {
 	return author.name;
 }
 
-function prepareDistMetadata( metadata ) {
+async function prepareDistMetadata( packageDir, metadata ) {
 	const subpaths = getSubPaths( metadata );
+	const exportMetadata = await Promise.all( subpaths.map( ( subPath ) => {
+		return prepareExportMetadata( packageDir, metadata, subPath );
+	} ) );
 
-	return subpaths.reduce( ( targets, subpath ) => {
-		const currentTargets = prepareExportMetadata( metadata, subpath );
-
+	return exportMetadata.reduce( ( targets, currentTargets ) => {
 		return { ...targets, ...currentTargets };
 	}, {} );
 }
@@ -160,14 +164,14 @@ function getSubPaths( metadata ) {
 	return subpaths;
 }
 
-function prepareExportMetadata( metadata, subPath ) {
-	const subPathFileName = subPath === '.' ? 'index' : subPath;
-	const subPathFilePath = subPathFileName.endsWith( '.js' ) ? subPathFileName : `${ subPathFileName }.js`;
+async function prepareExportMetadata( packageDir, metadata, subPath ) {
+	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const esmTarget = getESMTarget( metadata, subPath );
 	const cjsTarget = getCJSTarget( metadata, subPath );
 	const exportMetadata = {
-		esm: esmTarget
+		esm: esmTarget,
+		type: getEntryPointType( srcPath )
 	};
 
 	if ( cjsTarget ) {
@@ -177,6 +181,49 @@ function prepareExportMetadata( metadata, subPath ) {
 	return {
 		[ srcPath ]: exportMetadata
 	};
+}
+
+async function getSubPathFilePath( packageDir, subPath ) {
+	if ( !globby ) {
+		const globbyModule = await import( 'globby' );
+		// eslint-disable-next-line require-atomic-updates
+		globby = globbyModule.globby;
+	}
+
+	const srcPath = joinPath( packageDir, 'src' );
+	const subPathFileName = subPath === '.' ? 'index' : subPath;
+	const subPathGlobPattern = `${ subPathFileName}.{mts,ts,mjs,js,cts,cjs}`;
+	const matchedFiles = await globby( subPathGlobPattern, {
+		cwd: srcPath
+	} );
+	const desirableEntryPoint = getEntryPoint( matchedFiles );
+
+	return desirableEntryPoint;
+}
+
+function getEntryPoint( matchedFiles ) {
+	const fileExtensions = [
+		'.mts',
+		'.ts',
+		'.mjs',
+		'.js',
+		'.cts',
+		'.cjs'
+	];
+	const orderedFiles = matchedFiles.sort( ( a, b ) => {
+		const aIndex = fileExtensions.indexOf( extname( a ) );
+		const bIndex = fileExtensions.indexOf( extname( b ) );
+
+		return aIndex - bIndex;
+	} );
+
+	return orderedFiles[ 0 ];
+}
+
+function getEntryPointType( srcPath ) {
+	const isTS = srcPath.toLowerCase().endsWith( 'ts' );
+
+	return isTS ? 'ts' : 'js';
 }
 
 function getESMTarget( metadata, subPath ) {
