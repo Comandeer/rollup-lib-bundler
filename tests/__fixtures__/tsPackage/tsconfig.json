@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"module": "node16",
+		"moduleResolution": "node16"
+	},
+	"include": ["src/**/*.ts"],
+	"target": "esnext",
+}
