@@ -4,6 +4,7 @@ import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
+import typescript from '@rollup/plugin-typescript';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
@@ -24,7 +25,7 @@ function bundleChunks( packageInfo, onWarn = () => {} ) {
 
 async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } = {} ) {
 	const banner = generateBanner( packageInfo );
-	const inputConfig = getRollupInputConfig( source, onWarn );
+	const inputConfig = getRollupInputConfig( source, output, onWarn );
 
 	const otuputConfigESM = getRollupOutputConfig( output.esm, banner, 'esm' );
 
@@ -44,7 +45,7 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 	await Promise.all( bundlesPromises );
 }
 
-function getRollupInputConfig( input, onwarn = () => {} ) {
+function getRollupInputConfig( input, output, onwarn = () => {} ) {
 	const plugins = [
 		convertCJS(),
 
@@ -76,6 +77,15 @@ function getRollupInputConfig( input, onwarn = () => {} ) {
 
 		terser()
 	];
+
+	// In case of TypeScript, we need to add the plugin.
+	// We need to add it before the Babel plugin, so it's at index 2.
+	// Yep, it's not too elegant…
+	if ( output.type === 'ts' ) {
+		plugins.splice( 2, 0, typescript( {
+			tsconfig: output.tsConfig ? output.tsConfig : false
+		} ) );
+	}
 
 	return {
 		input,
