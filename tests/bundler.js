@@ -16,6 +16,7 @@ const testPackageFixture = resolvePath( fixturesPath, 'testPackage' );
 const subPathExportsFixture = resolvePath( fixturesPath, 'subPathExportsPackage' );
 const noCJSPackageFixture = resolvePath( fixturesPath, 'noCJSPackage' );
 const noCJSSubPathExportsFixture = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
+const tsPackageFixture = resolvePath( fixturesPath, 'tsPackage' );
 
 describe( 'bundler', () => {
 	let sandbox;
@@ -230,10 +231,12 @@ describe( 'bundler', () => {
 		const chunkPath = resolvePath( srcPath, 'chunk.js' );
 		const packageInfo = createPackageInfo( noCJSSubPathExportsFixture, {
 			[ indexPath ]: {
-				esm: resolvePath( distPath, 'es6.mjs' )
+				esm: resolvePath( distPath, 'es6.mjs' ),
+				type: 'js'
 			},
 			[ chunkPath ]: {
-				esm: resolvePath( distPath, 'also-not-related-name.js' )
+				esm: resolvePath( distPath, 'also-not-related-name.js' ),
+				type: 'js'
 			}
 		} );
 
@@ -272,6 +275,51 @@ describe( 'bundler', () => {
 			expect( code ).to.match( dynamicImportRegex );
 		}
 	} );
+
+	// #220
+	describe( 'bundling TS projects', () => {
+		it( 'bundles correctly a simple TS project', async () => {
+			const srcPath = resolvePath( tsPackageFixture, 'src' );
+			const distPath = resolvePath( tsPackageFixture, 'dist' );
+			const indexPath = resolvePath( srcPath, 'index.ts' );
+			const jsIndexPath = resolvePath( srcPath, 'index.js' );
+			const chunkPath = resolvePath( srcPath, 'chunk.js' );
+			const tsConfigPath = resolvePath( tsPackageFixture, 'tsconfig.json' );
+			const packageInfo = createPackageInfo( tsPackageFixture, {
+				[ indexPath ]: {
+					cjs: resolvePath( distPath, 'index.cjs' ),
+					esm: resolvePath( distPath, 'index.mjs' ),
+					types: resolvePath( distPath, 'index.d.ts' ),
+					tsConfig: tsConfigPath,
+					type: 'ts'
+				},
+				[ chunkPath ]: {
+					cjs: resolvePath( distPath, 'chunk.cjs' ),
+					esm: resolvePath( distPath, 'chunk.mjs' ),
+					type: 'js'
+				}
+			} );
+
+			// Our helper is definitely not suited for TS projects.
+			// So we need to remove the JS entry point.
+			delete packageInfo.dist[ jsIndexPath ];
+
+			await bundler( {
+				packageInfo
+			} );
+
+			checkFiles( tsPackageFixture, [
+				'dist/index.cjs',
+				'dist/index.cjs.map',
+				'dist/index.mjs',
+				'dist/index.mjs.map',
+				'dist/chunk.cjs',
+				'dist/chunk.cjs.map',
+				'dist/chunk.mjs',
+				'dist/chunk.mjs.map'
+			] );
+		} );
+	} );
 } );
 
 function createPackageInfo( packageName = 'testPackage', distMetadata = {} ) {
@@ -284,7 +332,8 @@ function createPackageInfo( packageName = 'testPackage', distMetadata = {} ) {
 			// have to be run in appropriate CWD.
 			[ indexPath ]: {
 				esm: resolvePath( packagePath, 'dist', 'es2015.js' ),
-				cjs: resolvePath( packagePath, 'dist', 'es5.js' )
+				cjs: resolvePath( packagePath, 'dist', 'es5.js' ),
+				type: 'js'
 			},
 			...distMetadata
 		}
