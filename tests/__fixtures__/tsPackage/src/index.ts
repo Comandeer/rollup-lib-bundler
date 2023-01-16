@@ -4,4 +4,5 @@ function main(): void {
 	console.log( fn() );
 }
 
-export default main;
+export { main };
+export { fn };
