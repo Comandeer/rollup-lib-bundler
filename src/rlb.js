@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import { resolve as resolvePath } from 'path';
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 import consoleControlStrings from 'console-control-strings';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';
@@ -15,7 +15,7 @@ async function rlb() {
 		const packageDirectory = process.cwd();
 		const distPath = resolvePath( packageDirectory, 'dist' );
 
-		await rimrafPromise( distPath );
+		await rimraf( distPath );
 
 		const packageInfo = await packageParser( packageDirectory );
 
@@ -34,18 +34,6 @@ async function rlb() {
 		await outputController.hideSpinner();
 		outputController.display();
 	}
-}
-
-function rimrafPromise( path ) {
-	return new Promise( ( resolve, reject ) => {
-		rimraf( path, ( error ) => {
-			if ( error ) {
-				return reject( error );
-			}
-
-			resolve();
-		} );
-	} );
 }
 
 export default rlb;
