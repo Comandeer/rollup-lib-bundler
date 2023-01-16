@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.17.0]
+### Changed
+* [#225]: Update dependencies, including major versions:
+	* `@rollup/plugin-babel` – `5.3.1` → `^6.0.3`;
+	* `@rollup/plugin-commonjs` – `22.0.2` → `^24.0.0`;
+	* `@rollup/plugin-json` – `4.1.0` → `^6.0.0`;
+	* `rimraf` – `3.0.2` → `^4.0.7`;
+	* `rollup` – `2.79.1` → `^3.10.0`;
+	* `rollup-plugin-terser` → `@rollup/plugin-terser`.
+
 ## [0.16.1] – 2022-11-10
 ### Fixed
 * [#222]: dynamic external imports aren't preserved.
@@ -210,7 +220,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#215]: https://github.com/Comandeer/rollup-lib-bundler/issues/215
 [#216]: https://github.com/Comandeer/rollup-lib-bundler/issues/216
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
+[#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 
+[0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.0...v0.15.1
