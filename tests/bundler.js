@@ -23,13 +23,12 @@ describe( 'bundler', () => {
 
 	before( () => {
 		sandbox = sinon.createSandbox();
-
-		removeArtifacts( fixturesPath );
 	} );
 
-	after( () => {
+	after( async () => {
 		sandbox.restore();
-		removeArtifacts( fixturesPath );
+
+		return removeArtifacts( fixturesPath );
 	} );
 
 	it( 'is a function', () => {
