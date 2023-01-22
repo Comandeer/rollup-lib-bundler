@@ -91,6 +91,39 @@ Although Node.js supports several different syntaxes for subpath exports, this b
 
 Each subpath is translated to appropriate file in `src` directory. Basically, `./` at the beginning is translated to `src/` and the name of the subpath is translated to `<subpath>.js` (e.g. `./chunk` → `src/chunk.js`). The only exception is the `.` subpath, which is translated to `src/index.js`.
 
+## TypeScript support
+
+Starting from v0.17.0 the bundler is able also to bundle TypeScript projects. There is no configuration needed, just replace the `.js` extension with the `.ts` one! Also ensure that there's a valid `tsconfig.json` file in the root of your project. If you want to provide different configuration for the bundler, place a `tsconfig.rlb.json` file instead.
+
+The bundler also bundles `.d.ts` files but only if you specified the `exports.types` field in your `package.json`.
+
+Sample configuration for a TS project:
+
+```json
+"exports": {
+	".": {
+		"require": "./dist/index.cjs",
+		"import": "./dist/index.mjs",
+		"types": "./dist/index.d.ts"
+	},
+
+	"./chunk": {
+		"require": "./dist/chunk.cjs",
+		"import": "./dist/chunk.mjs"
+	}
+}
+```
+
+In this case two source files will be bundled:
+* `src/index.ts`:
+	* ESM output: `dist/index.mjs`,
+	* CJS output: `dist/index.cjs`,
+	* DTS output: `dist/index.d.ts`,
+* `src/chunk.ts`:
+	* ESM output: `dist/chunk.mjs`,
+	* CJS output: `dist/chunk.cjs`,
+	* DTS output: none (there's no `types` field).
+
 ## License
 
 See [LICENSE](./LICENSE) file for details.
