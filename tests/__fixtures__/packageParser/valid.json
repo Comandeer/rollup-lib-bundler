@@ -1,8 +1,0 @@
-{
-	"name": "test-package",
-	"version": "9.0.1",
-	"author": "Comandeer",
-	"license": "MIT",
-	"main": "dist/es5.js",
-	"module": "dist/es2015.js"
-}

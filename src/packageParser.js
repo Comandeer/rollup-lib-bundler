@@ -1,22 +1,26 @@
 import { existsSync } from 'fs';
 import { readFileSync } from 'fs';
+import { extname } from 'path';
 import { join as joinPath } from 'path';
 
-function packageParser( metadata ) {
-	if ( typeof metadata === 'string' ) {
-		metadata = loadAndParseFile( metadata );
-	} else if ( typeof metadata !== 'object' ) {
-		throw new TypeError( 'Provide string or object.' );
+let globby;
+
+async function packageParser( packageDir ) {
+	if ( typeof packageDir !== 'string' ) {
+		throw new TypeError( 'Provide a path to a package directory.' );
 	}
 
+	const metadata = loadAndParsePackageJSONFile( packageDir );
 	lintObject( metadata );
 
-	return prepareMetadata( metadata );
+	return prepareMetadata( packageDir, metadata );
 }
 
-function loadAndParseFile( path ) {
+function loadAndParsePackageJSONFile( dirPath ) {
+	const path = joinPath( dirPath, 'package.json' );
+
 	if ( !existsSync( path ) ) {
-		throw new ReferenceError( 'File with given path does not exist.' );
+		throw new ReferenceError( 'The package.json does not exist in the provided location.' );
 	}
 
 	const contents = readFileSync( path, 'utf8' );
@@ -25,7 +29,7 @@ function loadAndParseFile( path ) {
 	try {
 		parsed = JSON.parse( contents );
 	} catch ( e ) {
-		throw new SyntaxError( 'Given file is not parsable as a correct JSON.' );
+		throw new SyntaxError( 'The package.json file is not parsable as a correct JSON.' );
 	}
 
 	return parsed;
@@ -111,13 +115,13 @@ function lintObject( obj ) {
 	}
 }
 
-function prepareMetadata( metadata ) {
+async function prepareMetadata( packageDir, metadata ) {
 	return {
 		name: metadata.name,
 		version: metadata.version,
 		author: prepareAuthorMetadata( metadata.author ),
 		license: metadata.license,
-		dist: prepareDistMetadata( metadata )
+		dist: await prepareDistMetadata( packageDir, metadata )
 	};
 }
 
@@ -129,12 +133,13 @@ function prepareAuthorMetadata( author ) {
 	return author.name;
 }
 
-function prepareDistMetadata( metadata ) {
+async function prepareDistMetadata( packageDir, metadata ) {
 	const subpaths = getSubPaths( metadata );
+	const exportMetadata = await Promise.all( subpaths.map( ( subPath ) => {
+		return prepareExportMetadata( packageDir, metadata, subPath );
+	} ) );
 
-	return subpaths.reduce( ( targets, subpath ) => {
-		const currentTargets = prepareExportMetadata( metadata, subpath );
-
+	return exportMetadata.reduce( ( targets, currentTargets ) => {
 		return { ...targets, ...currentTargets };
 	}, {} );
 }
@@ -159,23 +164,80 @@ function getSubPaths( metadata ) {
 	return subpaths;
 }
 
-function prepareExportMetadata( metadata, subPath ) {
-	const subPathFileName = subPath === '.' ? 'index' : subPath;
-	const subPathFilePath = subPathFileName.endsWith( '.js' ) ? subPathFileName : `${ subPathFileName }.js`;
+async function prepareExportMetadata( packageDir, metadata, subPath ) {
+	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const esmTarget = getESMTarget( metadata, subPath );
 	const cjsTarget = getCJSTarget( metadata, subPath );
+	const exportType = getEntryPointType( srcPath );
 	const exportMetadata = {
-		esm: esmTarget
+		esm: esmTarget,
+		type: exportType
 	};
 
 	if ( cjsTarget ) {
 		exportMetadata.cjs = cjsTarget;
 	}
 
+	if ( exportType === 'ts' ) {
+		const typesTarget = getTypesTarget( metadata, subPath );
+		const tsConfigPath = await getTSConfigPath( packageDir );
+
+		if ( typesTarget ) {
+			exportMetadata.types = typesTarget;
+		}
+
+		if ( tsConfigPath ) {
+			exportMetadata.tsConfig = tsConfigPath;
+		}
+	}
+
 	return {
 		[ srcPath ]: exportMetadata
 	};
+}
+
+async function getSubPathFilePath( packageDir, subPath ) {
+	if ( !globby ) {
+		const globbyModule = await import( 'globby' );
+		// eslint-disable-next-line require-atomic-updates
+		globby = globbyModule.globby;
+	}
+
+	const srcPath = joinPath( packageDir, 'src' );
+	const subPathFileName = subPath === '.' ? 'index' : subPath;
+	const subPathGlobPattern = `${ subPathFileName}.{mts,ts,mjs,js,cts,cjs}`;
+	const matchedFiles = await globby( subPathGlobPattern, {
+		cwd: srcPath
+	} );
+	const desirableEntryPoint = getEntryPoint( matchedFiles );
+
+	return desirableEntryPoint;
+}
+
+function getEntryPoint( matchedFiles ) {
+	const fileExtensions = [
+		'.mts',
+		'.ts',
+		'.mjs',
+		'.js',
+		'.cts',
+		'.cjs'
+	];
+	const orderedFiles = matchedFiles.sort( ( a, b ) => {
+		const aIndex = fileExtensions.indexOf( extname( a ) );
+		const bIndex = fileExtensions.indexOf( extname( b ) );
+
+		return aIndex - bIndex;
+	} );
+
+	return orderedFiles[ 0 ];
+}
+
+function getEntryPointType( srcPath ) {
+	const isTS = srcPath.toLowerCase().endsWith( 'ts' );
+
+	return isTS ? 'ts' : 'js';
 }
 
 function getESMTarget( metadata, subPath ) {
@@ -198,6 +260,16 @@ function getCJSTarget( metadata, subPath ) {
 	return exportsTarget;
 }
 
+function getTypesTarget( metadata, subPath ) {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'types' );
+
+	if ( subPath === '.' ) {
+		return exportsTarget || metadata.types;
+	}
+
+	return exportsTarget;
+}
+
 function getExportsTarget( metadata, subPath, type ) {
 	if ( !metadata.exports ) {
 		return null;
@@ -214,6 +286,24 @@ function getExportsTarget( metadata, subPath, type ) {
 	}
 
 	return null;
+}
+
+async function getTSConfigPath( packageDir ) {
+	const tsConfigGlobPattern = 'tsconfig?(.rlb).json';
+	const matchedFiles = await globby( tsConfigGlobPattern, {
+		cwd: packageDir
+	} );
+
+	if ( matchedFiles.length === 0 ) {
+		return null;
+	}
+
+	const rlbSpecificPath = matchedFiles.find( ( path ) => {
+		return path.endsWith( '.rlb.json' );
+	} );
+	const tsConfigPath = rlbSpecificPath || matchedFiles[ 0 ];
+
+	return tsConfigPath;
 }
 
 export default packageParser;

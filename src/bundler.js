@@ -1,17 +1,35 @@
+import { basename } from 'path';
+import { dirname } from 'path';
+import { resolve as resolvePath } from 'path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
-import { terser } from 'rollup-plugin-terser';
+import dts from 'rollup-plugin-dts';
+import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
+import typescript from '@rollup/plugin-typescript';
+import { rimraf } from 'rimraf';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
+
+/**
+ * @type {import('globby').globby}
+ */
+let globby;
 
 async function bundler( {
 	onWarn,
 	packageInfo
 } ) {
+	if ( !globby ) {
+		const globbyModule = await import( 'globby' );
+		// eslint-disable-next-line require-atomic-updates
+		globby = globbyModule.globby;
+	}
+
 	await Promise.all( bundleChunks( packageInfo, onWarn ) );
+	await removeLeftovers( packageInfo );
 }
 
 function bundleChunks( packageInfo, onWarn = () => {} ) {
@@ -24,7 +42,7 @@ function bundleChunks( packageInfo, onWarn = () => {} ) {
 
 async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } = {} ) {
 	const banner = generateBanner( packageInfo );
-	const inputConfig = getRollupInputConfig( source, onWarn );
+	const inputConfig = getRollupInputConfig( source, output, onWarn );
 
 	const otuputConfigESM = getRollupOutputConfig( output.esm, banner, 'esm' );
 
@@ -42,9 +60,17 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 	}
 
 	await Promise.all( bundlesPromises );
+
+	if ( output.types ) {
+		await bundleTypes( {
+			sourceFile: source,
+			outputFile: output.types,
+			onWarn
+		} );
+	}
 }
 
-function getRollupInputConfig( input, onwarn = () => {} ) {
+function getRollupInputConfig( input, output, onwarn = () => {} ) {
 	const plugins = [
 		convertCJS(),
 
@@ -77,6 +103,15 @@ function getRollupInputConfig( input, onwarn = () => {} ) {
 		terser()
 	];
 
+	// In case of TypeScript, we need to add the plugin.
+	// We need to add it before the Babel plugin, so it's at index 2.
+	// Yep, it's not too elegant…
+	if ( output.type === 'ts' ) {
+		plugins.splice( 2, 0, typescript( {
+			tsconfig: output.tsConfig ? output.tsConfig : false
+		} ) );
+	}
+
 	return {
 		input,
 		onwarn,
@@ -92,6 +127,65 @@ function getRollupOutputConfig( outputPath, banner, format = 'esm' ) {
 		file: outputPath,
 		exports: 'auto'
 	};
+}
+
+async function bundleTypes( {
+	sourceFile,
+	outputFile,
+	onWarn = () => {}
+} = {} ) {
+	const input = getOriginalDTsFilePath();
+	const rollupConfig = {
+		input,
+		plugins: [
+			dts()
+		],
+		onwarn: onWarn
+	};
+	const outputConfig = {
+		file: outputFile,
+		format: 'es'
+	};
+	const bundle = await rollup( rollupConfig );
+
+	await bundle.write( outputConfig );
+
+	function getOriginalDTsFilePath() {
+		const fileName = basename( sourceFile, '.ts' );
+		const originalFileName = `${ fileName }.d.ts`;
+		const declarationDirPath = dirname( outputFile );
+		const originalFilePath = resolvePath( declarationDirPath, originalFileName );
+
+		return originalFilePath;
+	}
+}
+
+async function removeLeftovers( packageInfo ) {
+	const distInfo = Object.entries( packageInfo.dist );
+	const allowedDefinitionFiles = distInfo.reduce( ( allowed, [ , output ] ) => {
+		if ( output.types ) {
+			allowed.push( output.types );
+		}
+
+		return allowed;
+	}, [] );
+
+	if ( allowedDefinitionFiles.length === 0 ) {
+		return;
+	}
+
+	const declarationDirPath = dirname( allowedDefinitionFiles[ 0 ] );
+	const allDefinitionFiles = await globby( [
+		'**/*.d.ts'
+	], {
+		cwd: declarationDirPath,
+		absolute: true
+	} );
+	const definitionFilesToRemove = allDefinitionFiles.filter( ( definitionFile ) => {
+		return !allowedDefinitionFiles.includes( definitionFile );
+	} );
+
+	return rimraf( definitionFilesToRemove );
 }
 
 export default bundler;
