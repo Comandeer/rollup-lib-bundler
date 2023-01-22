@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.17.0]
+## [0.17.0] – 2023-01-22
+### Added
+* [#220]: Support for bundling TypeScript projects.
+
 ### Changed
 * [#225]: Update dependencies, including major versions:
 	* `@rollup/plugin-babel` – `5.3.1` → `^6.0.3`;
@@ -219,6 +222,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#214]: https://github.com/Comandeer/rollup-lib-bundler/issues/214
 [#215]: https://github.com/Comandeer/rollup-lib-bundler/issues/215
 [#216]: https://github.com/Comandeer/rollup-lib-bundler/issues/216
+[#220]: https://github.com/Comandeer/rollup-lib-bundler/issues/220
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 
