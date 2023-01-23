@@ -1,12 +1,11 @@
 import { resolve as resolvePath } from 'path';
-import { existsSync } from 'fs';
-import { promises as fsPromises } from 'fs';
+import { access } from 'fs/promises';
+import { mkdir } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import createFixtureTest from './__helpers__/createFixtureTest.js';
-
-const { mkdir, writeFile } = fsPromises;
 
 const execPromise = promisify( exec );
 const binPath = resolvePath( __dirname, '..', 'bin', 'bundler' );
@@ -131,9 +130,7 @@ describe( 'CLI', () => {
 		const dummyFilePath = await createDummyDist( basicFixturePath );
 		await createCLITest( basicFixturePath )();
 
-		const isDummyFileAlive = existsSync( dummyFilePath );
-
-		expect( isDummyFileAlive ).to.equal( false );
+		await expect( access( dummyFilePath ) ).to.eventually.be.rejected;
 	} );
 } );
 

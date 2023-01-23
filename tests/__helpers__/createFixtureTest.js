@@ -14,7 +14,7 @@ function createFixtureTest( {
 		await cmdResultCheck( cmdResult );
 
 		if ( performFileCheck ) {
-			checkFiles( path, expected, { additionalCodeChecks } );
+			await checkFiles( path, expected, { additionalCodeChecks } );
 		}
 	};
 }

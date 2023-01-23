@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs';
-import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
+import { access } from 'fs/promises';
 import { resolve as resolvePath } from 'path';
 import { extname as getFileExtension } from 'path';
 import validateSourcemap from 'sourcemap-validator';
@@ -12,19 +12,21 @@ const checkStrategies = {
 	'.map': checkSourceMapFile
 };
 
-function checkFiles( path, files, {
+async function checkFiles( path, files, {
 	strategies = checkStrategies,
 	additionalCodeChecks
 } = {} ) {
-	files.forEach( ( file ) => {
+	/* eslint-disable no-await-in-loop */
+	for ( const file of files ) {
 		const filePath = resolvePath( path, file );
 
-		expect( existsSync( filePath ), `File ${ filePath } exists` ).to.equal( true );
-		checkBundledContent( filePath, {
+		await expect( access( filePath ), `File ${ filePath } exists` ).to.eventually.be.fulfilled;
+		await checkBundledContent( filePath, {
 			strategies,
 			additionalCodeChecks
 		} );
-	} );
+	}
+	/* eslint-enable no-await-in-loop */
 }
 
 function checkBanner( fileContent ) {
@@ -36,12 +38,12 @@ function checkBanner( fileContent ) {
 	expect( match ).to.have.lengthOf( 1 );
 }
 
-function checkJSFile( path, code, { additionalCodeChecks } ) {
+async function checkJSFile( path, code, { additionalCodeChecks } ) {
 	checkBanner( code );
 	checkSourceMapReference( code );
 
 	if ( typeof additionalCodeChecks === 'function' ) {
-		additionalCodeChecks( path, code );
+		await additionalCodeChecks( path, code );
 	}
 }
 
@@ -51,14 +53,14 @@ function checkSourceMapReference( fileContent ) {
 	expect( fileContent, 'sourcemap reference' ).to.match( sourceMapReferenceRegex );
 }
 
-function checkSourceMapFile( path, sourcemap ) {
+async function checkSourceMapFile( path, sourcemap ) {
 	const jsFilePath = path.replace( /\.map$/, '' );
-	const jsCode = readFileSync( jsFilePath, 'utf8' );
+	const jsCode = await readFile( jsFilePath, 'utf8' );
 
 	validateSourcemap( jsCode, sourcemap );
 }
 
-function checkBundledContent( path, {
+async function checkBundledContent( path, {
 	strategies = checkStrategies,
 	additionalCodeChecks
 } = {} ) {
@@ -69,7 +71,7 @@ function checkBundledContent( path, {
 		return;
 	}
 
-	const code = readFileSync( path, 'utf8' );
+	const code = await readFile( path, 'utf8' );
 
 	strategy( path, code, { additionalCodeChecks } );
 }
