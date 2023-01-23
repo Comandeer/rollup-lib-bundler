@@ -6,12 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.18.0]
+### Changed
+* [#209]: **BREAKING CHANGE**: parsing the project's `package.json` is no longer blocking as all file operations were rewritten to be asynchronous.
+
 ## [0.17.0] – 2023-01-22
 ### Added
 * [#220]: Support for bundling TypeScript projects.
 
 ### Changed
-* [#225]: Update dependencies, including major versions:
+* [#225]: **BREAKING CHANGE**: Update dependencies, including major versions:
 	* `@rollup/plugin-babel` – `5.3.1` → `^6.0.3`;
 	* `@rollup/plugin-commonjs` – `22.0.2` → `^24.0.0`;
 	* `@rollup/plugin-json` – `4.1.0` → `^6.0.0`;
@@ -218,6 +222,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#202]: https://github.com/Comandeer/rollup-lib-bundler/issues/202
 [#204]: https://github.com/Comandeer/rollup-lib-bundler/issues/204
 [#208]: https://github.com/Comandeer/rollup-lib-bundler/issues/208
+[#209]: https://github.com/Comandeer/rollup-lib-bundler/issues/209
 [#212]: https://github.com/Comandeer/rollup-lib-bundler/issues/212
 [#214]: https://github.com/Comandeer/rollup-lib-bundler/issues/214
 [#215]: https://github.com/Comandeer/rollup-lib-bundler/issues/215
@@ -226,6 +231,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 
+[0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.1...v0.16.0
