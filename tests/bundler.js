@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFile } from 'fs/promises';
 import { resolve as resolvePath } from 'path';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import { checkFiles } from './__helpers__/bundleChecks.js';
@@ -42,7 +42,7 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		checkFiles( testPackageFixture, [
+		await checkFiles( testPackageFixture, [
 			'dist/es5.js',
 			'dist/es5.js.map',
 			'dist/es2015.js',
@@ -71,7 +71,7 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		checkFiles( subPathExportsFixture, [
+		await checkFiles( subPathExportsFixture, [
 			'dist/es5.cjs',
 			'dist/es5.cjs.map',
 			'dist/es6.mjs',
@@ -93,8 +93,8 @@ describe( 'bundler', () => {
 		const distPath = resolvePath( testPackageFixture, 'dist' );
 		const cjsPath = resolvePath( distPath, 'es5.js' );
 		const esmPath = resolvePath( distPath, 'es2015.js' );
-		const cjsCode = readFileSync( cjsPath, 'utf8' );
-		const esmCode = readFileSync( esmPath, 'utf8' );
+		const cjsCode = await readFile( cjsPath, 'utf8' );
+		const esmCode = await readFile( esmPath, 'utf8' );
 
 		checkBanner( cjsCode );
 		checkBanner( esmCode );
@@ -123,8 +123,8 @@ describe( 'bundler', () => {
 
 		const cjsPath = resolvePath( distPath, 'not-related-name.cjs' );
 		const esmPath = resolvePath( distPath, 'also-not-related-name.js' );
-		const cjsCode = readFileSync( cjsPath, 'utf8' );
-		const esmCode = readFileSync( esmPath, 'utf8' );
+		const cjsCode = await readFile( cjsPath, 'utf8' );
+		const esmCode = await readFile( esmPath, 'utf8' );
 
 		checkBanner( cjsCode );
 		checkBanner( esmCode );
@@ -143,8 +143,8 @@ describe( 'bundler', () => {
 
 		const mapES5Path = resolvePath( distPath, 'es5.js.map' );
 		const mapES2015Path = resolvePath( distPath, 'es2015.js.map' );
-		const mapES5 = JSON.parse( readFileSync( mapES5Path, 'utf8' ) );
-		const mapES2015 = JSON.parse( readFileSync( mapES2015Path, 'utf8' ) );
+		const mapES5 = JSON.parse( await readFile( mapES5Path, 'utf8' ) );
+		const mapES2015 = JSON.parse( await readFile( mapES2015Path, 'utf8' ) );
 
 		expect( mapES5.mappings ).to.match( correctMappingsRegex );
 		expect( mapES2015.mappings ).to.match( correctMappingsRegex );
@@ -161,7 +161,7 @@ describe( 'bundler', () => {
 
 		const distPath = resolvePath( fixturesPath, 'jsonPackage', 'dist' );
 
-		checkFiles( distPath, [
+		await checkFiles( distPath, [
 			'es5.js',
 			'es5.js.map',
 			'es2015.js',
@@ -216,7 +216,7 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		checkFiles( noCJSPackageFixture, [
+		await checkFiles( noCJSPackageFixture, [
 			'dist/package.mjs',
 			'dist/package.mjs.map'
 		] );
@@ -243,7 +243,7 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		checkFiles( noCJSSubPathExportsFixture, [
+		await checkFiles( noCJSSubPathExportsFixture, [
 			'dist/es6.mjs',
 			'dist/es6.mjs.map',
 			'dist/also-not-related-name.js',
@@ -261,7 +261,7 @@ describe( 'bundler', () => {
 
 		const distPath = resolvePath( fixturesPath, 'dynamicExternalImport', 'dist' );
 
-		checkFiles( distPath, [
+		await checkFiles( distPath, [
 			'es5.js',
 			'es5.js.map',
 			'es2015.js',
@@ -307,7 +307,7 @@ describe( 'bundler', () => {
 				packageInfo
 			} );
 
-			checkFiles( tsPackageFixture, [
+			await checkFiles( tsPackageFixture, [
 				'dist/index.cjs',
 				'dist/index.cjs.map',
 				'dist/index.mjs',

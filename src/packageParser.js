@@ -1,5 +1,5 @@
-import { existsSync } from 'fs';
-import { readFileSync } from 'fs';
+import { access } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import { extname } from 'path';
 import { join as joinPath } from 'path';
 
@@ -10,20 +10,22 @@ async function packageParser( packageDir ) {
 		throw new TypeError( 'Provide a path to a package directory.' );
 	}
 
-	const metadata = loadAndParsePackageJSONFile( packageDir );
+	const metadata = await loadAndParsePackageJSONFile( packageDir );
 	lintObject( metadata );
 
 	return prepareMetadata( packageDir, metadata );
 }
 
-function loadAndParsePackageJSONFile( dirPath ) {
+async function loadAndParsePackageJSONFile( dirPath ) {
 	const path = joinPath( dirPath, 'package.json' );
 
-	if ( !existsSync( path ) ) {
+	try {
+		await access( path );
+	} catch {
 		throw new ReferenceError( 'The package.json does not exist in the provided location.' );
 	}
 
-	const contents = readFileSync( path, 'utf8' );
+	const contents = await readFile( path, 'utf8' );
 	let parsed;
 
 	try {
