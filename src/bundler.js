@@ -163,29 +163,36 @@ async function bundleTypes( {
 async function removeLeftovers( packageInfo ) {
 	const distInfo = Object.entries( packageInfo.dist );
 	const allowedDefinitionFiles = distInfo.reduce( ( allowed, [ , output ] ) => {
-		if ( output.types ) {
-			allowed.push( output.types );
+		if ( !output.types ) {
+			return allowed;
 		}
 
+		const absoluteTypesPath = resolvePath( packageInfo.project, output.types );
+		const declarationDirPath = dirname( absoluteTypesPath );
+
+		if ( !allowed.has( declarationDirPath ) ) {
+			allowed.set( declarationDirPath, new Set() );
+		}
+
+		allowed.get( declarationDirPath ).add( absoluteTypesPath );
+
 		return allowed;
-	}, [] );
+	}, new Map() );
+	const rimrafPromises = [ ...allowedDefinitionFiles ].map( async ( [ dir, allowedDefinitionFiles ] ) => {
+		const allDefinitionFiles = await globby( [
+			'**/*.d.ts'
+		], {
+			cwd: dir,
+			absolute: true
+		} );
+		const definitionFilesToRemove = allDefinitionFiles.filter( ( file ) => {
+			return !allowedDefinitionFiles.has( file );
+		} );
 
-	if ( allowedDefinitionFiles.length === 0 ) {
-		return;
-	}
-
-	const declarationDirPath = dirname( allowedDefinitionFiles[ 0 ] );
-	const allDefinitionFiles = await globby( [
-		'**/*.d.ts'
-	], {
-		cwd: declarationDirPath,
-		absolute: true
-	} );
-	const definitionFilesToRemove = allDefinitionFiles.filter( ( definitionFile ) => {
-		return !allowedDefinitionFiles.includes( definitionFile );
+		return rimraf( definitionFilesToRemove );
 	} );
 
-	return rimraf( definitionFilesToRemove );
+	return Promise.all( rimrafPromises );
 }
 
 export default bundler;
