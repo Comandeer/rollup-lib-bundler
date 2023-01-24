@@ -1,6 +1,6 @@
-import { Console } from 'console';
-import { Writable as WritableStream } from 'stream';
-import { Duplex as DuplexStream } from 'stream';
+import { Console } from 'node:console';
+import { Writable as WritableStream } from 'node:stream';
+import { Duplex as DuplexStream } from 'node:stream';
 import Spinner from '@comandeer/cli-spinner';
 import consoleControlStrings from 'console-control-strings';
 

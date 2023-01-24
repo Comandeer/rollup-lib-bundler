@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises';
-import { resolve as resolvePath } from 'path';
+import { readFile } from 'node:fs/promises';
+import { resolve as resolvePath } from 'node:path';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import { checkFiles } from './__helpers__/bundleChecks.js';
 import { checkBanner } from './__helpers__/bundleChecks.js';

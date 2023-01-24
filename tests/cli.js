@@ -1,9 +1,9 @@
-import { resolve as resolvePath } from 'path';
-import { access } from 'fs/promises';
-import { mkdir } from 'fs/promises';
-import { writeFile } from 'fs/promises';
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { exec } from 'node:child_process';
+import { access } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
+import { resolve as resolvePath } from 'node:path';
+import { promisify } from 'node:util';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import createFixtureTest from './__helpers__/createFixtureTest.js';
 

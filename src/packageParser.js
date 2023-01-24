@@ -1,7 +1,7 @@
-import { access } from 'fs/promises';
-import { readFile } from 'fs/promises';
-import { extname } from 'path';
-import { join as joinPath } from 'path';
+import { access } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { extname } from 'node:path';
+import { join as joinPath } from 'node:path';
 
 let globby;
 
