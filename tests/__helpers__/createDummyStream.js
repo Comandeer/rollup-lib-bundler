@@ -1,5 +1,5 @@
-import { Duplex as DuplexStream } from 'stream';
-import { Writable as WritableStream } from 'stream';
+import { Duplex as DuplexStream } from 'node:stream';
+import { Writable as WritableStream } from 'node:stream';
 
 function createDummyStream( {
 	type = 'writable',

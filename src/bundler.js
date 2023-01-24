@@ -1,6 +1,6 @@
-import { basename } from 'path';
-import { dirname } from 'path';
-import { resolve as resolvePath } from 'path';
+import { basename } from 'node:path';
+import { dirname } from 'node:path';
+import { resolve as resolvePath } from 'node:path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';

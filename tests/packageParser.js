@@ -1,5 +1,5 @@
-import { resolve as resolvePath } from 'path';
-import { sep as pathSeparator } from 'path';
+import { resolve as resolvePath } from 'node:path';
+import { sep as pathSeparator } from 'node:path';
 import mockFS from 'mock-fs';
 import packageParser from '../src/packageParser.js';
 import { deepClone } from './__helpers__/utils';

@@ -1,7 +1,7 @@
-import { readFile } from 'fs/promises';
-import { access } from 'fs/promises';
-import { resolve as resolvePath } from 'path';
-import { extname as getFileExtension } from 'path';
+import { readFile } from 'node:fs/promises';
+import { access } from 'node:fs/promises';
+import { resolve as resolvePath } from 'node:path';
+import { extname as getFileExtension } from 'node:path';
 import validateSourcemap from 'sourcemap-validator';
 
 const checkStrategies = {
