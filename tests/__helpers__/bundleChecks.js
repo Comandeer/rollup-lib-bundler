@@ -1,8 +1,12 @@
 import { readFile } from 'node:fs/promises';
-import { access } from 'node:fs/promises';
 import { resolve as resolvePath } from 'node:path';
 import { extname as getFileExtension } from 'node:path';
 import validateSourcemap from 'sourcemap-validator';
+
+/**
+ * @type {import('globby').globby}
+ */
+let globby;
 
 const checkStrategies = {
 	'.js': checkJSFile,
@@ -12,15 +16,32 @@ const checkStrategies = {
 	'.map': checkSourceMapFile
 };
 
-async function checkFiles( path, files, {
+async function checkDistFiles( fixturePath, expectedFiles, {
 	strategies = checkStrategies,
 	additionalCodeChecks
 } = {} ) {
-	/* eslint-disable no-await-in-loop */
-	for ( const file of files ) {
-		const filePath = resolvePath( path, file );
+	if ( !globby ) {
+		const globbyModule = await import( 'globby' );
+		// eslint-disable-next-line require-atomic-updates
+		globby = globbyModule.globby;
+	}
 
-		await expect( access( filePath ), `File ${ filePath } exists` ).to.eventually.be.fulfilled;
+	const distPathRegex = /dist[/\\]?$/g;
+	const distPath = distPathRegex.test( fixturePath ) ? fixturePath : resolvePath( fixturePath, 'dist' );
+	const actualFiles = await globby( '**/*', {
+		cwd: distPath,
+		onlyFiles: true,
+		absolute: true
+	} );
+
+	expectedFiles = expectedFiles.map( ( file ) => {
+		return resolvePath( distPath, file );
+	} );
+
+	expect( actualFiles ).to.have.members( expectedFiles );
+
+	/* eslint-disable no-await-in-loop */
+	for ( const filePath of expectedFiles ) {
 		await checkBundledContent( filePath, {
 			strategies,
 			additionalCodeChecks
@@ -76,6 +97,6 @@ async function checkBundledContent( path, {
 	strategy( path, code, { additionalCodeChecks } );
 }
 
-export { checkFiles };
+export { checkDistFiles };
 export { checkBanner };
 export { checkBundledContent };

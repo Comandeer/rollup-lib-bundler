@@ -1,4 +1,4 @@
-import { checkFiles } from './bundleChecks.js';
+import { checkDistFiles } from './bundleChecks.js';
 
 function createFixtureTest( {
 	path = process.cwd(),
@@ -14,7 +14,7 @@ function createFixtureTest( {
 		await cmdResultCheck( cmdResult );
 
 		if ( performFileCheck ) {
-			await checkFiles( path, expected, { additionalCodeChecks } );
+			await checkDistFiles( path, expected, { additionalCodeChecks } );
 		}
 	};
 }
