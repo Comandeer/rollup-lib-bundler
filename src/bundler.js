@@ -1,6 +1,7 @@
 import { basename } from 'node:path';
 import { dirname } from 'node:path';
 import { resolve as resolvePath } from 'node:path';
+import normalizePath from 'normalize-path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
@@ -174,7 +175,7 @@ async function removeLeftovers( packageInfo ) {
 			allowed.set( declarationDirPath, new Set() );
 		}
 
-		allowed.get( declarationDirPath ).add( absoluteTypesPath );
+		allowed.get( declarationDirPath ).add( normalizePath( absoluteTypesPath ) );
 
 		return allowed;
 	}, new Map() );
