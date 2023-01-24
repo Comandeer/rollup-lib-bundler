@@ -16,6 +16,7 @@ const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
 const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPackage' );
 const noCJSPackageFixturePath = resolvePath( fixturesPath, 'noCJSPackage' );
 const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
+const tsFixturePath = resolvePath( fixturesPath, 'tsPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
@@ -103,6 +104,28 @@ describe( 'CLI', () => {
 				expect( stderr ).not.to.include( 'Bundling failed!' );
 				expect( stderr ).not.to.include( '🚨Error🚨' );
 				expect( stderr ).to.include( 'Skipping CJS build for' );
+			}
+		} )(); // createCLITest() creates a test function, so it needs to be called.
+	} );
+
+	// #220, #237
+	it( 'bundles TypeScript package', () => {
+		const outputPath = resolvePath( tsFixturePath, 'dist' );
+
+		return createCLITest( tsFixturePath, {
+			expected: [
+				resolvePath( outputPath, 'index.cjs' ),
+				resolvePath( outputPath, 'index.cjs.map' ),
+				resolvePath( outputPath, 'index.mjs' ),
+				resolvePath( outputPath, 'index.mjs.map' ),
+				resolvePath( outputPath, 'chunk.cjs' ),
+				resolvePath( outputPath, 'chunk.cjs.map' ),
+				resolvePath( outputPath, 'chunk.mjs' ),
+				resolvePath( outputPath, 'chunk.mjs.map' )
+			],
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
 			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
