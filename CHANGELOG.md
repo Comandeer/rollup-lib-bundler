@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 * [#209]: **BREAKING CHANGE**: parsing the project's `package.json` is no longer blocking as all file operations were rewritten to be asynchronous.
 
+### Fixed
+* [#240]: bundling types incorrectly removes bundled types definitions right after creating them.
+
 ## [0.17.0] – 2023-01-22
 ### Added
 * [#220]: Support for bundling TypeScript projects.
@@ -230,8 +233,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#220]: https://github.com/Comandeer/rollup-lib-bundler/issues/220
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
+[#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 
-[0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
+[0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.15.1...v0.16.0
