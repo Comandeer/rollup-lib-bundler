@@ -36,6 +36,9 @@ async function checkDistFiles( fixturePath, expectedFiles, {
 
 	expectedFiles = expectedFiles.map( ( file ) => {
 		return resolvePath( distPath, file );
+	} ).map( ( file ) => {
+		// We need to normalize \ to / because globby returns paths with / on Windows.
+		return file.replace(  /\\/g, '/' );
 	} );
 
 	expect( actualFiles ).to.have.members( expectedFiles );
