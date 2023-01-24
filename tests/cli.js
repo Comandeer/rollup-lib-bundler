@@ -20,12 +20,8 @@ const tsFixturePath = resolvePath( fixturesPath, 'tsPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
-	before( () => {
-		removeArtifacts( fixturesPath );
-	} );
-
-	after( () => {
-		removeArtifacts( fixturesPath );
+	after( async () => {
+		return removeArtifacts( fixturesPath );
 	} );
 
 	it( 'bundles files based on current working directory', createCLITest( basicFixturePath ) );
