@@ -119,6 +119,7 @@ function lintObject( obj ) {
 
 async function prepareMetadata( packageDir, metadata ) {
 	return {
+		project: packageDir,
 		name: metadata.name,
 		version: metadata.version,
 		author: prepareAuthorMetadata( metadata.author ),

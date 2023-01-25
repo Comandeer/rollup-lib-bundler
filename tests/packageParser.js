@@ -301,6 +301,7 @@ describe( 'packageParser', () => {
 		mockPackage( JSON.stringify( fixtures.valid ) );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
+			project: mockedPackagePath,
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'MIT',
@@ -320,6 +321,7 @@ describe( 'packageParser', () => {
 		mockPackage( JSON.stringify( fixtures.validExports ) );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
+			project: mockedPackagePath,
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'MIT',
@@ -339,6 +341,7 @@ describe( 'packageParser', () => {
 		mockPackage( JSON.stringify( fixtures.validSubPathExports ), srcFixtures.subPath );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
+			project: mockedPackagePath,
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'ISC',
@@ -363,6 +366,7 @@ describe( 'packageParser', () => {
 		mockPackage( JSON.stringify( fixtures.noCJSExports ) );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
+			project: mockedPackagePath,
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'MIT',
@@ -381,6 +385,7 @@ describe( 'packageParser', () => {
 		mockPackage( JSON.stringify( fixtures.noCJSSubPathExports ), srcFixtures.subPath );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
+			project: mockedPackagePath,
 			name: 'test-package',
 			author: 'Comandeer',
 			license: 'ISC',

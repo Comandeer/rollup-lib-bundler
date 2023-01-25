@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'node:path';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
-import { checkFiles } from './__helpers__/bundleChecks.js';
+import { checkDistFiles } from './__helpers__/bundleChecks.js';
 import { checkBanner } from './__helpers__/bundleChecks.js';
 import bundler from '../src/bundler.js';
 
@@ -42,11 +42,11 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		await checkFiles( testPackageFixture, [
-			'dist/es5.js',
-			'dist/es5.js.map',
-			'dist/es2015.js',
-			'dist/es2015.js.map'
+		await checkDistFiles( testPackageFixture, [
+			'es5.js',
+			'es5.js.map',
+			'es2015.js',
+			'es2015.js.map'
 		] );
 	} );
 
@@ -71,15 +71,15 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		await checkFiles( subPathExportsFixture, [
-			'dist/es5.cjs',
-			'dist/es5.cjs.map',
-			'dist/es6.mjs',
-			'dist/es6.mjs.map',
-			'dist/not-related-name.cjs',
-			'dist/not-related-name.cjs.map',
-			'dist/also-not-related-name.js',
-			'dist/also-not-related-name.js.map'
+		await checkDistFiles( subPathExportsFixture, [
+			'es5.cjs',
+			'es5.cjs.map',
+			'es6.mjs',
+			'es6.mjs.map',
+			'not-related-name.cjs',
+			'not-related-name.cjs.map',
+			'also-not-related-name.js',
+			'also-not-related-name.js.map'
 		] );
 	} );
 
@@ -159,9 +159,9 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		const distPath = resolvePath( fixturesPath, 'jsonPackage', 'dist' );
+		const fixturePath = resolvePath( fixturesPath, 'jsonPackage' );
 
-		await checkFiles( distPath, [
+		await checkDistFiles( fixturePath, [
 			'es5.js',
 			'es5.js.map',
 			'es2015.js',
@@ -216,9 +216,9 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		await checkFiles( noCJSPackageFixture, [
-			'dist/package.mjs',
-			'dist/package.mjs.map'
+		await checkDistFiles( noCJSPackageFixture, [
+			'package.mjs',
+			'package.mjs.map'
 		] );
 	} );
 
@@ -243,11 +243,11 @@ describe( 'bundler', () => {
 			packageInfo
 		} );
 
-		await checkFiles( noCJSSubPathExportsFixture, [
-			'dist/es6.mjs',
-			'dist/es6.mjs.map',
-			'dist/also-not-related-name.js',
-			'dist/also-not-related-name.js.map'
+		await checkDistFiles( noCJSSubPathExportsFixture, [
+			'es6.mjs',
+			'es6.mjs.map',
+			'also-not-related-name.js',
+			'also-not-related-name.js.map'
 		] );
 	} );
 
@@ -261,7 +261,7 @@ describe( 'bundler', () => {
 
 		const distPath = resolvePath( fixturesPath, 'dynamicExternalImport', 'dist' );
 
-		await checkFiles( distPath, [
+		await checkDistFiles( distPath, [
 			'es5.js',
 			'es5.js.map',
 			'es2015.js',
@@ -307,15 +307,16 @@ describe( 'bundler', () => {
 				packageInfo
 			} );
 
-			await checkFiles( tsPackageFixture, [
-				'dist/index.cjs',
-				'dist/index.cjs.map',
-				'dist/index.mjs',
-				'dist/index.mjs.map',
-				'dist/chunk.cjs',
-				'dist/chunk.cjs.map',
-				'dist/chunk.mjs',
-				'dist/chunk.mjs.map'
+			await checkDistFiles( tsPackageFixture, [
+				'index.cjs',
+				'index.cjs.map',
+				'index.d.ts',
+				'index.mjs',
+				'index.mjs.map',
+				'chunk.cjs',
+				'chunk.cjs.map',
+				'chunk.mjs',
+				'chunk.mjs.map'
 			] );
 		} );
 	} );

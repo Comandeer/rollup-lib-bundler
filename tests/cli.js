@@ -16,15 +16,12 @@ const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
 const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPackage' );
 const noCJSPackageFixturePath = resolvePath( fixturesPath, 'noCJSPackage' );
 const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
+const tsFixturePath = resolvePath( fixturesPath, 'tsPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
-	before( () => {
-		removeArtifacts( fixturesPath );
-	} );
-
-	after( () => {
-		removeArtifacts( fixturesPath );
+	after( async () => {
+		return removeArtifacts( fixturesPath );
 	} );
 
 	it( 'bundles files based on current working directory', createCLITest( basicFixturePath ) );
@@ -43,18 +40,16 @@ describe( 'CLI', () => {
 
 	// #185
 	it( 'bundles package based on subpath exports fields', () => {
-		const outputPath = resolvePath( subPathExportsFixturePath, 'dist' );
-
 		return createCLITest( subPathExportsFixturePath, {
 			expected: [
-				resolvePath( outputPath, 'es5.cjs' ),
-				resolvePath( outputPath, 'es5.cjs.map' ),
-				resolvePath( outputPath, 'es6.mjs' ),
-				resolvePath( outputPath, 'es6.mjs.map' ),
-				resolvePath( outputPath, 'not-related-name.cjs' ),
-				resolvePath( outputPath, 'not-related-name.cjs.map' ),
-				resolvePath( outputPath, 'also-not-related-name.js' ),
-				resolvePath( outputPath, 'also-not-related-name.js.map' )
+				'es5.cjs',
+				'es5.cjs.map',
+				'es6.mjs',
+				'es6.mjs.map',
+				'not-related-name.cjs',
+				'not-related-name.cjs.map',
+				'also-not-related-name.js',
+				'also-not-related-name.js.map'
 			],
 			additionalCodeChecks( path, code ) {
 				const isChunk = path.includes( 'related-name' );
@@ -67,12 +62,10 @@ describe( 'CLI', () => {
 
 	// #215
 	it( 'bundles ESM-only package based on exports fields', () => {
-		const outputPath = resolvePath( noCJSPackageFixturePath, 'dist' );
-
 		return createCLITest( noCJSPackageFixturePath, {
 			expected: [
-				resolvePath( outputPath, 'package.mjs' ),
-				resolvePath( outputPath, 'package.mjs.map' )
+				'package.mjs',
+				'package.mjs.map'
 			],
 			cmdResultCheck( { stderr } ) {
 				expect( stderr ).not.to.include( 'Bundling failed!' );
@@ -84,14 +77,12 @@ describe( 'CLI', () => {
 
 	// #215
 	it( 'bundles ESM-only package based on subpath exports fields', () => {
-		const outputPath = resolvePath( noCJSSubPathExportsFixturePath, 'dist' );
-
 		return createCLITest( noCJSSubPathExportsFixturePath, {
 			expected: [
-				resolvePath( outputPath, 'es6.mjs' ),
-				resolvePath( outputPath, 'es6.mjs.map' ),
-				resolvePath( outputPath, 'also-not-related-name.js' ),
-				resolvePath( outputPath, 'also-not-related-name.js.map' )
+				'es6.mjs',
+				'es6.mjs.map',
+				'also-not-related-name.js',
+				'also-not-related-name.js.map'
 			],
 			additionalCodeChecks( path, code ) {
 				const isChunk = path.includes( 'related-name' );
@@ -103,6 +94,27 @@ describe( 'CLI', () => {
 				expect( stderr ).not.to.include( 'Bundling failed!' );
 				expect( stderr ).not.to.include( '🚨Error🚨' );
 				expect( stderr ).to.include( 'Skipping CJS build for' );
+			}
+		} )(); // createCLITest() creates a test function, so it needs to be called.
+	} );
+
+	// #220, #237
+	it( 'bundles TypeScript package', () => {
+		return createCLITest( tsFixturePath, {
+			expected: [
+				'index.cjs',
+				'index.cjs.map',
+				'index.d.ts',
+				'index.mjs',
+				'index.mjs.map',
+				'chunk.cjs',
+				'chunk.cjs.map',
+				'chunk.mjs',
+				'chunk.mjs.map'
+			],
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
 			}
 		} )(); // createCLITest() creates a test function, so it needs to be called.
 	} );
@@ -135,18 +147,16 @@ describe( 'CLI', () => {
 } );
 
 function createCLITest( fixturePath, options = {} ) {
-	const outputPath = resolvePath( fixturePath, 'dist' );
-
 	return createFixtureTest( {
 		cmd: () => {
 			return execPromise( `node ${ binPath }`, { cwd: fixturePath } );
 		},
 		path: fixturePath,
 		expected: [
-			resolvePath( outputPath, 'es5.js' ),
-			resolvePath( outputPath, 'es5.js.map' ),
-			resolvePath( outputPath, 'es2015.js' ),
-			resolvePath( outputPath, 'es2015.js.map' )
+			'es5.js',
+			'es5.js.map',
+			'es2015.js',
+			'es2015.js.map'
 		],
 		...options
 	} );
