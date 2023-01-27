@@ -17,6 +17,7 @@ const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPack
 const noCJSPackageFixturePath = resolvePath( fixturesPath, 'noCJSPackage' );
 const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
 const tsFixturePath = resolvePath( fixturesPath, 'tsPackage' );
+const tsComplexFixturePath = resolvePath( fixturesPath, 'tsComplexPackage' );
 const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 
 describe( 'CLI', () => {
@@ -111,6 +112,28 @@ describe( 'CLI', () => {
 				'chunk.cjs.map',
 				'chunk.mjs',
 				'chunk.mjs.map'
+			],
+			cmdResultCheck( { stderr } ) {
+				expect( stderr ).not.to.include( 'Bundling failed!' );
+				expect( stderr ).not.to.include( '🚨Error🚨' );
+			}
+		} )(); // createCLITest() creates a test function, so it needs to be called.
+	} );
+
+	// #242
+	it( 'bundles TypeScript package with complex directory structure', () => {
+		return createCLITest( tsComplexFixturePath, {
+			expected: [
+				'index.cjs',
+				'index.cjs.map',
+				'index.d.ts',
+				'index.mjs',
+				'index.mjs.map',
+				'submodule.d.ts',
+				'subdir/submodule.mjs',
+				'subdir/submodule.mjs.map',
+				'subdir/submodule.cjs',
+				'subdir/submodule.cjs.map'
 			],
 			cmdResultCheck( { stderr } ) {
 				expect( stderr ).not.to.include( 'Bundling failed!' );
