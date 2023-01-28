@@ -1,7 +1,7 @@
-import { basename } from 'node:path';
+import { mkdir } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { resolve as resolvePath } from 'node:path';
-import normalizePath from 'normalize-path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
@@ -10,7 +10,7 @@ import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
 import typescript from '@rollup/plugin-typescript';
-import { rimraf } from 'rimraf';
+import ts from 'typescript';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
@@ -18,6 +18,11 @@ import { node as nodeTarget } from './targets.js';
  * @type {import('globby').globby}
  */
 let globby;
+
+/**
+ * @type {import('tempy').temporaryDirectoryTask}
+ */
+let temporaryDirectoryTask;
 
 async function bundler( {
 	onWarn,
@@ -29,8 +34,13 @@ async function bundler( {
 		globby = globbyModule.globby;
 	}
 
+	if ( !temporaryDirectoryTask ) {
+		const tempyModule = await import( 'tempy' );
+		// eslint-disable-next-line require-atomic-updates
+		temporaryDirectoryTask = tempyModule.temporaryDirectoryTask;
+	}
+
 	await Promise.all( bundleChunks( packageInfo, onWarn ) );
-	await removeLeftovers( packageInfo );
 }
 
 function bundleChunks( packageInfo, onWarn = () => {} ) {
@@ -64,8 +74,10 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 
 	if ( output.types ) {
 		await bundleTypes( {
+			project: packageInfo.project,
 			sourceFile: source,
 			outputFile: output.types,
+			tsConfig: output.tsConfig,
 			onWarn
 		} );
 	}
@@ -109,7 +121,8 @@ function getRollupInputConfig( input, output, onwarn = () => {} ) {
 	// Yep, it's not too elegant…
 	if ( output.type === 'ts' ) {
 		plugins.splice( 2, 0, typescript( {
-			tsconfig: output.tsConfig ? output.tsConfig : false
+			tsconfig: output.tsConfig ? output.tsConfig : false,
+			declaration: false
 		} ) );
 	}
 
@@ -131,69 +144,91 @@ function getRollupOutputConfig( outputPath, banner, format = 'esm' ) {
 }
 
 async function bundleTypes( {
+	project,
 	sourceFile,
 	outputFile,
 	onWarn = () => {}
 } = {} ) {
-	const input = getOriginalDTsFilePath();
-	const rollupConfig = {
-		input,
-		plugins: [
-			dts()
-		],
-		onwarn: onWarn
-	};
-	const outputConfig = {
-		file: outputFile,
-		format: 'es'
-	};
-	const bundle = await rollup( rollupConfig );
+	return temporaryDirectoryTask( async ( outDirPath ) => {
+		const tsFiles = await globby( 'src/**/*.ts', {
+			cwd: project
+		} );
+		const compilerOptions = {
+			declaration: true,
+			emitDeclarationOnly: true
+		};
+		const emittedFiles = {};
 
-	await bundle.write( outputConfig );
+		// Just to be sure…
+		delete compilerOptions.declarationDir;
 
-	function getOriginalDTsFilePath() {
-		const fileName = basename( sourceFile, '.ts' );
-		const originalFileName = `${ fileName }.d.ts`;
-		const declarationDirPath = dirname( outputFile );
-		const originalFilePath = resolvePath( declarationDirPath, originalFileName );
+		const host = ts.createCompilerHost( compilerOptions );
+		host.writeFile = ( fileName, contents ) => {
+			emittedFiles[ fileName ] = contents;
+		};
+
+		// Prepare and emit the d.ts files
+		const program = ts.createProgram( tsFiles, compilerOptions, host );
+		program.emit();
+
+		const fsPromises = Object.entries( emittedFiles ).map( async ( [ name, content ] ) => {
+			const filePath = resolvePath( outDirPath, name );
+			const dirPath = dirname( filePath );
+
+			await mkdir( dirPath, {
+				recursive: true
+			} );
+
+			return writeFile( filePath, content, {
+				encoding: 'utf-8',
+				flag: 'w'
+			} );
+		} );
+
+		await Promise.all( fsPromises );
+
+		const input = getOriginalDTsFilePath( outDirPath );
+		const rollupConfig = {
+			input,
+			plugins: [
+				{
+					// Fix "CWD" issue.
+					// See: https://github.com/rollup/rollup/issues/558.
+					resolveId: ( imported ) => {
+						if ( imported.startsWith( outDirPath ) ) {
+							return imported;
+						}
+
+						return null;
+					}
+				},
+
+				dts()
+			],
+			onwarn: onWarn
+		};
+		const outputConfig = {
+			file: outputFile,
+			format: 'es'
+		};
+		const bundle = await rollup( rollupConfig );
+
+		await bundle.write( outputConfig );
+	} );
+
+	function getOriginalDTsFilePath( outDirPath ) {
+		// We need the relative path to the .d.ts file. So:
+		// 1. Replace the .ts extension with the .d.ts one.
+		// 2. Remove the project path.
+		// 3. Remove the leading slash.
+		const originalFileName = sourceFile.
+			replace( /\.ts$/, '.d.ts' ).
+			replace( project, '' ).
+			replace( /^\//, '' );
+		const originalFilePath = resolvePath( outDirPath, originalFileName );
 
 		return originalFilePath;
 	}
-}
-
-async function removeLeftovers( packageInfo ) {
-	const distInfo = Object.entries( packageInfo.dist );
-	const allowedDefinitionFiles = distInfo.reduce( ( allowed, [ , output ] ) => {
-		if ( !output.types ) {
-			return allowed;
-		}
-
-		const absoluteTypesPath = resolvePath( packageInfo.project, output.types );
-		const declarationDirPath = dirname( absoluteTypesPath );
-
-		if ( !allowed.has( declarationDirPath ) ) {
-			allowed.set( declarationDirPath, new Set() );
-		}
-
-		allowed.get( declarationDirPath ).add( normalizePath( absoluteTypesPath ) );
-
-		return allowed;
-	}, new Map() );
-	const rimrafPromises = [ ...allowedDefinitionFiles ].map( async ( [ dir, allowedDefinitionFiles ] ) => {
-		const allDefinitionFiles = await globby( [
-			'**/*.d.ts'
-		], {
-			cwd: dir,
-			absolute: true
-		} );
-		const definitionFilesToRemove = allDefinitionFiles.filter( ( file ) => {
-			return !allowedDefinitionFiles.has( file );
-		} );
-
-		return rimraf( definitionFilesToRemove );
-	} );
-
-	return Promise.all( rimrafPromises );
 }
 
 export default bundler;
