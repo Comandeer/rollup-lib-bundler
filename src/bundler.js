@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { normalize as normalizePath } from 'node:path';
 import { resolve as resolvePath } from 'node:path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
@@ -149,10 +150,17 @@ async function bundleTypes( {
 	outputFile,
 	onWarn = () => {}
 } = {} ) {
-	return temporaryDirectoryTask( async ( outDirPath ) => {
+	project = normalizePath( project );
+
+	return temporaryDirectoryTask( async ( outputDirPath ) => {
+		outputDirPath = normalizePath( outputDirPath );
+
 		const tsFiles = await globby( 'src/**/*.ts', {
 			absolute: true,
 			cwd: project
+		} );
+		const normalizedTSFiles = tsFiles.map( ( file ) => {
+			return normalizePath( file );
 		} );
 		const compilerOptions = {
 			declaration: true,
@@ -165,16 +173,19 @@ async function bundleTypes( {
 
 		const host = ts.createCompilerHost( compilerOptions );
 		host.writeFile = ( fileName, contents ) => {
-			emittedFiles[ fileName ] = contents;
+			// Seems that even TS uses POSIX-style filepaths on Windows…
+			const normalizedFileName = normalizePath( fileName );
+
+			emittedFiles[ normalizedFileName ] = contents;
 		};
 
 		// Prepare and emit the d.ts files
-		const program = ts.createProgram( tsFiles, compilerOptions, host );
+		const program = ts.createProgram( normalizedTSFiles, compilerOptions, host );
 		program.emit();
 
 		const fsPromises = Object.entries( emittedFiles ).map( async ( [ name, content ] ) => {
 			const relativePath = getRelativePath( name );
-			const filePath = resolvePath( outDirPath, relativePath );
+			const filePath = resolvePath( outputDirPath, relativePath );
 			const dirPath = dirname( filePath );
 
 			await mkdir( dirPath, {
@@ -189,7 +200,7 @@ async function bundleTypes( {
 
 		await Promise.all( fsPromises );
 
-		const input = getOriginalDTsFilePath( outDirPath );
+		const input = getOriginalDTsFilePath( outputDirPath );
 		const rollupConfig = {
 			input,
 			plugins: [
@@ -197,7 +208,7 @@ async function bundleTypes( {
 					// Fix "CWD" issue.
 					// See: https://github.com/rollup/rollup/issues/558.
 					resolveId: ( imported ) => {
-						if ( imported.startsWith( outDirPath ) ) {
+						if ( imported.startsWith( outputDirPath ) ) {
 							return imported;
 						}
 
@@ -230,11 +241,12 @@ async function bundleTypes( {
 
 	function getRelativePath( filePath ) {
 		// We need the relative path to the .d.ts file. So:
-		// 1. Remove the project path.
-		// 2. Remove the leading slash.
-		const relativeFilePath = filePath.
+		// 1. Normalize the filePath (just to be sure).
+		// 2. Remove the project path.
+		// 3. Remove the leading slash/backslash.
+		const relativeFilePath = normalizePath( filePath ).
 			replace( project, '' ).
-			replace( /^\//, '' );
+			replace( /^[/\\]/, '' );
 
 		return relativeFilePath;
 	}
