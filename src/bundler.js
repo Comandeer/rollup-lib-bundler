@@ -151,6 +151,7 @@ async function bundleTypes( {
 } = {} ) {
 	return temporaryDirectoryTask( async ( outDirPath ) => {
 		const tsFiles = await globby( 'src/**/*.ts', {
+			absolute: true,
 			cwd: project
 		} );
 		const compilerOptions = {
@@ -172,7 +173,8 @@ async function bundleTypes( {
 		program.emit();
 
 		const fsPromises = Object.entries( emittedFiles ).map( async ( [ name, content ] ) => {
-			const filePath = resolvePath( outDirPath, name );
+			const relativePath = getRelativePath( name );
+			const filePath = resolvePath( outDirPath, relativePath );
 			const dirPath = dirname( filePath );
 
 			await mkdir( dirPath, {
@@ -218,16 +220,23 @@ async function bundleTypes( {
 
 	function getOriginalDTsFilePath( outDirPath ) {
 		// We need the relative path to the .d.ts file. So:
-		// 1. Replace the .ts extension with the .d.ts one.
-		// 2. Remove the project path.
-		// 3. Remove the leading slash.
-		const originalFileName = sourceFile.
-			replace( /\.ts$/, '.d.ts' ).
-			replace( project, '' ).
-			replace( /^\//, '' );
+		// 1. Get the relative path via getRelativePath().
+		// 2. Replace the .ts extension with the .d.ts one.
+		const originalFileName = getRelativePath( sourceFile ).replace( /\.ts$/, '.d.ts' );
 		const originalFilePath = resolvePath( outDirPath, originalFileName );
 
 		return originalFilePath;
+	}
+
+	function getRelativePath( filePath ) {
+		// We need the relative path to the .d.ts file. So:
+		// 1. Remove the project path.
+		// 2. Remove the leading slash.
+		const relativeFilePath = filePath.
+			replace( project, '' ).
+			replace( /^\//, '' );
+
+		return relativeFilePath;
 	}
 }
 
