@@ -17,6 +17,7 @@ const subPathExportsFixture = resolvePath( fixturesPath, 'subPathExportsPackage'
 const noCJSPackageFixture = resolvePath( fixturesPath, 'noCJSPackage' );
 const noCJSSubPathExportsFixture = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
 const tsPackageFixture = resolvePath( fixturesPath, 'tsPackage' );
+const tsComplexPackageFixture = resolvePath( fixturesPath, 'tsComplexPackage' );
 
 describe( 'bundler', () => {
 	let sandbox;
@@ -319,6 +320,54 @@ describe( 'bundler', () => {
 				'chunk.mjs.map'
 			] );
 		} );
+
+		// #242
+		it( 'bundles correctly a TS project with complex directory structure', async () => {
+			const srcPath = resolvePath( tsComplexPackageFixture, 'src' );
+			const distPath = resolvePath( tsComplexPackageFixture, 'dist' );
+			const distSubDirPath = resolvePath( distPath, 'subdir' );
+			const indexPath = resolvePath( srcPath, 'index.ts' );
+			const jsIndexPath = resolvePath( srcPath, 'index.js' );
+			const submodulePath = resolvePath( srcPath, 'subdir', 'submodule.ts' );
+			const tsConfigPath = resolvePath( tsComplexPackageFixture, 'tsconfig.json' );
+			const packageInfo = createPackageInfo( tsComplexPackageFixture, {
+				[ indexPath ]: {
+					cjs: resolvePath( distPath, 'index.cjs' ),
+					esm: resolvePath( distPath, 'index.mjs' ),
+					types: resolvePath( distPath, 'index.d.ts' ),
+					tsConfig: tsConfigPath,
+					type: 'ts'
+				},
+				[ submodulePath ]: {
+					cjs: resolvePath( distSubDirPath, 'submodule.cjs' ),
+					esm: resolvePath( distSubDirPath, 'submodule.mjs' ),
+					types: resolvePath( distPath, 'submodule.d.ts' ),
+					tsConfig: tsConfigPath,
+					type: 'ts'
+				}
+			} );
+
+			// Our helper is definitely not suited for TS projects.
+			// So we need to remove the JS entry point.
+			delete packageInfo.dist[ jsIndexPath ];
+
+			await bundler( {
+				packageInfo
+			} );
+
+			await checkDistFiles( tsComplexPackageFixture, [
+				'index.cjs',
+				'index.cjs.map',
+				'index.d.ts',
+				'index.mjs',
+				'index.mjs.map',
+				'submodule.d.ts',
+				'subdir/submodule.cjs',
+				'subdir/submodule.cjs.map',
+				'subdir/submodule.mjs',
+				'subdir/submodule.mjs.map'
+			] );
+		} );
 	} );
 } );
 
@@ -327,6 +376,7 @@ function createPackageInfo( packageName = 'testPackage', distMetadata = {} ) {
 	const indexPath = resolvePath( packagePath, 'src', 'index.js' );
 
 	return Object.assign( {}, metadata, {
+		project: packagePath,
 		dist: {
 			// Full path needs to be used here. Otherwise all tests would
 			// have to be run in appropriate CWD.

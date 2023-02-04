@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 * [#240]: bundling types incorrectly removes bundled types definitions right after creating them.
+* [#242]: bundling of types creates incorrect file structure in `dist/` if source files are inside subdirectories.
 
 ## [0.17.0] – 2023-01-22
 ### Added
@@ -234,6 +235,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
+[#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
 
 [0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.1...v0.17.0
