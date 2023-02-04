@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'node:path';
 import { extname as getFileExtension } from 'node:path';
-import normalizePath from 'normalize-path';
+import { normalize as normalizePath } from 'node:path';
 import validateSourcemap from 'sourcemap-validator';
 
 /**
@@ -34,15 +34,17 @@ async function checkDistFiles( fixturePath, expectedFiles, {
 		onlyFiles: true,
 		absolute: true
 	} );
+	const normalizedActualFiles = actualFiles.map( ( file ) => {
+		return normalizePath( file );
+	} );
 
 	expectedFiles = expectedFiles.map( ( file ) => {
 		return resolvePath( distPath, file );
 	} ).map( ( file ) => {
-		// We need to normalize \ to / because globby returns paths with / on Windows.
 		return normalizePath( file );
 	} );
 
-	expect( actualFiles ).to.have.members( expectedFiles );
+	expect( normalizedActualFiles ).to.have.members( expectedFiles );
 
 	/* eslint-disable no-await-in-loop */
 	for ( const filePath of expectedFiles ) {
