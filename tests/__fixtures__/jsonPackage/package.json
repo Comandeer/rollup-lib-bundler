@@ -3,8 +3,12 @@
   "private": true,
   "version": "1.0.0",
   "description": "Test package",
-  "main": "dist/es5.js",
-  "module": "dist/es2015.js",
+  "exports": {
+    ".": {
+      "import": "./dist/es2015.js",
+      "require": "./dist/es5.js"
+    }
+  },
   "author": {
     "name": "Piotr Kowalski",
     "email": "piecioshka@gmail.com",
