@@ -40,7 +40,7 @@ async function loadAndParsePackageJSONFile( dirPath ) {
 function lintObject( obj ) {
 	checkProperty( 'name' );
 	checkProperty( 'version' );
-	checkProperties( 'exports/./import', 'exports/import', 'module', 'jsnext:main' );
+	checkProperties( 'exports/./import', 'exports/import' );
 	checkProperty( 'author' );
 	checkProperty( 'license' );
 
@@ -150,12 +150,6 @@ async function prepareDistMetadata( packageDir, metadata ) {
 function getSubPaths( metadata ) {
 	const exports = metadata.exports;
 
-	if ( !exports ) {
-		return [
-			'.'
-		];
-	}
-
 	const subpaths = Object.keys( exports ).filter( ( subpath ) => {
 		return subpath.startsWith( '.' );
 	} );
@@ -246,19 +240,11 @@ function getEntryPointType( srcPath ) {
 function getESMTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'import' );
 
-	if ( subPath === '.' ) {
-		return exportsTarget || metadata.module || metadata[ 'jsnext:main' ];
-	}
-
 	return exportsTarget;
 }
 
 function getCJSTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'require' );
-
-	if ( subPath === '.' ) {
-		return exportsTarget || metadata.main;
-	}
 
 	return exportsTarget;
 }
@@ -266,18 +252,10 @@ function getCJSTarget( metadata, subPath ) {
 function getTypesTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'types' );
 
-	if ( subPath === '.' ) {
-		return exportsTarget || metadata.types;
-	}
-
 	return exportsTarget;
 }
 
 function getExportsTarget( metadata, subPath, type ) {
-	if ( !metadata.exports ) {
-		return null;
-	}
-
 	const exports = metadata.exports;
 
 	if ( exports[ subPath ] ) {
