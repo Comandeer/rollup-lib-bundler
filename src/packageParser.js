@@ -38,82 +38,29 @@ async function loadAndParsePackageJSONFile( dirPath ) {
 }
 
 function lintObject( obj ) {
-	checkProperty( 'name' );
-	checkProperty( 'version' );
-	checkProperties( 'exports/./import', 'exports/import', 'module', 'jsnext:main' );
-	checkProperty( 'author' );
-	checkProperty( 'license' );
-
-	function checkProperty( name ) {
-		if ( typeof obj[ name ] === 'undefined' ) {
-			throw new ReferenceError( `Package metadata must contain "${ name }" property.` );
-		}
+	if ( typeof obj.name === 'undefined' ) {
+		throw new ReferenceError( 'Package metadata must contain "name" property.' );
 	}
 
-	function checkProperties( ...properties ) {
-		const isAtLeastOnePresent = properties.some( ( property ) => {
-			const propertyPath = property.split( '/' );
-
-			return checkPropertyExistence( obj, propertyPath );
-		} );
-
-		if ( !isAtLeastOnePresent ) {
-			throw new ReferenceError( `Package metadata must contain one of ${ prepareNamesForError( properties ) } properties or all of them.` );
-		}
+	if ( typeof obj.version === 'undefined' ) {
+		throw new ReferenceError( 'Package metadata must contain "version" property.' );
 	}
 
-	function checkPropertyExistence( obj, propertyPath ) {
-		const currentProperty = propertyPath.shift();
+	const isESMEntryPointPresent = typeof obj.exports?.import !== 'undefined' ||
+		typeof obj.exports?.[ '.' ]?.import !== 'undefined';
 
-		if ( typeof obj[ currentProperty ] === 'undefined' ) {
-			return false;
-		}
-
-		if ( propertyPath.length === 0 ) {
-			return true;
-		}
-
-		return checkPropertyExistence( obj[ currentProperty ], propertyPath );
+	if ( !isESMEntryPointPresent ) {
+		throw new ReferenceError(
+			'Package metadata must contain one of "exports[ \'.\' ].import" or "exports.import" properties or all of them.'
+		);
 	}
 
-	function prepareNamesForError( names ) {
-		return names.map( ( name, i ) => {
-			const formattedName = formatName( name );
-			const quotedName = `"${ formattedName }"`;
+	if ( typeof obj.author === 'undefined' ) {
+		throw new ReferenceError( 'Package metadata must contain "author" property.' );
+	}
 
-			if ( i === 0 ) {
-				return quotedName;
-			}
-
-			const conjuction = ( i === names.length - 1 ) ? ' or ' : ', ';
-
-			return `${ conjuction}${ quotedName }`;
-		} ).join( '' );
-
-		function formatName( name ) {
-			// Thanks to using capturing groups, the separator will be preserved
-			// in the splitted string.
-			const separatorRegex = /(\/)/g;
-			const nameParts = name.split( separatorRegex );
-
-			return nameParts.reduce( ( parts, part ) => {
-				const lastPart = parts[ parts.length - 1 ];
-
-				if ( part.startsWith( '.' ) && lastPart === '.' ) {
-					return [ ...parts.slice( 0, -1 ), '[ \'', part ];
-				}
-
-				if ( part === '/' && lastPart.startsWith( '.' ) ) {
-					return [ ...parts, '\' ].' ];
-				}
-
-				if ( part === '/' ) {
-					return [ ...parts, '.' ];
-				}
-
-				return [ ...parts, part ];
-			}, [] ).join( '' );
-		}
+	if ( typeof obj.license === 'undefined' ) {
+		throw new ReferenceError( 'Package metadata must contain "license" property.' );
 	}
 }
 
@@ -149,12 +96,6 @@ async function prepareDistMetadata( packageDir, metadata ) {
 
 function getSubPaths( metadata ) {
 	const exports = metadata.exports;
-
-	if ( !exports ) {
-		return [
-			'.'
-		];
-	}
 
 	const subpaths = Object.keys( exports ).filter( ( subpath ) => {
 		return subpath.startsWith( '.' );
@@ -246,19 +187,11 @@ function getEntryPointType( srcPath ) {
 function getESMTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'import' );
 
-	if ( subPath === '.' ) {
-		return exportsTarget || metadata.module || metadata[ 'jsnext:main' ];
-	}
-
 	return exportsTarget;
 }
 
 function getCJSTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'require' );
-
-	if ( subPath === '.' ) {
-		return exportsTarget || metadata.main;
-	}
 
 	return exportsTarget;
 }
@@ -266,18 +199,10 @@ function getCJSTarget( metadata, subPath ) {
 function getTypesTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'types' );
 
-	if ( subPath === '.' ) {
-		return exportsTarget || metadata.types;
-	}
-
 	return exportsTarget;
 }
 
 function getExportsTarget( metadata, subPath, type ) {
-	if ( !metadata.exports ) {
-		return null;
-	}
-
 	const exports = metadata.exports;
 
 	if ( exports[ subPath ] ) {

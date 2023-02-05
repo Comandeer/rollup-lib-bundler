@@ -5,15 +5,6 @@ import packageParser from '../src/packageParser.js';
 import { deepClone } from './__helpers__/utils';
 
 const fixtures = {
-	valid: {
-		'name': 'test-package',
-		'version': '9.0.1',
-		'author': 'Comandeer',
-		'license': 'MIT',
-		'main': 'dist/es5.js',
-		'module': 'dist/es2015.js'
-	},
-
 	validExports: {
 		'name': 'test-package',
 		'version': '9.0.1',
@@ -102,16 +93,6 @@ const fixtures = {
 		}
 	},
 
-	tsFallbacks: {
-		'name': 'test-package',
-		'version': '9.0.1',
-		'author': 'Comandeer',
-		'license': 'MIT',
-		'types': 'dist/test-package.d.ts',
-		'module': 'dist/test-package.mjs',
-		'main': 'dist/test-package.cjs'
-	},
-
 	mixedProject: {
 		'name': 'test-package',
 		'private': true,
@@ -195,7 +176,7 @@ const mockedPackagePath = '/some-package';
 const INVALID_ARGUMENT_TYPE_ERROR = 'Provide a path to a package directory.';
 const MISSING_PACKAGE_JSON_ERROR = 'The package.json does not exist in the provided location.';
 const INVALID_PACKAGE_JSON_ERROR = 'The package.json file is not parsable as a correct JSON.';
-const INVALID_ESM_METADATA_ERROR = 'Package metadata must contain one of "exports[ \'.\' ].import", "exports.import", "module" or "jsnext:main" properties or all of them.';
+const INVALID_ESM_METADATA_ERROR = 'Package metadata must contain one of "exports[ \'.\' ].import" or "exports.import" properties or all of them.';
 
 describe( 'packageParser', () => {
 	afterEach( mockFS.restore );
@@ -211,13 +192,13 @@ describe( 'packageParser', () => {
 	} );
 
 	it( 'resolves package.json from the given directory', async () => {
-		mockPackage( JSON.stringify( fixtures.valid ) );
+		mockPackage( JSON.stringify( fixtures.validExports ) );
 
 		await expect( await packageParser( mockedPackagePath ) ).to.be.an( 'object' );
 	} );
 
 	it( 'throws when package.json does not exist in the given directory', async () => {
-		mockPackage( JSON.stringify( fixtures.valid ) );
+		mockPackage( JSON.stringify( fixtures.validExports ) );
 
 		await expect( packageParser( 'non-existent' ) ).to.be.rejectedWith(
 			ReferenceError, MISSING_PACKAGE_JSON_ERROR );
@@ -247,11 +228,11 @@ describe( 'packageParser', () => {
 				ReferenceError, 'Package metadata must contain "version" property.' );
 		} );
 
-		it( 'requires one of the ESM output properties', async () => {
+		it( 'requires the ESM output property', async () => {
 			mockPackage( JSON.stringify(  {
 				name: 'test',
 				version: '0.0.0',
-				main: 'test'
+				exports: {}
 			} ) );
 
 			await expect( packageParser( mockedPackagePath ) ).to.be.rejectedWith(
@@ -262,8 +243,9 @@ describe( 'packageParser', () => {
 			mockPackage( JSON.stringify( {
 				name: 'test',
 				version: '0.0.0',
-				main: 'test',
-				module: 'test'
+				exports: {
+					import: 'test'
+				}
 			} ) );
 
 			await expect( packageParser( mockedPackagePath ) ).to.be.rejectedWith( ReferenceError, 'Package metadata must contain "author" property.' );
@@ -273,8 +255,9 @@ describe( 'packageParser', () => {
 			mockPackage( JSON.stringify(  {
 				name: 'test',
 				version: '0.0.0',
-				main: 'test',
-				module: 'test',
+				exports: {
+					import: 'test'
+				},
 				author: 'test'
 			} ) );
 
@@ -284,40 +267,7 @@ describe( 'packageParser', () => {
 	} );
 
 	// #61
-	it( 'requires module or jsnext:main if exports does not contain import property', async () => {
-		mockPackage( JSON.stringify( {
-			name: 'test',
-			version: '0.0.0',
-			exports: {
-				require: 'dist/whatever.js'
-			}
-		} ) );
-
-		await expect( packageParser( mockedPackagePath ) ).to.be.rejectedWith(
-			ReferenceError, INVALID_ESM_METADATA_ERROR );
-	} );
-
 	it( 'returns simplified metadata', async () => {
-		mockPackage( JSON.stringify( fixtures.valid ) );
-
-		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
-			project: mockedPackagePath,
-			name: 'test-package',
-			author: 'Comandeer',
-			license: 'MIT',
-			version: '9.0.1',
-			dist: {
-				[ `src${ pathSeparator }index.js` ]: {
-					esm: 'dist/es2015.js',
-					cjs: 'dist/es5.js',
-					type: 'js'
-				}
-			}
-		} );
-	} );
-
-	// #61
-	it( 'returns simplified metadata for package with "exports" field', async () => {
 		mockPackage( JSON.stringify( fixtures.validExports ) );
 
 		expect( await packageParser( mockedPackagePath ) ).to.deep.equal( {
@@ -431,87 +381,8 @@ describe( 'packageParser', () => {
 		expect( indexDistMetadata.cjs ).to.equal( distPath );
 	} );
 
-	// #61
-	it( 'prefers exports.import over module', async () => {
-		const module = deepClone( fixtures.validExports );
-
-		module.module = 'dist/es2015.js';
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.esm ).to.equal( 'dist/test-package.mjs' );
-	} );
-
-	// #61
-	it( 'prefers exports.require over main', async () => {
-		const module = deepClone( fixtures.validExports );
-
-		module.main = 'dist/es5.js';
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.cjs ).to.equal( 'dist/test-package.cjs' );
-	} );
-
-	it( 'prefers module over jsnext:main', async () => {
-		const module = deepClone( fixtures.valid );
-
-		module[ 'jsnext:main' ] = 'dist/esnext.js';
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.esm ).to.equal( 'dist/es2015.js' );
-	} );
-
-	// #61
-	it( 'uses module when exports.import is not available', async () => {
-		const module = deepClone( fixtures.validExports );
-
-		module.module = 'dist/module.js';
-		delete module.exports.import;
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.esm ).to.equal( 'dist/module.js' );
-	} );
-
-	// #61
-	it( 'uses jsnext:main when both exports.import and module are not available', async () => {
-		const module = deepClone( fixtures.validExports );
-
-		module[ 'jsnext:main' ] = 'dist/jsnext.js';
-		delete module.exports.import;
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.esm ).to.equal( 'dist/jsnext.js' );
-	} );
-
-	// #61
-	it( 'uses main when exports.require is not available', async () => {
-		const module = deepClone( fixtures.validExports );
-
-		module.main = 'dist/legacy.js';
-		delete module.exports.require;
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.cjs ).to.equal( 'dist/legacy.js' );
-	} );
-
-	it( 'uses jsnext:main when module is not available', async () => {
-		const module = deepClone( fixtures.valid );
-
-		module[ 'jsnext:main' ] = 'dist/esnext.js';
-		delete module.module;
-
-		const indexDistMetadata = await parseMetadataAndGetDistInfo( module );
-
-		expect( indexDistMetadata.esm ).to.equal( 'dist/esnext.js' );
-	} );
-
 	it( 'parses author object into string', async () => {
-		const author = deepClone( fixtures.valid );
+		const author = deepClone( fixtures.validExports );
 
 		author.author = {
 			name: 'Tester'
@@ -710,22 +581,6 @@ describe( 'packageParser', () => {
 					esm: 'dist/test-package.mjs',
 					cjs: 'dist/test-package.cjs',
 					tsConfig: 'tsconfig.json',
-					type: 'ts'
-				}
-			} );
-		} );
-
-		it( 'correctly parses TS project with fallback values', async () => {
-			mockPackage( JSON.stringify( fixtures.tsFallbacks ), srcFixtures.ts );
-
-			const { dist } = await packageParser( mockedPackagePath );
-
-			expect( dist ).to.deep.equal( {
-				[ `src${ pathSeparator }index.ts` ]: {
-					esm: 'dist/test-package.mjs',
-					cjs: 'dist/test-package.cjs',
-					tsConfig: 'tsconfig.json',
-					types: 'dist/test-package.d.ts',
 					type: 'ts'
 				}
 			} );
