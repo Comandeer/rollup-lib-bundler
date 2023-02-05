@@ -1,12 +1,11 @@
-import { mkdir } from 'node:fs/promises';
-import { writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
+import { join as joinPath } from 'node:path';
 import { normalize as normalizePath } from 'node:path';
-import { resolve as resolvePath } from 'node:path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
 import terser from '@rollup/plugin-terser';
+import virtual from '@rollup/plugin-virtual';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
@@ -20,11 +19,6 @@ import { node as nodeTarget } from './targets.js';
  */
 let globby;
 
-/**
- * @type {import('tempy').temporaryDirectoryTask}
- */
-let temporaryDirectoryTask;
-
 async function bundler( {
 	onWarn,
 	packageInfo
@@ -33,12 +27,6 @@ async function bundler( {
 		const globbyModule = await import( 'globby' );
 		// eslint-disable-next-line require-atomic-updates
 		globby = globbyModule.globby;
-	}
-
-	if ( !temporaryDirectoryTask ) {
-		const tempyModule = await import( 'tempy' );
-		// eslint-disable-next-line require-atomic-updates
-		temporaryDirectoryTask = tempyModule.temporaryDirectoryTask;
 	}
 
 	await Promise.all( bundleChunks( packageInfo, onWarn ) );
@@ -152,89 +140,78 @@ async function bundleTypes( {
 } = {} ) {
 	project = normalizePath( project );
 
-	return temporaryDirectoryTask( async ( outputDirPath ) => {
-		outputDirPath = normalizePath( outputDirPath );
+	const tsFiles = await globby( 'src/**/*.ts', {
+		absolute: true,
+		cwd: project
+	} );
+	const compilerOptions = {
+		declaration: true,
+		emitDeclarationOnly: true
+	};
+	const emittedFiles = {};
 
-		const tsFiles = await globby( 'src/**/*.ts', {
-			absolute: true,
-			cwd: project
-		} );
-		const normalizedTSFiles = tsFiles.map( ( file ) => {
-			return normalizePath( file );
-		} );
-		const compilerOptions = {
-			declaration: true,
-			emitDeclarationOnly: true
-		};
-		const emittedFiles = {};
+	// Just to be sure…
+	delete compilerOptions.declarationDir;
 
-		// Just to be sure…
-		delete compilerOptions.declarationDir;
+	const host = ts.createCompilerHost( compilerOptions );
+	host.writeFile = ( filePath, contents ) => {
+		const relativeFilePath = getRelativePath( filePath );
 
-		const host = ts.createCompilerHost( compilerOptions );
-		host.writeFile = ( fileName, contents ) => {
-			// Seems that even TS uses POSIX-style filepaths on Windows…
-			const normalizedFileName = normalizePath( fileName );
+		emittedFiles[ relativeFilePath ] = contents;
+	};
 
-			emittedFiles[ normalizedFileName ] = contents;
-		};
+	// Prepare and emit the d.ts files
+	const program = ts.createProgram( tsFiles, compilerOptions, host );
+	program.emit();
 
-		// Prepare and emit the d.ts files
-		const program = ts.createProgram( normalizedTSFiles, compilerOptions, host );
-		program.emit();
-
-		const fsPromises = Object.entries( emittedFiles ).map( async ( [ name, content ] ) => {
-			const relativePath = getRelativePath( name );
-			const filePath = resolvePath( outputDirPath, relativePath );
-			const dirPath = dirname( filePath );
-
-			await mkdir( dirPath, {
-				recursive: true
-			} );
-
-			return writeFile( filePath, content, {
-				encoding: 'utf-8',
-				flag: 'w'
-			} );
-		} );
-
-		await Promise.all( fsPromises );
-
-		const input = getOriginalDTsFilePath( outputDirPath );
-		const rollupConfig = {
-			input,
-			plugins: [
-				{
-					// Fix "CWD" issue.
-					// See: https://github.com/rollup/rollup/issues/558.
-					resolveId: ( imported ) => {
-						if ( imported.startsWith( outputDirPath ) ) {
-							return imported;
-						}
-
+	const input = getOriginalDTsFilePath();
+	const rollupConfig = {
+		input,
+		plugins: [
+			{
+				resolveId: ( imported, importer ) => {
+					// Skip the main file.
+					if ( !importer ) {
 						return null;
 					}
-				},
 
-				dts()
-			],
-			onwarn: onWarn
-		};
-		const outputConfig = {
-			file: outputFile,
-			format: 'es'
-		};
-		const bundle = await rollup( rollupConfig );
+					const importerDir = dirname( importer );
+					const jsExtensionRegex = /\.(m|c)?js$/;
 
-		await bundle.write( outputConfig );
-	} );
+					imported = joinPath( importerDir, imported );
 
-	function getOriginalDTsFilePath( outDirPath ) {
+					// We need full file path, with extension here.
+					// Due to that we need to:
+					// 1. Remove JS extension (in ESM-based projects
+					//    TS tends to add it).
+					// 2. Add the .d.ts extension.
+					if ( !imported.endsWith( '.d.ts' ) ) {
+						imported = `${ imported.replace( jsExtensionRegex, '' ) }.d.ts`;
+					}
+
+					return imported;
+				}
+			},
+
+			virtual( emittedFiles ),
+
+			dts()
+		],
+		onwarn: onWarn
+	};
+	const outputConfig = {
+		file: outputFile,
+		format: 'es'
+	};
+	const bundle = await rollup( rollupConfig );
+
+	await bundle.write( outputConfig );
+
+	function getOriginalDTsFilePath() {
 		// We need the relative path to the .d.ts file. So:
 		// 1. Get the relative path via getRelativePath().
 		// 2. Replace the .ts extension with the .d.ts one.
-		const originalFileName = getRelativePath( sourceFile ).replace( /\.ts$/, '.d.ts' );
-		const originalFilePath = resolvePath( outDirPath, originalFileName );
+		const originalFilePath = getRelativePath( sourceFile ).replace( /\.ts$/, '.d.ts' );
 
 		return originalFilePath;
 	}
