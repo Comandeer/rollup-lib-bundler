@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.19.0]
+### Changed
+* [#247]: **BREAKING CHANGE**: the bundler's `package.json` contains now only the `exports`-based entrypoints.
+* [#235]: binary now uses the ESM version of the bundler.
+
 ## [0.18.0] – 2023-02-05
 ### Changed
 * [#209]: **BREAKING CHANGE**: parsing the project's `package.json` is no longer blocking as all file operations were rewritten to be asynchronous.
@@ -238,9 +243,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 [#228]: https://github.com/Comandeer/rollup-lib-bundler/issues/228
+[#235]: https://github.com/Comandeer/rollup-lib-bundler/issues/235
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
+[#247]: https://github.com/Comandeer/rollup-lib-bundler/issues/247
 
+[0.19.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.1...v0.17.0
 [0.16.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.0...v0.16.1
