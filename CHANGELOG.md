@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.19.0]
 ### Changed
 * [#247]: **BREAKING CHANGE**: the bundler's `package.json` contains now only the `exports`-based entrypoints.
+* [#248]: **BREAKING CHANGE**: bundler of type definitions uses now virtual filesystem instead of a real temporary directory. It caused the list of dependencies to change:
+	* `@rollup/plugin-virtual` was added,
+	* `tempy` was removed.
 * [#235]: binary now uses the ESM version of the bundler.
 
 ## [0.18.0] – 2023-02-05
