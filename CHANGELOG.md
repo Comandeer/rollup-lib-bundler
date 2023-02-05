@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.18.0]
+## [0.18.0] – 2023-02-05
 ### Changed
 * [#209]: **BREAKING CHANGE**: parsing the project's `package.json` is no longer blocking as all file operations were rewritten to be asynchronous.
+
+### Removed
+* [#228]: **BREAKING CHANGE**: support for non-`exports` entrypoints.
 
 ### Fixed
 * [#240]: bundling types incorrectly removes bundled types definitions right after creating them.
@@ -234,6 +237,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#220]: https://github.com/Comandeer/rollup-lib-bundler/issues/220
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
+[#228]: https://github.com/Comandeer/rollup-lib-bundler/issues/228
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
 
