@@ -29,8 +29,8 @@ No configuration. Consider it a feature.
 It gets `package.json` from the current working directory, parses it and get neeeded info:
 
 * `name`, `author`, `version` and `license` to create beautiful banner comment,
-* `exports.import`, `module` or `jsnext:main` for saving ESM bundle,
-* `exports.require` or `main` to get path for saving CJS bundle (optional).
+* `exports.import` for saving ESM bundle,
+* `exports.require` to get path for saving CJS bundle (optional).
 
 Then the bundling happens. The default entry point for Rollup is `src/index.js`. Please note that **`dist/` directory is purged before bundling**! So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
 
