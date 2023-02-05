@@ -8,7 +8,7 @@ import removeArtifacts from './__helpers__/removeArtifacts.js';
 import createFixtureTest from './__helpers__/createFixtureTest.js';
 
 const execPromise = promisify( exec );
-const binPath = resolvePath( __dirname, '..', 'bin', 'bundler' );
+const binPath = resolvePath( __dirname, '..', 'bin', 'bundler.mjs' );
 const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
 const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
