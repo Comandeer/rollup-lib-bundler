@@ -1,6 +1,7 @@
 import { dirname } from 'node:path';
 import { join as joinPath } from 'node:path';
 import { normalize as normalizePath } from 'node:path';
+import { resolve as resolvePath } from 'node:path';
 import { rollup } from 'rollup';
 import convertCJS from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
@@ -136,22 +137,29 @@ async function bundleTypes( {
 	project,
 	sourceFile,
 	outputFile,
+	tsConfig,
 	onWarn = () => {}
 } = {} ) {
 	project = normalizePath( project );
+
+	const userCompilerOptions = getUserCompilerOptions( tsConfig );
+	const compilerOptions = {
+		...userCompilerOptions,
+		declaration: true,
+		emitDeclarationOnly: true
+	};
+
+	// Remove all options that can change the emitted output.
+	delete compilerOptions.outDir;
+	delete compilerOptions.declarationDir;
+	delete compilerOptions.outFile;
+	delete compilerOptions.rootDir;
 
 	const tsFiles = await globby( 'src/**/*.ts', {
 		absolute: true,
 		cwd: project
 	} );
-	const compilerOptions = {
-		declaration: true,
-		emitDeclarationOnly: true
-	};
 	const emittedFiles = {};
-
-	// Just to be sure…
-	delete compilerOptions.declarationDir;
 
 	const host = ts.createCompilerHost( compilerOptions );
 	host.writeFile = ( filePath, contents ) => {
@@ -206,6 +214,18 @@ async function bundleTypes( {
 	const bundle = await rollup( rollupConfig );
 
 	await bundle.write( outputConfig );
+
+	function getUserCompilerOptions( tsConfig ) {
+		if ( !tsConfig ) {
+			return {};
+		}
+
+		const tsConfigFilePath = resolvePath( project, tsConfig );
+		const tsConfigContent = ts.readConfigFile( tsConfigFilePath, ts.sys.readFile );
+		const parsedOptions = ts.parseJsonConfigFileContent( tsConfigContent.config, ts.sys, project );
+
+		return parsedOptions.options;
+	}
 
 	function getOriginalDTsFilePath() {
 		// We need the relative path to the .d.ts file. So:
