@@ -250,6 +250,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
 [#247]: https://github.com/Comandeer/rollup-lib-bundler/issues/247
+[#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
 
 [0.19.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
