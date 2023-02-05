@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.19.0]
 ### Changed
+* [#243]: **BREAKING CHANGE**: bundler of type definitions loads now the `tsconfig.json` file of the project being bundled.
 * [#247]: **BREAKING CHANGE**: the bundler's `package.json` contains now only the `exports`-based entrypoints.
 * [#248]: **BREAKING CHANGE**: bundler of type definitions uses now virtual filesystem instead of a real temporary directory. It caused the list of dependencies to change:
 	* `@rollup/plugin-virtual` was added,
@@ -249,6 +250,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#235]: https://github.com/Comandeer/rollup-lib-bundler/issues/235
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
+[#243]: https://github.com/Comandeer/rollup-lib-bundler/issues/243
 [#247]: https://github.com/Comandeer/rollup-lib-bundler/issues/247
 [#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
 
