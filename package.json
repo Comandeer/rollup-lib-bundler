@@ -2,8 +2,12 @@
   "name": "@comandeer/rollup-lib-bundler",
   "version": "0.18.0",
   "description": "Simple library bundler",
-  "main": "dist/rollup-lib-bundler.js",
-  "module": "dist/rollup-lib-bundler.es2015.js",
+  "exports": {
+    ".": {
+      "import": "./dist/rollup-lib-bundler.mjs",
+      "require": "./dist/rollup-lib-bundler.cjs"
+    }
+  },
   "engines": {
     "node": ">=16.0.0"
   },
