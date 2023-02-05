@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-const bundle = require( '../dist/rollup-lib-bundler.js' );
+const bundle = require( '../dist/rollup-lib-bundler.cjs' );
 
 bundle();
