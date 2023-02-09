@@ -1,10 +1,10 @@
 const config = {
 	files: [
-		'tests/ava/**',
+		'tests/**/*.ava.js',
 		'!tests/**/{__fixtures__,__helpers__}/**'
 	],
 	require: [
-		'tests/__helpers__/avaBabelHook.js'
+		'./tests/__helpers__/avaBabelHook.js'
 	]
 };
 

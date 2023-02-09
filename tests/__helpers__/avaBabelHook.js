@@ -1,10 +1,10 @@
 const babelRegister = require( '@babel/register' );
-const preset = require( '@babel/preset-env' );
+const { default: preset } = require( '@babel/preset-env' );
 
 babelRegister( {
 	cache: false,
 	caller: {
-		name: 'mlt',
+		name: 'ava-runner',
 		supportsStaticESM: false,
 		supportsDynamicImport: true
 	},
