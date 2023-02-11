@@ -76,10 +76,12 @@
     "commitplease": "^3.2.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.33.0",
+    "execa": "^7.0.0",
     "husky": "^8.0.3",
     "mock-fs": "^5.2.0",
     "sinon": "^15.0.1",
-    "sourcemap-validator": "^2.1.0"
+    "sourcemap-validator": "^2.1.0",
+    "tempy": "^3.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.20.12",
