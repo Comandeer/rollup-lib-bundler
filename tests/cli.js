@@ -1,191 +1,205 @@
-import { exec } from 'node:child_process';
 import { access } from 'node:fs/promises';
 import { mkdir } from 'node:fs/promises';
 import { writeFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'node:path';
-import { promisify } from 'node:util';
-import removeArtifacts from './__helpers__/removeArtifacts.js';
-import createFixtureTest from './__helpers__/createFixtureTest.js';
+import test from 'ava';
+import testCLI from './__helpers__/macros/testCLI.js';
 
-const execPromise = promisify( exec );
-const binPath = resolvePath( __dirname, '..', 'bin', 'bundler.mjs' );
-const fixturesPath = resolvePath( __dirname, '__fixtures__' );
-const basicFixturePath = resolvePath( fixturesPath, 'testPackage' );
-const jsonFixturePath = resolvePath( fixturesPath, 'jsonPackage' );
-const exportsFixturePath = resolvePath( fixturesPath, 'exportsPackage' );
-const subPathExportsFixturePath = resolvePath( fixturesPath, 'subPathExportsPackage' );
-const noCJSPackageFixturePath = resolvePath( fixturesPath, 'noCJSPackage' );
-const noCJSSubPathExportsFixturePath = resolvePath( fixturesPath, 'noCJSSubPathExportsPackage' );
-const tsFixturePath = resolvePath( fixturesPath, 'tsPackage' );
-const tsComplexFixturePath = resolvePath( fixturesPath, 'tsComplexPackage' );
-const errorFixturePath = resolvePath( fixturesPath, 'errorPackage' );
+const defaultExpectedFiles = [
+	'test-package.cjs',
+	'test-package.cjs.map',
+	'test-package.mjs',
+	'test-package.mjs.map'
+];
+const cmdResultChecks = {
+	isSuccesful: ( t, { stdout, stderr } ) => {
+		t.true( stdout.includes( 'Bundling complete!' ) );
+		t.is( stderr, '' );
+	},
 
-describe( 'CLI', () => {
-	after( async () => {
-		return removeArtifacts( fixturesPath );
-	} );
+	isFailed: ( t, { stdout, stderr } ) => {
+		t.true( stdout.includes( 'Bundling failed!' ) );
+		t.true( stderr.includes( '🚨Error🚨' ) );
+	},
 
-	it( 'bundles files based on current working directory', createCLITest( basicFixturePath ) );
+	noError: ( t, { stderr } ) => {
+		t.false( stderr.includes( 'Bundling failed!' ) );
+		t.false( stderr.includes( '🚨Error🚨' ) );
+	},
 
-	// #155
-	it( 'bundles package that imports JSON content', createCLITest( jsonFixturePath, {
-		additionalCodeChecks( path, code ) {
-			const regex = /name:\s?["']Piotr Kowalski["']/;
+	skippedCJSBuild: ( t, { stderr } ) => {
+		t.true( stderr.includes( 'Skipping CJS build for' ) );
+	}
+};
 
-			expect( code ).to.match( regex );
-		}
-	} ) );
-
-	// #61
-	it( 'bundles package based on exports fields', createCLITest( exportsFixturePath ) );
-
-	// #185
-	it( 'bundles package based on subpath exports fields', () => {
-		return createCLITest( subPathExportsFixturePath, {
-			expected: [
-				'es5.cjs',
-				'es5.cjs.map',
-				'es6.mjs',
-				'es6.mjs.map',
-				'not-related-name.cjs',
-				'not-related-name.cjs.map',
-				'also-not-related-name.js',
-				'also-not-related-name.js.map'
-			],
-			additionalCodeChecks( path, code ) {
-				const isChunk = path.includes( 'related-name' );
-				const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
-
-				expect( code ).to.include( expectedString );
-			}
-		} )(); // createCLITest() creates a test function, so it needs to be called.
-	} );
-
-	// #215
-	it( 'bundles ESM-only package based on exports fields', () => {
-		return createCLITest( noCJSPackageFixturePath, {
-			expected: [
-				'package.mjs',
-				'package.mjs.map'
-			],
-			cmdResultCheck( { stderr } ) {
-				expect( stderr ).not.to.include( 'Bundling failed!' );
-				expect( stderr ).not.to.include( '🚨Error🚨' );
-				expect( stderr ).to.include( 'Skipping CJS build for' );
-			}
-		} )(); // createCLITest() creates a test function, so it needs to be called.
-	} );
-
-	// #215
-	it( 'bundles ESM-only package based on subpath exports fields', () => {
-		return createCLITest( noCJSSubPathExportsFixturePath, {
-			expected: [
-				'es6.mjs',
-				'es6.mjs.map',
-				'also-not-related-name.js',
-				'also-not-related-name.js.map'
-			],
-			additionalCodeChecks( path, code ) {
-				const isChunk = path.includes( 'related-name' );
-				const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
-
-				expect( code ).to.include( expectedString );
-			},
-			cmdResultCheck( { stderr } ) {
-				expect( stderr ).not.to.include( 'Bundling failed!' );
-				expect( stderr ).not.to.include( '🚨Error🚨' );
-				expect( stderr ).to.include( 'Skipping CJS build for' );
-			}
-		} )(); // createCLITest() creates a test function, so it needs to be called.
-	} );
-
-	// #220, #237
-	it( 'bundles TypeScript package', () => {
-		return createCLITest( tsFixturePath, {
-			expected: [
-				'index.cjs',
-				'index.cjs.map',
-				'index.d.ts',
-				'index.mjs',
-				'index.mjs.map',
-				'chunk.cjs',
-				'chunk.cjs.map',
-				'chunk.mjs',
-				'chunk.mjs.map'
-			],
-			cmdResultCheck( { stderr } ) {
-				expect( stderr ).not.to.include( 'Bundling failed!' );
-				expect( stderr ).not.to.include( '🚨Error🚨' );
-			}
-		} )(); // createCLITest() creates a test function, so it needs to be called.
-	} );
-
-	// #242
-	it( 'bundles TypeScript package with complex directory structure', () => {
-		return createCLITest( tsComplexFixturePath, {
-			expected: [
-				'index.cjs',
-				'index.cjs.map',
-				'index.d.ts',
-				'index.mjs',
-				'index.mjs.map',
-				'submodule.d.ts',
-				'subdir/submodule.mjs',
-				'subdir/submodule.mjs.map',
-				'subdir/submodule.cjs',
-				'subdir/submodule.cjs.map'
-			],
-			cmdResultCheck( { stderr } ) {
-				expect( stderr ).not.to.include( 'Bundling failed!' );
-				expect( stderr ).not.to.include( '🚨Error🚨' );
-			}
-		} )(); // createCLITest() creates a test function, so it needs to be called.
-	} );
-
-	// #193
-	it( 'displays output for valid package', createCLITest( basicFixturePath, {
-		performFileCheck: false,
-		cmdResultCheck: ( { stdout, stderr } ) => {
-			expect( stdout ).to.include( 'Bundling complete!' );
-			expect( stderr ).to.equal( '' );
-		}
-	} ) );
-
-	// #156
-	it( 'displays error for invalid package', createCLITest( errorFixturePath, {
-		performFileCheck: false,
-		cmdResultCheck: ( { stdout, stderr } ) => {
-			expect( stdout ).to.include( 'Bundling failed!' );
-			expect( stderr ).to.include( '🚨Error🚨' );
-		}
-	} ) );
-
-	// #204
-	it( 'cleans dist directory before bundling', async () => {
-		const dummyFilePath = await createDummyDist( basicFixturePath );
-		await createCLITest( basicFixturePath )();
-
-		await expect( access( dummyFilePath ) ).to.eventually.be.rejected;
-	} );
+test( 'CLI bundles files based on current working directory', testCLI, {
+	fixture: 'testPackage',
+	expectedFiles: defaultExpectedFiles
 } );
 
-function createCLITest( fixturePath, options = {} ) {
-	return createFixtureTest( {
-		cmd: () => {
-			return execPromise( `node ${ binPath }`, { cwd: fixturePath } );
-		},
-		path: fixturePath,
-		expected: [
-			'es5.js',
-			'es5.js.map',
-			'es2015.js',
-			'es2015.js.map'
-		],
-		...options
-	} );
-}
+// #61
+test( 'CLI bundles package based on exports fields', testCLI, {
+	fixture: 'exportsPackage',
+	expectedFiles: defaultExpectedFiles
+} );
 
-async function createDummyDist( packagePath ) {
+// #155
+test( 'CLI bundles package that imports JSON content', testCLI, {
+	fixture: 'jsonPackage',
+	expectedFiles: defaultExpectedFiles,
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const regex = /name:\s?["']Piotr Kowalski["']/;
+
+			t.regex( code, regex );
+		}
+	]
+} );
+
+// #185
+test( 'CLI bundles package based on subpath exports fields', testCLI, {
+	fixture: 'subPathExportsPackage',
+	expectedFiles: [
+		'also-not-related-name.js',
+		'also-not-related-name.js.map',
+		'not-related-name.cjs',
+		'not-related-name.cjs.map',
+		'test-package.cjs',
+		'test-package.cjs.map',
+		'test-package.mjs',
+		'test-package.mjs.map'
+	],
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const isChunk = path.includes( 'related-name' );
+			const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
+
+			t.true( code.includes( expectedString ) );
+		}
+	]
+} );
+
+// #215
+test( 'CLI bundles ESM-only package based on exports fields', testCLI, {
+	fixture: 'noCJSPackage',
+	expectedFiles: [
+		'package.mjs',
+		'package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError,
+		cmdResultChecks.skippedCJSBuild
+	]
+} );
+
+// #215
+test( 'CLI bundles ESM-only package based on subpath exports fields', testCLI, {
+	fixture: 'noCJSSubPathExportsPackage',
+	expectedFiles: [
+		'also-not-related-name.js',
+		'also-not-related-name.js.map',
+		'es6.mjs',
+		'es6.mjs.map'
+	],
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const isChunk = path.includes( 'related-name' );
+			const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
+
+			t.true( code.includes( expectedString ) );
+		}
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError,
+		cmdResultChecks.skippedCJSBuild
+	]
+} );
+
+// #220, #237
+test( 'CLI bundles TypeScript package', testCLI, {
+	fixture: 'tsPackage',
+	expected: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map',
+		'chunk.cjs',
+		'chunk.cjs.map',
+		'chunk.mjs',
+		'chunk.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	]
+} );
+
+// #242
+test( 'CLI bundles TypeScript package with complex directory structure', testCLI, {
+	fixture: 'tsComplexPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map',
+		'submodule.d.ts',
+		'subdir/submodule.cjs',
+		'subdir/submodule.cjs.map',
+		'subdir/submodule.mjs',
+		'subdir/submodule.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	]
+} );
+
+// #222
+test( 'CLI preserves dynamic external imports', testCLI, {
+	fixture: 'dynamicExternalImport',
+	expectedFiles: defaultExpectedFiles,
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const dynamicImportRegex = /await import\(\s*['"]node:fs['"]\s*\)/;
+
+			t.regex( code, dynamicImportRegex );
+		}
+	]
+} );
+
+// #193
+test( 'CLI displays output for valid package', testCLI, {
+	fixture: 'testPackage',
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
+
+// #156
+test( 'CLI displays error for invalid package', testCLI, {
+	fixture: 'errorPackage',
+	cmdResultChecks: [
+		cmdResultChecks.isFailed
+	]
+} );
+
+// #204
+test( 'cleans dist directory before bundling', testCLI, {
+	fixture: 'testPackage',
+	before: async ( t, packagePath ) => {
+		return createDummyDist( t, packagePath );
+	},
+	after: async ( t, packagePath ) => {
+		const dummyFilePath = resolvePath( packagePath, 'dist', 'dummy.js' );
+
+		return t.throwsAsync( access( dummyFilePath ) );
+	},
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
+
+async function createDummyDist( t, packagePath ) {
 	const distPath = resolvePath( packagePath, 'dist' );
 	const dummyFilePath = resolvePath( distPath, 'dummy.js' );
 
