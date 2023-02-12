@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "description": "Test package",
   "exports": {
-    "require": "./dist/es5.js",
-    "import": "./dist/es2015.js"
+    "require": "./dist/test-package.cjs",
+    "import": "./dist/test-package.mjs"
   },
   "author": "Comandeer",
   "license": "ISC"

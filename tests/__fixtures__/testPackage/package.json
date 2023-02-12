@@ -5,8 +5,8 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./dist/es2015.js",
-      "require": "./dist/es5.js"
+      "import": "./dist/test-package.mjs",
+      "require": "./dist/test-package.cjs"
     }
   },
   "author": "Comandeer",

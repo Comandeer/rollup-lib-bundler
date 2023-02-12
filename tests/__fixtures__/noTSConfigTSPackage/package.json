@@ -1,12 +1,14 @@
 {
   "name": "test-package",
   "private": true,
+  "type": "module",
   "version": "1.0.0",
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./dist/test-package.mjs",
-      "require": "./dist/test-package.cjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
   "author": "Comandeer",

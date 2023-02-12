@@ -1,240 +1,230 @@
+import test from 'ava';
 import { Console } from 'node:console';
 import consoleControlStrings from 'console-control-strings';
 import createDummyStream from './__helpers__/createDummyStream.js';
+import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
 import OutputController from '../src/OutputController.js';
 
-describe( 'OutputController', () => {
-	let sandbox;
+test( 'OutputController is a class', ( t ) => {
+	t.is( typeof OutputController, 'function' );
+} );
 
-	beforeEach( () => {
-		sandbox = sinon.createSandbox();
+test( 'OutputController#constructor() allows passing custom stdout and stderr streams as part of options argument', ( t ) => {
+	const { stream: dummyStdout, output: stdoutLog } = createDummyStream();
+	const { stream: dummyStderr } = createDummyStream();
+	const outputController = new OutputController( {
+		stdout: dummyStdout,
+		stderr: dummyStderr
 	} );
+	const expectedStdout = [
+		'dummy\n'
+	];
 
-	afterEach( () => {
-		sandbox.restore();
-	} );
+	outputController.addLog( 'dummy' );
+	outputController.display();
 
-	it( 'is a class', () => {
-		expect( OutputController ).to.be.a( 'function' );
-	} );
+	t.deepEqual( stdoutLog, expectedStdout );
+} );
 
-	describe( '#constructor()', () => {
-		it( 'allows passing custom stdout and stderr streams as part of options argument', () => {
-			const { stream: dummyStdout, output: stdoutLog } = createDummyStream();
-			const { stream: dummyStderr } = createDummyStream();
-			const outputController = new OutputController( {
-				stdout: dummyStdout,
-				stderr: dummyStderr
+test( 'OutputController#constructor() creates custom console object', ( t ) => {
+	const outputController = new OutputController();
+
+	t.true( outputController.console instanceof Console );
+	t.not( outputController.console, console );
+} );
+
+test( 'OutputController#constructor() accepts only writable and duplex streams as the first two parameters', ( t ) => {
+	const invalidArguments = [
+		1,
+		'a',
+		{},
+		[],
+		{
+			write() {}
+		},
+		null,
+		() => {}
+	];
+
+	invalidArguments.forEach( ( argument ) => {
+		t.throws( () => {
+			new OutputController( {
+				stdout: argument
 			} );
-
-			outputController.addLog( 'dummy' );
-			outputController.display();
-
-			expect( stdoutLog ).to.deep.equal( [
-				'dummy\n'
-			] );
+		}, {
+			instanceOf: TypeError,
+			message: 'Custom stdout must be a valid writable/duplex stream'
 		} );
 
-		it( 'creates custom console object', () => {
-			const outputController = new OutputController();
-
-			expect( outputController.console ).to.be.an.instanceOf( Console );
-			expect( outputController ).not.to.equal( console );
-		} );
-
-		it( 'accepts only writable and duplex streams as the first two parameters', () => {
-			const invalidArguments = [
-				1,
-				'a',
-				{},
-				[],
-				{
-					write() {}
-				},
-				null,
-				() => {}
-			];
-
-			invalidArguments.forEach( ( argument ) => {
-				expect( () => {
-					new OutputController( {
-						stdout: argument
-					} );
-				} ).to.throw( TypeError, 'Custom stdout must be a valid writable/duplex stream' );
-
-				expect( () => {
-					new OutputController( {
-						stderr: argument
-					} );
-				} ).to.throw( TypeError, 'Custom stderr must be a valid writable/duplex stream' );
+		t.throws( () => {
+			new OutputController( {
+				stderr: argument
 			} );
-
-			expect( () => {
-				const { stream: dummyStdout } = createDummyStream();
-				const { stream: dummyStderr } = createDummyStream( {
-					type: 'duplex'
-				} );
-
-				new OutputController( dummyStdout, dummyStderr );
-			} ).not.to.throw( TypeError );
+		}, {
+			instanceOf: TypeError,
+			message: 'Custom stderr must be a valid writable/duplex stream'
 		} );
 	} );
 
-	describe( '#addLog()', () => {
-		it( 'pushes all passed arguments to pending logs array', () => {
-			const args = [
-				[
-					1,
-					'hublabubla',
-					{}
-				],
+	t.notThrows( () => {
+		const { stream: dummyStdout } = createDummyStream();
+		const { stream: dummyStderr } = createDummyStream( {
+			type: 'duplex'
+		} );
 
-				[
-					2,
-					'albubalbuh',
-					{}
-				]
-			];
-			const outputController = new OutputController();
-
-			args.forEach( ( arg ) => {
-				outputController.addLog( ...arg );
-			} );
-
-			expect( outputController.pendingLogs ).to.deep.equal( args );
+		new OutputController( {
+			stdout: dummyStdout,
+			stderr: dummyStderr
 		} );
 	} );
+} );
 
-	describe( '#addWarning()', () => {
-		it( 'creates and pushes a warning to pending logs array', () => {
-			const expected = [
-				[
-					`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`
-				]
-			];
-			const outputController = new OutputController();
+test( 'OutputController#addLog() pushes all passed arguments to pending logs array', ( t ) => {
+	const args = [
+		[
+			1,
+			'hublabubla',
+			{}
+		],
 
-			outputController.addWarning( 'hublabubla' );
+		[
+			2,
+			'albubalbuh',
+			{}
+		]
+	];
+	const outputController = new OutputController();
 
-			expect( outputController.pendingWarnings ).to.deep.equal( expected );
-		} );
-
-		it( 'uses warning#message property as a warning content', () => {
-			const expected = [
-				[
-					`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`
-				]
-			];
-			const warning = {
-				message: 'hublabubla'
-			};
-			const outputController = new OutputController();
-
-			outputController.addWarning( warning );
-
-			expect( outputController.pendingWarnings ).to.deep.equal( expected );
-		} );
-
-		it( 'supresses external dependencies warning', () => {
-			const warning = {
-				code: 'UNRESOLVED_IMPORT'
-			};
-			const outputController = new OutputController();
-
-			outputController.addWarning( warning );
-
-			expect( outputController.pendingWarnings ).to.deep.equal( [] );
-		} );
+	args.forEach( ( arg ) => {
+		outputController.addLog( ...arg );
 	} );
 
-	describe( '#display()', () => {
-		it( 'displays all pending logs in order', () => {
-			const logs = [
-				[ 5, 'hublabubla', { a: 3 } ],
-				[ 'whatever', false ],
-				[ { b: 123 } ]
-			];
-			const { stream: dummyStdout } = createDummyStream();
-			const outputController = new OutputController( {
-				stdout: dummyStdout
-			} );
-			const spy = sandbox.spy( outputController.console, 'log' );
+	t.deepEqual( outputController.pendingLogs, args );
+} );
 
-			outputController.pendingLogs = [ ...logs ];
+test( 'OutputController#addWarning() creates and pushes a warning to pending logs array', ( t ) => {
+	const expected = [
+		[
+			`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`
+		]
+	];
+	const outputController = new OutputController();
 
-			outputController.display();
+	outputController.addWarning( 'hublabubla' );
 
-			expect( spy ).to.have.been.calledThrice;
+	t.deepEqual( outputController.pendingWarnings, expected );
+} );
 
-			logs.forEach( ( log, i ) => {
-				expect( spy.getCall( i ) ).to.have.been.calledWithExactly( ...log );
-			} );
-		} );
+test( 'OutputController#addWarning() uses warning#message property as a warning content', ( t ) => {
+	const expected = [
+		[
+			`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`
+		]
+	];
+	const warning = {
+		message: 'hublabubla'
+	};
+	const outputController = new OutputController();
 
-		// #208
-		it( 'displays all pending warnings in order', () => {
-			const warnings = [
-				[ 5, 'hublabubla', { a: 3 } ],
-				[ 'whatever', false ],
-				[ { b: 123 } ]
-			];
-			const { stream: dummyStderr } = createDummyStream();
-			const outputController = new OutputController( {
-				stderr: dummyStderr
-			} );
-			const spy = sandbox.spy( outputController.console, 'warn' );
+	outputController.addWarning( warning );
 
-			outputController.pendingWarnings = [ ...warnings ];
+	t.deepEqual( outputController.pendingWarnings, expected );
+} );
 
-			outputController.display();
+test( 'OutputController#addWarning() supresses external dependencies warning', ( t ) => {
+	const warning = {
+		code: 'UNRESOLVED_IMPORT'
+	};
+	const outputController = new OutputController();
 
-			expect( spy ).to.have.been.calledThrice;
+	outputController.addWarning( warning );
 
-			warnings.forEach( ( warning, i ) => {
-				expect( spy.getCall( i ) ).to.have.been.calledWithExactly( ...warning );
-			} );
-		} );
+	t.deepEqual( outputController.pendingWarnings, [] );
+} );
 
-		it( 'displays warnings before logs', async () => {
-			const logs = [
-				[ 'log1' ],
-				[ 'log2' ]
-			];
-			const warnings = [
-				[ 'warning1' ],
-				[ 'warning2' ]
-			];
-			const { stream: dummyStdout } = createDummyStream();
-			const outputController = new OutputController( {
-				stdout: dummyStdout,
-				stderr: dummyStdout
-			} );
-			const warnSpy = sandbox.spy( outputController.console, 'warn' );
-			const logSpy = sandbox.spy( outputController.console, 'log' );
+test( 'OutputController#display() displays all pending logs in order', testWithSinonSandbox, ( t, sandbox ) => {
+	const logs = [
+		[ 5, 'hublabubla', { a: 3 } ],
+		[ 'whatever', false ],
+		[ { b: 123 } ]
+	];
+	const { stream: dummyStdout } = createDummyStream();
+	const outputController = new OutputController( {
+		stdout: dummyStdout
+	} );
+	const spy = sandbox.spy( outputController.console, 'log' );
 
-			outputController.pendingLogs = [ ...logs ];
-			outputController.pendingWarnings = [ ...warnings ];
+	outputController.pendingLogs = [ ...logs ];
 
-			outputController.display();
+	outputController.display();
 
-			expect( warnSpy ).to.have.been.calledTwice;
-			expect( warnSpy ).to.have.been.calledBefore( logSpy );
-			expect( logSpy ).to.have.been.calledTwice;
-		} );
+	t.true( spy.calledThrice );
+
+	logs.forEach( ( log, i ) => {
+		t.true( spy.getCall( i ).calledWithExactly( ...log ) );
+	} );
+} );
+
+// #208
+test( 'OutputController#display() displays all pending warnings in order', testWithSinonSandbox, ( t, sandbox ) => {
+	const warnings = [
+		[ 5, 'hublabubla', { a: 3 } ],
+		[ 'whatever', false ],
+		[ { b: 123 } ]
+	];
+	const { stream: dummyStderr } = createDummyStream();
+	const outputController = new OutputController( {
+		stderr: dummyStderr
+	} );
+	const spy = sandbox.spy( outputController.console, 'warn' );
+
+	outputController.pendingWarnings = [ ...warnings ];
+
+	outputController.display();
+
+	t.true( spy.calledThrice );
+
+	warnings.forEach( ( warning, i ) => {
+		t.true( spy.getCall( i ).calledWithExactly( ...warning ) );
+	} );
+} );
+
+test( 'OutputController#display() displays warnings before logs', testWithSinonSandbox, ( t, sandbox ) => {
+	const logs = [
+		[ 'log1' ],
+		[ 'log2' ]
+	];
+	const warnings = [
+		[ 'warning1' ],
+		[ 'warning2' ]
+	];
+	const { stream: dummyStdout } = createDummyStream();
+	const outputController = new OutputController( {
+		stdout: dummyStdout,
+		stderr: dummyStdout
+	} );
+	const warnSpy = sandbox.spy( outputController.console, 'warn' );
+	const logSpy = sandbox.spy( outputController.console, 'log' );
+
+	outputController.pendingLogs = [ ...logs ];
+	outputController.pendingWarnings = [ ...warnings ];
+
+	outputController.display();
+
+	t.true( warnSpy.calledTwice );
+	t.true( warnSpy.calledBefore( logSpy ) );
+	t.true( logSpy.calledTwice );
+} );
+
+test( 'OutputController#displayError() outputs error into stderr', ( t ) => {
+	const { stream: dummyStderr, output } = createDummyStream();
+	const error = new Error( 'whatever' );
+	const outputController = new OutputController( {
+		stderr: dummyStderr
 	} );
 
-	describe( '#displayError()', () => {
-		it( 'outputs error into stderr', () => {
-			const { stream: dummyStderr, output } = createDummyStream();
-			const error = new Error( 'whatever' );
-			const outputController = new OutputController( {
-				stderr: dummyStderr
-			} );
+	outputController.displayError( error );
 
-			outputController.displayError( error );
-
-			// Just check if there's anything in stderr.
-			expect( output ).to.have.lengthOf.above( 0 );
-		} );
-	} );
+	// Just check if there's anything in stderr.
+	t.not( output.length, 0 );
 } );

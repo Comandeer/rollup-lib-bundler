@@ -3,6 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { extname } from 'node:path';
 import { join as joinPath } from 'node:path';
 
+/**
+ * @type {import('globby').globby}
+ */
 let globby;
 
 async function packageParser( packageDir ) {
@@ -212,8 +215,6 @@ function getExportsTarget( metadata, subPath, type ) {
 	if ( !exports[ subPath ] && subPath === '.' ) {
 		return exports[ type ];
 	}
-
-	return null;
 }
 
 async function getTSConfigPath( packageDir ) {

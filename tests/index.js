@@ -1,20 +1,22 @@
+import test from 'ava';
 import rlb from '../src/index.js';
 import trueRlb from '../src/rlb.js';
 import * as rlbPackage from '../src/index.js';
 
-describe( 'package', () => {
-	// #164
-	it( 'has one, default export', () => {
-		expect( rlbPackage ).to.have.all.keys( 'default' );
-	} );
+// #164
+test( 'package has one, default exports', ( t ) => {
+	const actualExports = Object.keys( rlbPackage );
+	const expectedExports = [
+		'default'
+	];
 
-	describe( 'default export', () => {
-		it( 'is a function', () => {
-			expect( rlb ).to.be.a( 'function' );
-		} );
+	t.deepEqual( actualExports, expectedExports );
+} );
 
-		it( 'is the same as rlb from rlb.js file', () => {
-			expect( rlb ).to.equal( trueRlb );
-		} );
-	} );
+test( 'package default export is a function', ( t ) => {
+	t.is( typeof rlb, 'function' );
+} );
+
+test( 'package default export is the same as rlb from rlb.js file', ( t ) => {
+	t.is( rlb, trueRlb );
 } );

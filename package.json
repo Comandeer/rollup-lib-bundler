@@ -26,7 +26,7 @@
   "scripts": {
     "build": "rlb",
     "pretest": "npm run build",
-    "test": "mlt",
+    "test": "c8 ava",
     "version": "npm test && npm run build && git add -f dist/",
     "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags",
     "prepare": "husky install"
@@ -66,17 +66,24 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
-    "@comandeer/mocha-lib-tester": "^0.7.0",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/register": "^7.18.9",
+    "@comandeer/eslint-config": "^0.10.0",
     "@comandeer/rollup-lib-bundler": "^0.18.0",
+    "ava": "^5.1.1",
+    "c8": "^7.12.0",
     "commitplease": "^3.2.0",
     "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.33.0",
+    "execa": "^7.0.0",
     "husky": "^8.0.3",
     "mock-fs": "^5.2.0",
-    "sourcemap-validator": "^2.1.0"
+    "sinon": "^15.0.1",
+    "sourcemap-validator": "^2.1.0",
+    "tempy": "^3.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.20.12",
-    "@babel/preset-env": "^7.20.2",
     "@comandeer/cli-spinner": "^0.3.2",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.0",

@@ -19,10 +19,13 @@ jobs:
         node: [ '16', '18' ]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Git checkout
+        uses: actions/checkout@v3
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci
       - run: npm test
+      - name: Upload coverage data to Codecov
+        uses: codecov/codecov-action@v3
