@@ -1,6 +1,6 @@
 const config = {
 	files: [
-		'tests/**/*.ava.js',
+		'tests/**/*.js',
 		'!tests/**/{__fixtures__,__helpers__}/**'
 	],
 	require: [
