@@ -35,12 +35,10 @@ class OutputController {
 		this.pendingWarnings = [];
 	}
 
-	/* istanbul ignore next */
 	async showSpinner() {
 		return this[ spinnerSymbol ].show();
 	}
 
-	/* istanbul ignore next */
 	async hideSpinner() {
 		return this[ spinnerSymbol ].hide();
 	}

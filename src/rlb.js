@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import { resolve as resolvePath } from 'node:path';
 import { rimraf } from 'rimraf';
 import consoleControlStrings from 'console-control-strings';
