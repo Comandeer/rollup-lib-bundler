@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	* `tempy` was removed.
 * [#235]: binary now uses the ESM version of the bundler.
 
+### Fixed
+* [#255]: `.ts` source files were not transpiled by Babel to syntax understandable by specified Node.js version (v16.0.0 at the moment of fixing).
+
 ## [0.18.0] – 2023-02-05
 ### Changed
 * [#209]: **BREAKING CHANGE**: parsing the project's `package.json` is no longer blocking as all file operations were rewritten to be asynchronous.
@@ -253,6 +256,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#243]: https://github.com/Comandeer/rollup-lib-bundler/issues/243
 [#247]: https://github.com/Comandeer/rollup-lib-bundler/issues/247
 [#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
+[#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
 
 [0.19.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
