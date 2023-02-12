@@ -2,7 +2,7 @@ import { rimraf } from 'rimraf';
 
 let globby;
 
-async function removeArtifacts( fixturesPath ) {
+async function removeArtifacts( fixturePath ) {
 	if ( !globby ) {
 		const globbyModule = await import( 'globby' );
 		// eslint-disable-next-line require-atomic-updates
@@ -12,7 +12,7 @@ async function removeArtifacts( fixturesPath ) {
 	const distPaths = await globby( [
 		'**/*Package/dist'
 	], {
-		cwd: fixturesPath,
+		cwd: fixturePath,
 		onlyDirectories: true,
 		absolute: true
 	} );

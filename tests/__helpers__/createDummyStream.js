@@ -1,6 +1,23 @@
 import { Duplex as DuplexStream } from 'node:stream';
 import { Writable as WritableStream } from 'node:stream';
 
+/**
+ * @typedef {Object} CreateDummyStreamOptions
+ * @property {'writable' | 'duplex'} [type='writable'] Type of the stream.
+ * @property {boolean} [isTTY=true] Whether the stream is a TTY.
+ */
+
+/**
+ * @typedef {Object} DummyStream
+ * @property {WritableStream | DuplexStream} stream
+ * @property {Array<string>} output
+ */
+
+/**
+ *
+ * @param {CreateDummyStreamOptions} options
+ * @returns {DummyStream}
+ */
 function createDummyStream( {
 	type = 'writable',
 	isTTY = true
