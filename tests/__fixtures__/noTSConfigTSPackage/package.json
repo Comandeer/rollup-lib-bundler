@@ -1,0 +1,16 @@
+{
+  "name": "test-package",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Test package",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "author": "Comandeer",
+  "license": "ISC"
+}

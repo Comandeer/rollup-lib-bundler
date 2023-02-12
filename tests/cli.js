@@ -134,6 +134,21 @@ test( 'CLI bundles TypeScript package', testCLI, {
 	]
 } );
 
+// #220
+test( 'CLI bundles TypeScript package without the tsconfig.json file', testCLI, {
+	fixture: 'noTSConfigTSPackage',
+	expected: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
+
 // #242
 test( 'CLI bundles TypeScript package with complex directory structure', testCLI, {
 	fixture: 'tsComplexPackage',
