@@ -215,8 +215,6 @@ function getExportsTarget( metadata, subPath, type ) {
 	if ( !exports[ subPath ] && subPath === '.' ) {
 		return exports[ type ];
 	}
-
-	return null;
 }
 
 async function getTSConfigPath( packageDir ) {
