@@ -83,6 +83,14 @@ function getRollupInputConfig( input, output, onwarn = () => {} ) {
 						}
 					}
 				]
+			],
+			extensions: [
+				'.js',
+				'.mjs',
+				'.cjs',
+				'.ts',
+				'.mts',
+				'.cts'
 			]
 		} ),
 
