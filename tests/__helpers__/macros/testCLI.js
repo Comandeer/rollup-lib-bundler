@@ -45,6 +45,7 @@ let execa;
  * @property {Record<string, string>} [env={}] Additional environment variables to pass to the command.
  * @property {Array<TestCLICallback>} [cmdResultChecks=[]] Callbacks to check the command's result.
  * @property {Array<string> | undefined} [expectedFiles] Expected files in the dist directory.
+ * @property {Record<string,import('../checkDistFiles.js').CheckStrategyCallback>} [customCheckStrategies={}] Custom check strategies.
  * @property {Array<AdditionalCodeCheckCallback>} [additionalCodeChecks=[]] Additional code checks to perform.
  */
 
@@ -61,6 +62,7 @@ const testCLI = test.macro( async ( t, {
 	env = {},
 	cmdResultChecks = [],
 	expectedFiles,
+	customCheckStrategies = {},
 	additionalCodeChecks = []
 } = {} ) => {
 	if ( !execa ) {
@@ -90,7 +92,10 @@ const testCLI = test.macro( async ( t, {
 		await cmdResultChecksPromises;
 
 		if ( Array.isArray( expectedFiles ) ) {
-			await checkDistFiles( t, tempDirPath, expectedFiles, { additionalCodeChecks } );
+			await checkDistFiles( t, tempDirPath, expectedFiles, {
+				customCheckStrategies,
+				additionalCodeChecks
+			} );
 		}
 
 		if ( typeof after === 'function' ) {
