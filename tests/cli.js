@@ -182,6 +182,35 @@ test( 'CLI preserves dynamic external imports', testCLI, {
 	]
 } );
 
+// #255
+test( 'CLI transpiles bundled JS files down to code understandable by Node v16.0.0', testCLI, {
+	fixture: 'babelTranspilationTSPackage',
+	expectedFiles: [
+		'chunk.cjs',
+		'chunk.cjs.map',
+		'chunk.mjs',
+		'chunk.mjs.map',
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	customCheckStrategies: {
+		// For some reason class static initialization block
+		// failes sourcemap check.
+		'.map': () => {}
+	},
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			t.false( code.includes( 'static{' ) );
+		}
+	]
+} );
+
 // #193
 test( 'CLI displays output for valid package', testCLI, {
 	fixture: 'testPackage',

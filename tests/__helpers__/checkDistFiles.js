@@ -10,7 +10,19 @@ import checkBanner from './checkBanner.js';
  */
 let globby;
 
-const checkStrategies = {
+/**
+ * @callback CheckStrategyCallback
+ * @param {AvaTestContext} t
+ * @param {string} path
+ * @param {string} code
+ * @param {CheckStrategyCallbackOptions} options
+ * @returns {Promise<void> | void}
+ */
+
+/**
+ * @type {Record<string,CheckStrategyCallback>}
+ */
+const defaultCheckStrategies = {
 	'.js': checkJSFile,
 	'.cjs': checkJSFile,
 	'.mjs': checkJSFile,
@@ -32,7 +44,7 @@ const checkStrategies = {
 
 /**
  * @typedef {Object} CheckDistFilesOptions
- * @property {Record<string, function>} [strategies=checkStrategies] Strategies for checking files.
+ * @property {Record<string,CheckStrategyCallback>} [strategies={}] Allowe strategies for checking files.
  * @property {Array<AdditionalCodeCheckCallback>} [additionalCodeChecks=[]] Additional code checks to perform.
  */
 
@@ -45,7 +57,7 @@ const checkStrategies = {
  * @returns {Promise<void>}
  */
 async function checkDistFiles( t, fixturePath, expectedFiles, {
-	strategies = checkStrategies,
+	customCheckStrategies = {},
 	additionalCodeChecks = []
 } = {} ) {
 	if ( !globby ) {
@@ -73,14 +85,15 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
 
 	t.deepEqual( normalizedActualFiles, expectedFiles );
 
-	/* eslint-disable no-await-in-loop */
-	for ( const filePath of expectedFiles ) {
-		await checkBundledContent( t, filePath, {
+	const strategies = { ...defaultCheckStrategies, ...customCheckStrategies };
+	const checkPromises = expectedFiles.map( ( filePath ) => {
+		return checkBundledContent( t, filePath, {
 			strategies,
 			additionalCodeChecks
 		} );
-	}
-	/* eslint-enable no-await-in-loop */
+	} );
+
+	await Promise.all( checkPromises );
 }
 
 /**
@@ -89,17 +102,8 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
  */
 
 /**
- * @callback CheckStrategyCallback
- * @param {AvaTestContext} t
- * @param {string} path
- * @param {string} code
- * @param {CheckStrategyCallbackOptions} options
- * @returns {Promise<void> | void}
- */
-
-/**
  * @typedef {Object} CheckBundledContentOptions
- * @property {Record<string, function>} [strategies=checkStrategies] Strategies for checking files.
+ * @property {Record<string, CheckStrategyCallback>} [strategies=checkStrategies] Strategies for checking files.
  * @property {Array<AdditionalCodeCheckCallback>} [additionalCodeChecks=[]] Additional code checks to perform.
  */
 
@@ -110,7 +114,7 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
  * @returns {Promise<void>}
  */
 async function checkBundledContent( t, path, {
-	strategies = checkStrategies,
+	strategies = defaultCheckStrategies,
 	additionalCodeChecks
 } = {} ) {
 	const extension = getFileExtension( path );
