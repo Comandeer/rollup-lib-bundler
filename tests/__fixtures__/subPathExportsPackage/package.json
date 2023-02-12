@@ -5,8 +5,8 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "require": "./dist/es5.cjs",
-      "import": "./dist/es6.mjs"
+      "require": "./dist/test-package.cjs",
+      "import": "./dist/test-package.mjs"
     },
     "./chunk": {
       "require": "./dist/not-related-name.cjs",
