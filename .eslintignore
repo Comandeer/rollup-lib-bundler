@@ -1,2 +1,1 @@
-tests/**/__fixtures__/**/*.js
-tests/**/__helpers__/**/.js
+tests/**/__fixtures__/**/*
