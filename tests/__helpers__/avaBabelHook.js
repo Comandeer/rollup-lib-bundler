@@ -14,7 +14,7 @@ babelRegister( {
 			preset,
 			{
 				targets: {
-					node: '16.12.0'
+					node: '16.0.0'
 				}
 			}
 		]
