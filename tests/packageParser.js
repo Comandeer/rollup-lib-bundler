@@ -4,13 +4,6 @@ import { sep as pathSeparator } from 'node:path';
 import mockFS from 'mock-fs';
 import packageParser from '../src/packageParser.js';
 
-// TODO: debug it (mock-fs + ava + globby = this error).
-process.on( 'unhandledRejection', ( reason, promise ) => {
-	if ( reason.code === 'EBADF' ) { // Bad file descriptor
-		promise.catch( () => {} );
-	}
-} );
-
 const fixtures = {
 	invalid: '',
 	empty: {},
