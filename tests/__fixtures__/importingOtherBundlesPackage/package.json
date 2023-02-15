@@ -1,0 +1,25 @@
+{
+  "name": "test-package",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Test package",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./chunk": {
+      "import": "./dist/chunk.mjs",
+      "require": "./dist/chunk.cjs"
+    },
+    "./subdir/submodule": {
+      "import": "./dist/subdir/submodule.mjs",
+      "require": "./dist/subdir/submodule.cjs",
+      "types": "./dist/subdir/submodule.d.ts"
+    }
+  },
+  "author": "Comandeer",
+  "license": "ISC"
+}
