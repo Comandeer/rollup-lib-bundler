@@ -12,7 +12,8 @@
     },
     "./chunk": {
       "import": "./dist/chunk.mjs",
-      "require": "./dist/chunk.cjs"
+      "require": "./dist/chunk.cjs",
+      "types": "./dist/chunk.d.ts"
     },
     "./subdir/submodule": {
       "import": "./dist/subdir/submodule.mjs",

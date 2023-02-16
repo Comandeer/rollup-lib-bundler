@@ -9,3 +9,4 @@ function main(): void {
 }
 
 export { main };
+export { Chunk };
