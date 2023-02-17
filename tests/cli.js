@@ -211,6 +211,88 @@ test( 'CLI transpiles bundled JS files down to code understandable by Node v16.0
 	]
 } );
 
+// #230
+test( 'CLI treats import of other bundles as external dependencies', testCLI, {
+	fixture: 'importingOtherBundlesTSPackage',
+	expectedFiles: [
+		'chunk.cjs',
+		'chunk.cjs.map',
+		'chunk.d.ts',
+		'chunk.mjs',
+		'chunk.mjs.map',
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map',
+		'subdir/submodule.cjs',
+		'subdir/submodule.cjs.map',
+		'subdir/submodule.d.ts',
+		'subdir/submodule.mjs',
+		'subdir/submodule.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	customCheckStrategies: {
+		// For some reason sourcemap checks fail.
+		'.map': () => {}
+	},
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const expectedImports = new Map( [
+				[
+					'chunk.cjs',
+					[
+						'./subdir/submodule.cjs'
+					]
+				],
+
+				[
+					'chunk.mjs',
+					[
+						'./subdir/submodule.mjs'
+					]
+				],
+
+				[
+					'index.cjs',
+					[
+						'./chunk.cjs',
+						'./subdir/submodule.cjs'
+					]
+				],
+
+				[
+					'index.mjs',
+					[
+						'./chunk.mjs',
+						'./subdir/submodule.mjs'
+					]
+				]
+			] );
+			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
+				return path.endsWith( file );
+			} );
+
+			if ( typeof expectedImportsForCurrentFile === 'undefined' ) {
+				return;
+			}
+
+			const [ file, imports ] = expectedImportsForCurrentFile;
+
+			imports.forEach( ( expectedImport ) => {
+				const importString = file.endsWith( '.cjs' ) ?
+					`require("${ expectedImport }")` :
+					`from"${ expectedImport }"`;
+
+				t.true( code.includes( importString ), `${ expectedImport } in ${ file }` );
+				t.false( code.includes( 'rlb:' ), 'All placeholder imports were removed' );
+			} );
+		}
+	]
+} );
+
 // #193
 test( 'CLI displays output for valid package', testCLI, {
 	fixture: 'testPackage',
