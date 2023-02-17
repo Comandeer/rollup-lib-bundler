@@ -6,6 +6,7 @@ import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
 import typescript from '@rollup/plugin-typescript';
 import bundleTypes from './bundler/bundleTypes.js';
+import resolveOtherBundles from './bundler/rollupPlugins/resolveOtherBundles.js';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
@@ -26,7 +27,7 @@ function bundleChunks( packageInfo, onWarn = () => {} ) {
 
 async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } = {} ) {
 	const banner = generateBanner( packageInfo );
-	const inputConfig = getRollupInputConfig( source, output, onWarn );
+	const inputConfig = getRollupInputConfig( packageInfo, source, output, onWarn );
 
 	const otuputConfigESM = getRollupOutputConfig( output.esm, banner, 'esm' );
 
@@ -56,11 +57,13 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 	}
 }
 
-function getRollupInputConfig( input, output, onwarn = () => {} ) {
+function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 	const plugins = [
 		convertCJS(),
 
 		json(),
+
+		resolveOtherBundles( packageInfo.project, packageInfo.dist ),
 
 		{
 			renderDynamicImport() {
@@ -98,10 +101,11 @@ function getRollupInputConfig( input, output, onwarn = () => {} ) {
 	];
 
 	// In case of TypeScript, we need to add the plugin.
-	// We need to add it before the Babel plugin, so it's at index 2.
+	// We need to add it before the Babel plugin
+	// and after the custom resolver, so it's at index 3.
 	// Yep, it's not too elegant…
 	if ( output.type === 'ts' ) {
-		plugins.splice( 2, 0, typescript( {
+		plugins.splice( 3, 0, typescript( {
 			tsconfig: output.tsConfig ? output.tsConfig : false,
 			declaration: false
 		} ) );
