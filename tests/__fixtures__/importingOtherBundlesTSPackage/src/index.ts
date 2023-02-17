@@ -10,3 +10,4 @@ function main(): void {
 
 export { main };
 export { Chunk };
+export * from './subdir/submodule.js';
