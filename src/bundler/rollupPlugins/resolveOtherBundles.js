@@ -103,6 +103,38 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 						t.stringLiteral( importPath )
 					)
 				);
+			},
+
+			CallExpression( path ) {
+				const { node } = path;
+				const { callee, arguments: args } = node;
+
+				if ( !t.isIdentifier( callee ) || callee.name !== 'require' ) {
+					return;
+				}
+
+				const [ requiredModuleArg ] = args;
+
+				if ( !t.isStringLiteral( requiredModuleArg ) ) {
+					return;
+				}
+
+				const importee = requiredModuleArg.value;
+
+				if ( !importee.startsWith( 'rlb:' ) ) {
+					return;
+				}
+
+				const importPath = getCorrectImportPath( importee, 'cjs' );
+
+				path.replaceWith(
+					t.callExpression(
+						t.identifier( 'require' ),
+						[
+							t.stringLiteral( importPath )
+						]
+					)
+				);
 			}
 		}
 	};
