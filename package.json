@@ -85,6 +85,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.20.12",
+    "@babel/types": "^7.20.7",
     "@comandeer/cli-spinner": "^0.3.2",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.0",
