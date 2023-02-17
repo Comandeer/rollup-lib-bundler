@@ -67,6 +67,42 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 						t.stringLiteral( importPath )
 					)
 				);
+			},
+
+			ExportNamedDeclaration( path ) {
+				const { node } = path;
+				const { source } = node;
+
+				if ( !source || !source.value.startsWith( 'rlb:' ) ) {
+					return;
+				}
+
+				const importPath = getCorrectImportPath( source.value, 'esm' );
+
+				path.replaceWith(
+					t.exportNamedDeclaration(
+						node.declaration,
+						node.specifiers,
+						t.stringLiteral( importPath )
+					)
+				);
+			},
+
+			ExportAllDeclaration( path ) {
+				const { node } = path;
+				const { source } = node;
+
+				if ( !source.value.startsWith( 'rlb:' ) ) {
+					return;
+				}
+
+				const importPath = getCorrectImportPath( source.value, 'esm' );
+
+				path.replaceWith(
+					t.exportAllDeclaration(
+						t.stringLiteral( importPath )
+					)
+				);
 			}
 		}
 	};
