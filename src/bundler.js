@@ -6,6 +6,7 @@ import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
 import typescript from '@rollup/plugin-typescript';
 import bundleTypes from './bundler/bundleTypes.js';
+import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
 import resolveOtherBundles from './bundler/rollupPlugins/resolveOtherBundles.js';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
@@ -65,14 +66,7 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 
 		resolveOtherBundles( packageInfo.project, packageInfo.dist ),
 
-		{
-			renderDynamicImport() {
-				return {
-					left: 'import(',
-					right: ');'
-				};
-			}
-		},
+		preserveDynamicImports(),
 
 		babel( {
 			babelrc: false,
