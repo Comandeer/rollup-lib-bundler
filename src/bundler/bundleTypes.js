@@ -1,11 +1,10 @@
-import { dirname } from 'node:path';
-import { join as joinPath } from 'node:path';
 import { normalize as normalizePath } from 'node:path';
 import { resolve as resolvePath } from 'node:path';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import virtual from '@rollup/plugin-virtual';
 import ts from 'typescript';
+import fixDTSImportPaths from './rollupPlugins/fixDTSImportPaths.js';
 
 /**
  * @type {import('globby').globby}
@@ -61,7 +60,7 @@ async function bundleTypes( {
 	const rollupConfig = {
 		input,
 		plugins: [
-			fixImportPaths(),
+			fixDTSImportPaths(),
 
 			virtual( emittedFiles ),
 
@@ -76,33 +75,6 @@ async function bundleTypes( {
 	const bundle = await rollup( rollupConfig );
 
 	await bundle.write( outputConfig );
-}
-
-function fixImportPaths() {
-	return {
-		resolveId: ( imported, importer ) => {
-			// Skip the main file.
-			if ( !importer ) {
-				return null;
-			}
-
-			const importerDir = dirname( importer );
-			const jsExtensionRegex = /\.(m|c)?js$/;
-
-			imported = joinPath( importerDir, imported );
-
-			// We need full file path, with extension here.
-			// Due to that we need to:
-			// 1. Remove JS extension (in ESM-based projects
-			//    TS tends to add it).
-			// 2. Add the .d.ts extension.
-			if ( !imported.endsWith( '.d.ts' ) ) {
-				imported = `${ imported.replace( jsExtensionRegex, '' ) }.d.ts`;
-			}
-
-			return imported;
-		}
-	};
 }
 
 function getUserCompilerOptions( project, tsConfig ) {
