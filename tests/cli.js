@@ -219,7 +219,7 @@ test( 'CLI transpiles bundled JS files down to code understandable by Node v16.0
 } );
 
 // #230
-test( 'CLI treats import of other bundles as external dependencies', testCLI, {
+test( 'CLI treats import of other bundles as external dependencies (TS package)', testCLI, {
 	fixture: 'importingOtherBundlesTSPackage',
 	expectedFiles: [
 		'chunk.cjs',
@@ -281,6 +281,84 @@ test( 'CLI treats import of other bundles as external dependencies', testCLI, {
 					[
 						'./chunk.js',
 						'./subdir/submodule.js'
+					]
+				]
+			] );
+			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
+				return path.endsWith( file );
+			} );
+
+			if ( typeof expectedImportsForCurrentFile === 'undefined' ) {
+				return;
+			}
+
+			const [ file, imports ] = expectedImportsForCurrentFile;
+
+			imports.forEach( ( expectedImport ) => {
+				const expectedImportEscapedForRegex = expectedImport.replace( /[.]/g, '\\.' );
+				const importRegex = file.endsWith( '.cjs' ) ?
+					new RegExp( `require\\(\\s*["']${ expectedImportEscapedForRegex }["']\\s*\\)` ) :
+					new RegExp( `(import|export).+?from\\s*["']${ expectedImportEscapedForRegex }["']` );
+
+				t.regex( code, importRegex, `${ expectedImport } in ${ file }` );
+				t.false( code.includes( 'rlb:' ), 'All placeholder imports were removed' );
+			} );
+		}
+	]
+} );
+
+// #230
+test( 'CLI treats import of other bundles as external dependencies (JS package)', testCLI, {
+	fixture: 'importingOtherBundlesJSPackage',
+	expectedFiles: [
+		'chunk.cjs',
+		'chunk.cjs.map',
+		'chunk.mjs',
+		'chunk.mjs.map',
+		'index.cjs',
+		'index.cjs.map',
+		'index.mjs',
+		'index.mjs.map',
+		'subdir/submodule.cjs',
+		'subdir/submodule.cjs.map',
+		'subdir/submodule.mjs',
+		'subdir/submodule.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const expectedImports = new Map( [
+				[
+					'index.cjs',
+					[
+						'./chunk.cjs',
+						'./subdir/submodule.cjs'
+					]
+				],
+
+				[
+					'index.mjs',
+					[
+						'./chunk.mjs',
+						'./subdir/submodule.mjs'
+					]
+				],
+
+				[
+					'subdir/submodule.cjs',
+					[
+						'../chunk.cjs'
+					]
+				],
+
+				[
+					'subdir/submodule.mjs',
+					[
+						'../chunk.mjs'
 					]
 				]
 			] );
