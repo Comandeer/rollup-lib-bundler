@@ -1,6 +1,5 @@
 import { readFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'node:path';
-import { extname as getFileExtension } from 'node:path';
 import { normalize as normalizePath } from 'node:path';
 import validateSourceMap from 'sourcemap-validator';
 import checkBanner from './checkBanner.js';
@@ -20,15 +19,13 @@ let globby;
  */
 
 /**
- * @type {Record<string,CheckStrategyCallback>}
+ * @type {Map<RegExp,CheckStrategyCallback>}
  */
-const defaultCheckStrategies = {
-	'.js': checkJSFile,
-	'.cjs': checkJSFile,
-	'.mjs': checkJSFile,
-
-	'.map': checkSourceMapFile
-};
+const defaultCheckStrategies = new Map( [
+	[ /\.(c|m)?js$/, checkJSFile ],
+	[ /\.map$/, checkSourceMapFile ],
+	[ /\.d\.ts$/, checkDTSFile ]
+] );
 
 /**
  * @typedef {import('ava').ExecutionContext<unknown>} AvaTestContext
@@ -44,7 +41,7 @@ const defaultCheckStrategies = {
 
 /**
  * @typedef {Object} CheckDistFilesOptions
- * @property {Record<string,CheckStrategyCallback>} [strategies={}] Allowe strategies for checking files.
+ * @property {Map<RegExp,CheckStrategyCallback>} [strategies=new Map()] Allowe strategies for checking files.
  * @property {Array<AdditionalCodeCheckCallback>} [additionalCodeChecks=[]] Additional code checks to perform.
  */
 
@@ -57,7 +54,7 @@ const defaultCheckStrategies = {
  * @returns {Promise<void>}
  */
 async function checkDistFiles( t, fixturePath, expectedFiles, {
-	customCheckStrategies = {},
+	customCheckStrategies = new Map(),
 	additionalCodeChecks = []
 } = {} ) {
 	if ( !globby ) {
@@ -85,7 +82,7 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
 
 	t.deepEqual( normalizedActualFiles, expectedFiles );
 
-	const strategies = { ...defaultCheckStrategies, ...customCheckStrategies };
+	const strategies = prepareStrategies( defaultCheckStrategies, customCheckStrategies );
 	const checkPromises = expectedFiles.map( ( filePath ) => {
 		return checkBundledContent( t, filePath, {
 			strategies,
@@ -94,6 +91,17 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
 	} );
 
 	await Promise.all( checkPromises );
+}
+
+function prepareStrategies( defaultCheckStrategies, customCheckStrategies ) {
+	const customCheckStrategiesEntries = [ ...customCheckStrategies ];
+	const filteredDefaultStrategies = [ ...defaultCheckStrategies ].filter( ( [ regex ] ) => {
+		return !customCheckStrategiesEntries.some( ( [ customRegex ] ) => {
+			return customRegex.source === regex.source;
+		} );
+	} );
+
+	return new Map( [ ...filteredDefaultStrategies, ...customCheckStrategiesEntries ] );
 }
 
 /**
@@ -117,8 +125,7 @@ async function checkBundledContent( t, path, {
 	strategies = defaultCheckStrategies,
 	additionalCodeChecks
 } = {} ) {
-	const extension = getFileExtension( path );
-	const strategy = strategies[ extension ];
+	const strategy = getStrategy( strategies, path );
 
 	if ( !strategy ) {
 		return;
@@ -127,6 +134,12 @@ async function checkBundledContent( t, path, {
 	const code = await readFile( path, 'utf8' );
 
 	strategy( t, path, code, { additionalCodeChecks } );
+}
+
+function getStrategy( strategies, path ) {
+	return [ ...strategies ].find( ( [ regex ] ) => {
+		return regex.test( path );
+	} )?.[ 1 ];
 }
 
 /**
@@ -185,6 +198,28 @@ async function checkSourceMapFile( t, path, sourceMap ) {
 	const correctMappingsRegex = /;[a-z0-9]+,/i;
 
 	t.regex( parsedSourceMap.mappings, correctMappingsRegex, 'Mappings are not empty' );
+}
+
+/**
+ * @typedef {CheckJSFileOptions} CheckDTSFileOptions
+ */
+
+/**
+ *
+ * @param {AvaTestContext} t
+ * @param {string} path
+ * @param {string} code
+ * @param {CheckDTSFileOptions} options
+ * @returns {Promise<void>}
+ */
+async function checkDTSFile( t, path, code, {
+	additionalCodeChecks
+} ) {
+	const additionalCodeChecksPromises = additionalCodeChecks.map( ( additionalCodeCheck ) => {
+		return additionalCodeCheck( t, path, code );
+	} );
+
+	return Promise.all( additionalCodeChecksPromises );
 }
 
 export default checkDistFiles;

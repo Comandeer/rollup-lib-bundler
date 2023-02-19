@@ -45,7 +45,7 @@ let execa;
  * @property {Record<string, string>} [env={}] Additional environment variables to pass to the command.
  * @property {Array<TestCLICallback>} [cmdResultChecks=[]] Callbacks to check the command's result.
  * @property {Array<string> | undefined} [expectedFiles] Expected files in the dist directory.
- * @property {Record<string,import('../checkDistFiles.js').CheckStrategyCallback>} [customCheckStrategies={}] Custom check strategies.
+ * @property {Map<RegExp,import('../checkDistFiles.js').CheckStrategyCallback>} [customCheckStrategies=new Map()] Custom check strategies.
  * @property {Array<AdditionalCodeCheckCallback>} [additionalCodeChecks=[]] Additional code checks to perform.
  */
 
@@ -62,7 +62,7 @@ const testCLI = test.macro( async ( t, {
 	env = {},
 	cmdResultChecks = [],
 	expectedFiles,
-	customCheckStrategies = {},
+	customCheckStrategies = new Map(),
 	additionalCodeChecks = []
 } = {} ) => {
 	if ( !execa ) {

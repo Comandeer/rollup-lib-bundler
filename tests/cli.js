@@ -31,6 +31,11 @@ const cmdResultChecks = {
 		t.true( stderr.includes( 'Skipping CJS build for' ) );
 	}
 };
+const customCheckStrategies = {
+	skipSourceMaps: new Map( [
+		[ /\.map$/, () => {} ]
+	] )
+};
 
 test( 'CLI bundles files based on current working directory', testCLI, {
 	fixture: 'testPackage',
@@ -199,11 +204,9 @@ test( 'CLI transpiles bundled JS files down to code understandable by Node v16.0
 	cmdResultChecks: [
 		cmdResultChecks.noError
 	],
-	customCheckStrategies: {
-		// For some reason class static initialization block
-		// failes sourcemap check.
-		'.map': () => {}
-	},
+	// For some reason class static initialization block
+	// failes sourcemap check.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
 		( t, path, code ) => {
 			t.false( code.includes( 'static{' ) );
@@ -234,10 +237,8 @@ test( 'CLI treats import of other bundles as external dependencies', testCLI, {
 	cmdResultChecks: [
 		cmdResultChecks.noError
 	],
-	customCheckStrategies: {
-		// For some reason sourcemap checks fail.
-		'.map': () => {}
-	},
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
 		( t, path, code ) => {
 			const expectedImports = new Map( [
@@ -269,6 +270,14 @@ test( 'CLI treats import of other bundles as external dependencies', testCLI, {
 						'./chunk.mjs',
 						'./subdir/submodule.mjs'
 					]
+				],
+
+				[
+					'index.d.ts',
+					[
+						'./chunk.js',
+						'./subdir/submodule.js'
+					]
 				]
 			] );
 			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
@@ -282,11 +291,12 @@ test( 'CLI treats import of other bundles as external dependencies', testCLI, {
 			const [ file, imports ] = expectedImportsForCurrentFile;
 
 			imports.forEach( ( expectedImport ) => {
-				const importString = file.endsWith( '.cjs' ) ?
-					`require("${ expectedImport }")` :
-					`from"${ expectedImport }"`;
+				const expectedImportEscapedForRegex = expectedImport.replace( /[.]/g, '\\.' );
+				const importRegex = file.endsWith( '.cjs' ) ?
+					new RegExp( `require\\(\\s*["']${ expectedImportEscapedForRegex }["']\\s*\\)` ) :
+					new RegExp( `(import|export).+?from\\s*["']${ expectedImportEscapedForRegex }["']` );
 
-				t.true( code.includes( importString ), `${ expectedImport } in ${ file }` );
+				t.regex( code, importRegex, `${ expectedImport } in ${ file }` );
 				t.false( code.includes( 'rlb:' ), 'All placeholder imports were removed' );
 			} );
 		}
