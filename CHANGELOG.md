@@ -8,11 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.19.0]
 ### Changed
+* [#230]: **BREAKING CHANGE**: bundler now omits bundling files that are marked in `package.json` as bundle entrypoints; such files will be always treated as external and imported.
 * [#243]: **BREAKING CHANGE**: bundler of type definitions loads now the `tsconfig.json` file of the project being bundled.
 * [#247]: **BREAKING CHANGE**: the bundler's `package.json` contains now only the `exports`-based entrypoints.
-* [#248]: **BREAKING CHANGE**: bundler of type definitions uses now virtual filesystem instead of a real temporary directory. It caused the list of dependencies to change:
-	* `@rollup/plugin-virtual` was added,
-	* `tempy` was removed.
+* [#248]: **BREAKING CHANGE**: bundler of type definitions uses now virtual filesystem instead of a real temporary directory.
+* **BREAKING CHANGE**: the list of dependencies changed:
+
+	| Dependency                           | Added/Removed | Old version | New version |
+	| ------------------------------------ | ------------- | ----------- | ----------- |
+	| `@babel/plugin-transform-typescript` | Added         | N/A         | `^7.20.13`  |
+	| `@babel/types`                       | Added         | N/A         | `^7.20.7`   |
+	| `@rollup/plugin-virtual`             | Added         | N/A         | `^3.0.1`    |
+	| `tempy`                              | Removed       | `^3.0.0`    | N/A         |
+
 * [#235]: binary now uses the ESM version of the bundler.
 
 ### Fixed
@@ -250,6 +258,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#222]: https://github.com/Comandeer/rollup-lib-bundler/issues/222
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 [#228]: https://github.com/Comandeer/rollup-lib-bundler/issues/228
+[#230]: https://github.com/Comandeer/rollup-lib-bundler/issues/230
 [#235]: https://github.com/Comandeer/rollup-lib-bundler/issues/235
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
