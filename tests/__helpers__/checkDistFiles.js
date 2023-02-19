@@ -1,6 +1,5 @@
 import { readFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
-import { normalize as normalizePath } from 'pathe';
 import validateSourceMap from 'sourcemap-validator';
 import checkBanner from './checkBanner.js';
 
@@ -70,20 +69,14 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
 		onlyFiles: true,
 		absolute: true
 	} );
-	const normalizedActualFiles = actualFiles.map( ( file ) => {
-		return normalizePath( file );
-	} );
-
-	expectedFiles = expectedFiles.map( ( file ) => {
+	const expectedFilePaths = expectedFiles.map( ( file ) => {
 		return resolvePath( distPath, file );
-	} ).map( ( file ) => {
-		return normalizePath( file );
 	} );
 
-	t.deepEqual( normalizedActualFiles, expectedFiles );
+	t.deepEqual( actualFiles, expectedFilePaths, 'All expected files are present' );
 
 	const strategies = prepareStrategies( defaultCheckStrategies, customCheckStrategies );
-	const checkPromises = expectedFiles.map( ( filePath ) => {
+	const checkPromises = expectedFilePaths.map( ( filePath ) => {
 		return checkBundledContent( t, filePath, {
 			strategies,
 			additionalCodeChecks

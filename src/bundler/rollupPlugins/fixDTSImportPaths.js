@@ -1,6 +1,5 @@
 import { dirname } from 'pathe';
 import { join as joinPath } from 'pathe';
-import { normalize as normalizePath } from 'pathe';
 import { relative as getRelativePath } from 'pathe';
 
 function fixDTSImportPaths( distMetadata ) {
@@ -26,7 +25,7 @@ function fixDTSImportPaths( distMetadata ) {
 				importee = `${ importee.replace( jsExtensionRegex, '' ) }.d.ts`;
 			}
 
-			const importeeFullPath = normalizePath( joinPath( importerDir, importee ) );
+			const importeeFullPath = joinPath( importerDir, importee );
 			const distImporteePath = importeeFullPath.replace( virtualSrcPrefix, './dist' );
 			const isBundle = checkIfBundle( distMetadata, distImporteePath );
 
@@ -36,7 +35,7 @@ function fixDTSImportPaths( distMetadata ) {
 
 			const distImporterPath = importer.replace( virtualSrcPrefix, './dist' );
 			const distImporterDirectory = dirname( distImporterPath );
-			const importeePathRelativeToImporter = normalizePath( getRelativePath( distImporterDirectory, distImporteePath ) );
+			const importeePathRelativeToImporter = getRelativePath( distImporterDirectory, distImporteePath );
 
 			// As TS does not accept the .d.ts extension in import paths, we need to reused the original one.
 			const importeeImportSpecifier = `./${ importeePathRelativeToImporter.

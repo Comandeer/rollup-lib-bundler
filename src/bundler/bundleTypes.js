@@ -1,4 +1,3 @@
-import { normalize as normalizePath } from 'pathe';
 import { resolve as resolvePath } from 'pathe';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
@@ -24,7 +23,7 @@ async function bundleTypes( {
 		globby = globbyModule.globby;
 	}
 
-	const project = normalizePath( packageInfo.project );
+	const project = packageInfo.project;
 
 	const userCompilerOptions = getUserCompilerOptions( project, tsConfig );
 	const compilerOptions = {
@@ -100,10 +99,9 @@ function getOriginalDTsFilePath( project, sourceFile ) {
 
 function getRelativeToProjectPath( project, filePath ) {
 	// We need the relative path to the .d.ts file. So:
-	// 1. Normalize the filePath (just to be sure).
-	// 2. Remove the project path.
-	// 3. Remove the leading slash/backslash.
-	const relativeFilePath = normalizePath( filePath ).
+	// 1. Remove the project path.
+	// 2. Remove the leading slash/backslash.
+	const relativeFilePath = filePath.
 		replace( project, '' ).
 		replace( /^[/\\]/, '' );
 
