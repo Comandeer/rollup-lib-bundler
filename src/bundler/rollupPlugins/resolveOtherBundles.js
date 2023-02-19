@@ -145,10 +145,10 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 		const distPathRelativeToProject = metadata[ srcPathRelativeToProject ][ importType ];
 		const distFullPath = resolvePath( projectPath, distPathRelativeToProject );
 		const chunkDirectoryPath = dirname( importerFullPath );
-		const distPathRelativeToChunk = getRelativePath( chunkDirectoryPath, distFullPath );
-		const importPath = normalizePath( distPathRelativeToChunk.startsWith( '.' ) ?
+		const distPathRelativeToChunk = normalizePath( getRelativePath( chunkDirectoryPath, distFullPath ) );
+		const importPath = distPathRelativeToChunk.startsWith( '.' ) ?
 			distPathRelativeToChunk :
-			`./${ distPathRelativeToChunk }` );
+			`./${ distPathRelativeToChunk }`;
 
 		return importPath;
 	}

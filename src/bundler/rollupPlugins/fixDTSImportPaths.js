@@ -36,11 +36,11 @@ function fixDTSImportPaths( distMetadata ) {
 
 			const distImporterPath = importer.replace( virtualSrcPrefix, './dist' );
 			const distImporterDirectory = dirname( distImporterPath );
-			const importeePathRelativeToImporter = getRelativePath( distImporterDirectory, distImporteePath );
+			const importeePathRelativeToImporter = normalizePath( getRelativePath( distImporterDirectory, distImporteePath ) );
 
 			// As TS does not accept the .d.ts extension in import paths, we need to reused the original one.
-			const importeeImportSpecifier = normalizePath( `./${ importeePathRelativeToImporter.
-				replace( /\.d\.ts$/, originalExtension ) }` );
+			const importeeImportSpecifier = `./${ importeePathRelativeToImporter.
+				replace( /\.d\.ts$/, originalExtension ) }`;
 
 			return {
 				id: importeeImportSpecifier,
