@@ -1,4 +1,5 @@
 import { dirname } from 'node:path';
+import { normalize as normalizePath } from 'node:path/posix';
 import { relative as getRelativePath } from 'node:path';
 import { resolve as resolvePath } from 'node:path';
 import { transformAsync } from '@babel/core';
@@ -145,9 +146,9 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 		const distFullPath = resolvePath( projectPath, distPathRelativeToProject );
 		const chunkDirectoryPath = dirname( importerFullPath );
 		const distPathRelativeToChunk = getRelativePath( chunkDirectoryPath, distFullPath );
-		const importPath = distPathRelativeToChunk.startsWith( '.' ) ?
+		const importPath = normalizePath( distPathRelativeToChunk.startsWith( '.' ) ?
 			distPathRelativeToChunk :
-			`./${ distPathRelativeToChunk }`;
+			`./${ distPathRelativeToChunk }` );
 
 		return importPath;
 	}
