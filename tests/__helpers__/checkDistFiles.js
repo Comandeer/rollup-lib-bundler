@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
-import { resolve as resolvePath } from 'node:path';
-import { normalize as normalizePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
+import { normalize as normalizePath } from 'pathe';
 import validateSourceMap from 'sourcemap-validator';
 import checkBanner from './checkBanner.js';
 

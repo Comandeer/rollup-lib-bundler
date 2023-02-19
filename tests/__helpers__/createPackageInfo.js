@@ -1,4 +1,4 @@
-import { resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 
 const DEFAULT_METADATA = {
 	name: 'test-package',

@@ -1,7 +1,7 @@
 import { access } from 'node:fs/promises';
 import { readFile } from 'node:fs/promises';
-import { extname } from 'node:path';
-import { join as joinPath } from 'node:path';
+import { extname } from 'pathe';
+import { join as joinPath } from 'pathe';
 
 /**
  * @type {import('globby').globby}

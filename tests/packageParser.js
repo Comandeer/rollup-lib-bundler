@@ -1,6 +1,6 @@
 import test from 'ava';
-import { resolve as resolvePath } from 'node:path';
-import { sep as pathSeparator } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
+import { sep as pathSeparator } from 'pathe';
 import mockFS from 'mock-fs';
 import packageParser from '../src/packageParser.js';
 

@@ -1,7 +1,7 @@
-import { dirname } from 'node:path';
-import { join as joinPath } from 'node:path';
-import { normalize as normalizePath } from 'node:path/posix';
-import { relative as getRelativePath } from 'node:path';
+import { dirname } from 'pathe';
+import { join as joinPath } from 'pathe';
+import { normalize as normalizePath } from 'pathe';
+import { relative as getRelativePath } from 'pathe';
 
 function fixDTSImportPaths( distMetadata ) {
 	const virtualSrcPrefix = '\0virtual:src';

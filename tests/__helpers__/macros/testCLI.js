@@ -1,4 +1,4 @@
-import { resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import checkDistFiles from '../checkDistFiles.js';
 import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.js';

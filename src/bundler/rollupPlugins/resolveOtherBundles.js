@@ -1,7 +1,7 @@
-import { dirname } from 'node:path';
-import { normalize as normalizePath } from 'node:path/posix';
-import { relative as getRelativePath } from 'node:path';
-import { resolve as resolvePath } from 'node:path';
+import { dirname } from 'pathe';
+import { normalize as normalizePath } from 'pathe';
+import { relative as getRelativePath } from 'pathe';
+import { resolve as resolvePath } from 'pathe';
 import { transformAsync } from '@babel/core';
 import * as t from '@babel/types';
 

@@ -1,5 +1,5 @@
-import { normalize as normalizePath } from 'node:path';
-import { resolve as resolvePath } from 'node:path';
+import { normalize as normalizePath } from 'pathe';
+import { resolve as resolvePath } from 'pathe';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import virtual from '@rollup/plugin-virtual';
