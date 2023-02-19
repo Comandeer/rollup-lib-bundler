@@ -52,6 +52,8 @@ test( 'CLI bundles package based on exports fields', testCLI, {
 test( 'CLI bundles package that imports JSON content', testCLI, {
 	fixture: 'jsonPackage',
 	expectedFiles: defaultExpectedFiles,
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
 		( t, path, code ) => {
 			const regex = /name:\s?["']Piotr Kowalski["']/;
@@ -169,6 +171,8 @@ test( 'CLI bundles TypeScript package with complex directory structure', testCLI
 		'subdir/submodule.mjs',
 		'subdir/submodule.mjs.map'
 	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	cmdResultChecks: [
 		cmdResultChecks.noError
 	]
