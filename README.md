@@ -68,8 +68,8 @@ By default, `src/index.js` is treated as the only entry point. However, using [s
 ```json
 "exports": {
 	".": {
-		"require": "./dist/es5.cjs",
-		"import": "./dist/es6.mjs"
+		"require": "./dist/package.cjs",
+		"import": "./dist/package.mjs"
 	},
 
 	"./chunk": {
@@ -81,8 +81,8 @@ By default, `src/index.js` is treated as the only entry point. However, using [s
 
 In this case two source files will be bundled:
 * `src/index.js`:
-	* ESM output: `dist/es6.mjs`,
-	* CJS output: `dist/es5.cjs`,
+	* ESM output: `dist/package.mjs`,
+	* CJS output: `dist/package.cjs`,
 * `src/chunk.js`:
 	* ESM output: `dist/chunk.mjs`,
 	* CJS output: `dist/chunk.cjs`.
@@ -90,6 +90,8 @@ In this case two source files will be bundled:
 Although Node.js supports several different syntaxes for subpath exports, this bundler supports only the form presented on the example above (so each subpath needs two properties – `require` for CJS bundle and `import` for ESM bundle).
 
 Each subpath is translated to appropriate file in `src` directory. Basically, `./` at the beginning is translated to `src/` and the name of the subpath is translated to `<subpath>.js` (e.g. `./chunk` → `src/chunk.js`). The only exception is the `.` subpath, which is translated to `src/index.js`.
+
+As of version 0.19.0 the bundler also automatically omits bundling bundles inside other bundles. If there were an import of the `src/chunk.js` file inside the `src/index.js` file in the above structure, then the `dist/package.(c|m)js` file would contain an import from `dist/chunk.(c|m)js` file instead of the content of the other bundle.
 
 ## TypeScript support
 
