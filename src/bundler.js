@@ -49,7 +49,7 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 
 	if ( output.types ) {
 		await bundleTypes( {
-			project: packageInfo.project,
+			packageInfo,
 			sourceFile: source,
 			outputFile: output.types,
 			tsConfig: output.tsConfig,

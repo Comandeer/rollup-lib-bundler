@@ -12,7 +12,7 @@ import fixDTSImportPaths from './rollupPlugins/fixDTSImportPaths.js';
 let globby;
 
 async function bundleTypes( {
-	project,
+	packageInfo,
 	sourceFile,
 	outputFile,
 	tsConfig,
@@ -24,7 +24,7 @@ async function bundleTypes( {
 		globby = globbyModule.globby;
 	}
 
-	project = normalizePath( project );
+	const project = normalizePath( packageInfo.project );
 
 	const userCompilerOptions = getUserCompilerOptions( project, tsConfig );
 	const compilerOptions = {
@@ -60,7 +60,7 @@ async function bundleTypes( {
 	const rollupConfig = {
 		input,
 		plugins: [
-			fixDTSImportPaths(),
+			fixDTSImportPaths( packageInfo.dist ),
 
 			virtual( emittedFiles ),
 
