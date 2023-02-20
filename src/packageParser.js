@@ -1,7 +1,8 @@
 import { access } from 'node:fs/promises';
 import { readFile } from 'node:fs/promises';
-import { extname } from 'node:path';
-import { join as joinPath } from 'node:path';
+import { extname } from 'pathe';
+import { join as joinPath } from 'pathe';
+import { normalize as normalizePath } from 'pathe';
 
 /**
  * @type {import('globby').globby}
@@ -68,8 +69,10 @@ function lintObject( obj ) {
 }
 
 async function prepareMetadata( packageDir, metadata ) {
+	const project = normalizePath( packageDir );
+
 	return {
-		project: packageDir,
+		project,
 		name: metadata.name,
 		version: metadata.version,
 		author: prepareAuthorMetadata( metadata.author ),

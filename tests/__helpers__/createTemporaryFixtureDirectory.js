@@ -1,5 +1,5 @@
 import { cp } from 'node:fs/promises';
-import { resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 
 const FIXTURES_PATH = resolvePath( __dirname, '..', '__fixtures__' );
 

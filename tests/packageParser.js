@@ -1,6 +1,5 @@
 import test from 'ava';
-import { resolve as resolvePath } from 'node:path';
-import { sep as pathSeparator } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 import mockFS from 'mock-fs';
 import packageParser from '../src/packageParser.js';
 
@@ -400,7 +399,7 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 		license: 'MIT',
 		version: '9.0.1',
 		dist: {
-			[ `src${ pathSeparator }index.js` ]: {
+			[ 'src/index.js' ]: {
 				esm: 'dist/test-package.mjs',
 				cjs: 'dist/test-package.cjs',
 				type: 'js'
@@ -422,12 +421,12 @@ test( 'packageParser() returns simplified metadata for package with subpath "exp
 		license: 'ISC',
 		version: '1.0.0',
 		dist: {
-			[ `src${ pathSeparator }index.js` ]: {
+			[ 'src/index.js' ]: {
 				cjs: './dist/es5.cjs',
 				esm: './dist/es6.mjs',
 				type: 'js'
 			},
-			[ `src${ pathSeparator }chunk.mjs` ]: {
+			[ 'src/chunk.mjs' ]: {
 				cjs: './dist/not-related-name.cjs',
 				esm: './dist/also-not-related-name.js',
 				type: 'js'
@@ -449,7 +448,7 @@ test( 'packageParser() returns simplified metadata for package with no-CJS "expo
 		license: 'MIT',
 		version: '9.0.1',
 		dist: {
-			[ `src${ pathSeparator }index.js` ]: {
+			[ 'src/index.js' ]: {
 				esm: './dist/test-package.mjs',
 				type: 'js'
 			}
@@ -470,11 +469,11 @@ test( 'packageParser() returns simplified metadata for package with no-CJS subpa
 		license: 'ISC',
 		version: '1.0.0',
 		dist: {
-			[ `src${ pathSeparator }index.js` ]: {
+			[ 'src/index.js' ]: {
 				esm: './dist/es6.mjs',
 				type: 'js'
 			},
-			[ `src${ pathSeparator }chunk.mjs` ]: {
+			[ 'src/chunk.mjs' ]: {
 				esm: './dist/also-not-related-name.js',
 				type: 'js'
 			}
@@ -518,7 +517,7 @@ test( 'packageParser() correctly detects JS type with single .js entry point', a
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'js' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.js` ]: {
+		[ 'src/index.js' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			type: 'js'
@@ -533,7 +532,7 @@ test( 'packageParser() correctly detects JS type with single .mjs entry point', 
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'mjs' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.mjs` ]: {
+		[ 'src/index.mjs' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			type: 'js'
@@ -548,7 +547,7 @@ test( 'packageParser() correctly detects JS type with .mjs and .js entry point',
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'mixedJS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.mjs` ]: {
+		[ 'src/index.mjs' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			type: 'js'
@@ -563,13 +562,13 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 	const mockedPackagePath = getMockedPackagePath( 'validSubPathExports', 'subPath' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.js` ]: {
+		[ 'src/index.js' ]: {
 			esm: './dist/es6.mjs',
 			cjs: './dist/es5.cjs',
 			type: 'js'
 		},
 
-		[ `src${ pathSeparator }chunk.mjs` ]: {
+		[ 'src/chunk.mjs' ]: {
 			esm: './dist/also-not-related-name.js',
 			cjs: './dist/not-related-name.cjs',
 			type: 'js'
@@ -584,13 +583,13 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 	const mockedPackagePath = getMockedPackagePath( 'nestedSubPathExports', 'nestedSubPath' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.js` ]: {
+		[ 'src/index.js' ]: {
 			esm: './dist/index.mjs',
 			cjs: './dist/index.cjs',
 			type: 'js'
 		},
 
-		[ `src${ pathSeparator }test${ pathSeparator }chunk.mjs` ]: {
+		[ 'src/test/chunk.mjs' ]: {
 			esm: './dist/nested/chunk.mjs',
 			cjs: './dist/nested/chunk.cjs',
 			type: 'js'
@@ -605,7 +604,7 @@ test( 'packageParser() correctly detects TS type with single .ts entry point', a
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'ts' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.ts` ]: {
+		[ 'src/index.ts' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
@@ -622,7 +621,7 @@ test( 'packageParser() correctly detects TS type with single .mts entry point', 
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'mts' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.mts` ]: {
+		[ 'src/index.mts' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
@@ -639,7 +638,7 @@ test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'mixedProject', 'mixedProject' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.ts` ]: {
+		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			cjs: './dist/test-package.cjs',
 			types: './dist/test-package.d.ts',
@@ -647,7 +646,7 @@ test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 			type: 'ts'
 		},
 
-		[ `src${ pathSeparator }chunk.mjs` ]: {
+		[ 'src/chunk.mjs' ]: {
 			esm: './dist/chunk.mjs',
 			cjs: './dist/chunk.cjs',
 			type: 'js'
@@ -661,7 +660,7 @@ test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'tsConfig' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.ts` ]: {
+		[ 'src/index.ts' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			tsConfig: 'tsconfig.rlb.json',
@@ -677,7 +676,7 @@ test( 'packageParser() skips tsConfig metadata if there is no tsconfig?(.rlb).js
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'noTSConfig' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
-		[ `src${ pathSeparator }index.ts` ]: {
+		[ 'src/index.ts' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			types: 'dist/test-package.d.ts',
@@ -692,7 +691,7 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 	const mockedPackagePath = getMockedPackagePath( 'noTypes', 'ts' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist =  {
-		[ `src${ pathSeparator }index.ts` ]: {
+		[ 'src/index.ts' ]: {
 			esm: 'dist/test-package.mjs',
 			cjs: 'dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
@@ -703,7 +702,7 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 	t.deepEqual( actualDist, expectedDist );
 } );
 
-async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = `src${ pathSeparator }index.js` ) {
+async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ) {
 	const parsedMetadata = await packageParser( mockedPackagePath );
 
 	return parsedMetadata.dist[ srcFile ];

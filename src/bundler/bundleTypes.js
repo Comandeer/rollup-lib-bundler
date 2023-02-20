@@ -1,11 +1,9 @@
-import { dirname } from 'node:path';
-import { join as joinPath } from 'node:path';
-import { normalize as normalizePath } from 'node:path';
-import { resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import virtual from '@rollup/plugin-virtual';
 import ts from 'typescript';
+import fixDTSImportPaths from './rollupPlugins/fixDTSImportPaths.js';
 
 /**
  * @type {import('globby').globby}
@@ -13,7 +11,7 @@ import ts from 'typescript';
 let globby;
 
 async function bundleTypes( {
-	project,
+	packageInfo,
 	sourceFile,
 	outputFile,
 	tsConfig,
@@ -25,7 +23,7 @@ async function bundleTypes( {
 		globby = globbyModule.globby;
 	}
 
-	project = normalizePath( project );
+	const project = packageInfo.project;
 
 	const userCompilerOptions = getUserCompilerOptions( project, tsConfig );
 	const compilerOptions = {
@@ -61,7 +59,7 @@ async function bundleTypes( {
 	const rollupConfig = {
 		input,
 		plugins: [
-			fixImportPaths(),
+			fixDTSImportPaths( packageInfo.dist ),
 
 			virtual( emittedFiles ),
 
@@ -76,33 +74,6 @@ async function bundleTypes( {
 	const bundle = await rollup( rollupConfig );
 
 	await bundle.write( outputConfig );
-}
-
-function fixImportPaths() {
-	return {
-		resolveId: ( imported, importer ) => {
-			// Skip the main file.
-			if ( !importer ) {
-				return null;
-			}
-
-			const importerDir = dirname( importer );
-			const jsExtensionRegex = /\.(m|c)?js$/;
-
-			imported = joinPath( importerDir, imported );
-
-			// We need full file path, with extension here.
-			// Due to that we need to:
-			// 1. Remove JS extension (in ESM-based projects
-			//    TS tends to add it).
-			// 2. Add the .d.ts extension.
-			if ( !imported.endsWith( '.d.ts' ) ) {
-				imported = `${ imported.replace( jsExtensionRegex, '' ) }.d.ts`;
-			}
-
-			return imported;
-		}
-	};
 }
 
 function getUserCompilerOptions( project, tsConfig ) {
@@ -128,10 +99,9 @@ function getOriginalDTsFilePath( project, sourceFile ) {
 
 function getRelativeToProjectPath( project, filePath ) {
 	// We need the relative path to the .d.ts file. So:
-	// 1. Normalize the filePath (just to be sure).
-	// 2. Remove the project path.
-	// 3. Remove the leading slash/backslash.
-	const relativeFilePath = normalizePath( filePath ).
+	// 1. Remove the project path.
+	// 2. Remove the leading slash/backslash.
+	const relativeFilePath = filePath.
 		replace( project, '' ).
 		replace( /^[/\\]/, '' );
 

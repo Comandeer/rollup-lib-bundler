@@ -1,4 +1,4 @@
-import { resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import createPackageInfo from './__helpers__/createPackageInfo.js';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
