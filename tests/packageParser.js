@@ -45,8 +45,8 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -115,9 +115,9 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			types: 'dist/test-package.d.ts',
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			types: './dist/test-package.d.ts',
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -127,8 +127,8 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -157,10 +157,10 @@ const fixtures = {
 		license: 'MIT',
 		exports: {
 			'.': {
-				import: 'dist/subpath.mjs'
+				import: './dist/subpath.mjs'
 			},
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -171,10 +171,10 @@ const fixtures = {
 		license: 'MIT',
 		exports: {
 			'.': {
-				require: 'dist/subpath.cjs'
+				require: './dist/subpath.cjs'
 			},
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -186,8 +186,8 @@ const fixtures = {
 		},
 		license: 'MIT',
 		exports: {
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	}
 };
@@ -400,8 +400,8 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 		version: '9.0.1',
 		dist: {
 			[ 'src/index.js' ]: {
-				esm: 'dist/test-package.mjs',
-				cjs: 'dist/test-package.cjs',
+				esm: './dist/test-package.mjs',
+				cjs: './dist/test-package.cjs',
 				type: 'js'
 			}
 		}
@@ -518,8 +518,8 @@ test( 'packageParser() correctly detects JS type with single .js entry point', a
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.js' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			type: 'js'
 		}
 	};
@@ -533,8 +533,8 @@ test( 'packageParser() correctly detects JS type with single .mjs entry point', 
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.mjs' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			type: 'js'
 		}
 	};
@@ -548,8 +548,8 @@ test( 'packageParser() correctly detects JS type with .mjs and .js entry point',
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.mjs' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			type: 'js'
 		}
 	};
@@ -605,10 +605,10 @@ test( 'packageParser() correctly detects TS type with single .ts entry point', a
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
-			types: 'dist/test-package.d.ts',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -622,10 +622,10 @@ test( 'packageParser() correctly detects TS type with single .mts entry point', 
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.mts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
-			types: 'dist/test-package.d.ts',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -661,10 +661,10 @@ test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.rlb.json',
-			types: 'dist/test-package.d.ts',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -677,9 +677,9 @@ test( 'packageParser() skips tsConfig metadata if there is no tsconfig?(.rlb).js
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
-			types: 'dist/test-package.d.ts',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -692,8 +692,8 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist =  {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			type: 'ts'
 		}
