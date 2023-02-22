@@ -447,6 +447,97 @@ test( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI,
 	]
 } );
 
+// #116
+test( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI, {
+	fixture: 'complexBinJSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/aside.mjs',
+		'__bin__/aside.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
+
+// #116
+test( 'CLI correctly bundles binaries (complex bin format, TS package)', testCLI, {
+	fixture: 'complexBinTSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/aside.mjs',
+		'__bin__/aside.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
+
 // #193
 test( 'CLI displays output for valid package', testCLI, {
 	fixture: 'testPackage',
