@@ -91,33 +91,58 @@ function prepareAuthorMetadata( author ) {
 
 async function prepareDistMetadata( packageDir, metadata ) {
 	const subpaths = getSubPaths( metadata );
-	const exportMetadata = await Promise.all( subpaths.map( ( subPath ) => {
-		return prepareExportMetadata( packageDir, metadata, subPath );
+	const subPathsMetadata = await Promise.all( subpaths.map( ( subPath ) => {
+		return prepareSubPathMetadata( packageDir, metadata, subPath );
 	} ) );
-
-	return exportMetadata.reduce( ( targets, currentTargets ) => {
+	const distMetadata = [ ...subPathsMetadata ].reduce( ( targets, currentTargets ) => {
 		return { ...targets, ...currentTargets };
 	}, {} );
+
+	return distMetadata;
 }
 
 function getSubPaths( metadata ) {
 	const exports = metadata.exports;
 
-	const subpaths = Object.keys( exports ).filter( ( subpath ) => {
+	const subPaths = Object.keys( exports ).filter( ( subpath ) => {
 		return subpath.startsWith( '.' );
 	} );
 
-	if ( !subpaths.includes( '.' ) ) {
-		subpaths.unshift( '.' );
+	if ( !subPaths.includes( '.' ) ) {
+		subPaths.unshift( '.' );
 	}
 
-	return subpaths;
+	const binSubPaths = getBinSubPaths( metadata );
+
+	subPaths.push( ...binSubPaths );
+
+	return subPaths;
 }
 
-async function prepareExportMetadata( packageDir, metadata, subPath ) {
+function getBinSubPaths( { bin, name } ) {
+	if ( typeof bin === 'undefined' ) {
+		return [];
+	}
+
+	if ( typeof bin === 'string' ) {
+		return [
+			`./__bin__/${ name }`
+		];
+	}
+
+	const binSubPaths = Object.keys( bin ).map( ( bin ) => {
+		return `./__bin__/${ bin }`;
+	} );
+
+	return binSubPaths;
+}
+
+async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
-	const esmTarget = getESMTarget( metadata, subPath );
+	const esmTarget = isBinSubPath( subPath ) ?
+		getBinTarget( metadata, subPath ) :
+		getESMTarget( metadata, subPath );
 	const cjsTarget = getCJSTarget( metadata, subPath );
 	const exportType = getEntryPointType( srcPath );
 	const exportMetadata = {
@@ -190,10 +215,25 @@ function getEntryPointType( srcPath ) {
 	return isTS ? 'ts' : 'js';
 }
 
+function isBinSubPath( subPath ) {
+	return subPath.startsWith( './__bin__' );
+}
+
 function getESMTarget( metadata, subPath ) {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'import' );
 
 	return exportsTarget;
+}
+
+function getBinTarget( { bin, name }, subPath ) {
+	const subPathPrefixRegex = /^\.\/__bin__\//g;
+	const binName = subPath.replace( subPathPrefixRegex, '' );
+
+	if ( binName === name && typeof bin === 'string' ) {
+		return bin;
+	}
+
+	return bin[ binName ];
 }
 
 function getCJSTarget( metadata, subPath ) {
