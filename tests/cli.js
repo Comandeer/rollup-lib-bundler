@@ -383,6 +383,38 @@ test( 'CLI treats import of other bundles as external dependencies (JS package)'
 } );
 
 // #116
+test( 'CLI correctly bundles binaries (simple bin format, JS package)', testCLI, {
+	fixture: 'simpleBinJSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #116
 test( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI, {
 	fixture: 'simpleBinTSPackage',
 	expectedFiles: [
