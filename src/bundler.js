@@ -4,6 +4,7 @@ import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
+import preserveShebang from 'rollup-plugin-preserve-shebang';
 import typescript from '@rollup/plugin-typescript';
 import bundleTypes from './bundler/bundleTypes.js';
 import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
@@ -90,6 +91,8 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 				'.cts'
 			]
 		} ),
+
+		preserveShebang(),
 
 		terser()
 	];
