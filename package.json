@@ -2,6 +2,7 @@
   "name": "@comandeer/rollup-lib-bundler",
   "version": "0.19.1",
   "description": "Simple library bundler",
+  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/rollup-lib-bundler.mjs",
