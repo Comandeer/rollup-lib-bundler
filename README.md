@@ -126,6 +126,68 @@ In this case two source files will be bundled:
 	* CJS output: `dist/chunk.cjs`,
 	* DTS output: none (there's no `types` field).
 
+## Bundling binaries
+
+From v0.19.0 `rlb` can also bundle binaries defined in the `bin` field of the `package.json`. It supports both the simple format of that field and the complex one. Source files for binaries must be placed in the `src/__bin__` directory with the same name as in the `bin` field. All source file formats supported for `exports` bundles are also supported for the `bin` ones.
+
+All bundles created from the `bin` field are saved in the ESM format. The bundler will also preserve shebang in the produced bundle. Please also note that in case of referencing some other bundles inside executables, their ESM versions will be used.
+
+### Example with the simple `bin` format
+
+```json
+{
+	"name": "some-package",
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs"
+		}
+	},
+	"bin": "./dist/bin.mjs"
+}
+```
+
+In that case bundler excepts the following source file structure:
+
+```
+some-package/
+|- package.json
+|- src/
+|     |- index.js
+|     |- __bin__/
+|     |         |- some-package.js
+```
+
+Please note that when using the simple `bin` format (so just the path to the executable, without its name), the bundler will look for the source file with the name of the package (derived from the `name` field in the `package.json` files).
+
+### Example with the complex `bin` format
+
+```json
+{
+	"name": "some-package",
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs"
+		}
+	},
+	"bin": {
+		"whatever": "./dist/bin.mjs",
+		"another-one": "./dist/bin2.js"
+	}
+}
+```
+
+In that case bundler excepts the following source file structure:
+
+```
+some-package/
+|- package.json
+|- src/
+|     |- index.js
+|     |- __bin__/
+|     |         |- whatever.js
+|     |         |- another-one.js
+```
+
 ## License
 
 See [LICENSE](./LICENSE) file for details.

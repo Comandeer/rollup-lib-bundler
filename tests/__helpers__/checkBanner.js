@@ -6,10 +6,9 @@
  */
 function checkBanner( t, fileContent ) {
 	// Yeah, I know…
-	const bannerRegex = /^(?<banner>\/\*! .+? v\d+\.\d+\.\d+ \| \(c\) \d{4} .+? \| .+? license \(see LICENSE\) \*\/\n)(?!.*\k<banner>)/g;
-	const match = fileContent.match( bannerRegex );
+	const bannerRegex = /^(?<shebang>#!\/usr\/bin\/env node\n)?(?<banner>\/\*! .+? v\d+\.\d+\.\d+ \| \(c\) \d{4} .+? \| .+? license \(see LICENSE\) \*\/\n)(?!.*\k<banner>)/g;
 
-	t.is( match.length, 1 );
+	t.regex( fileContent, bannerRegex, 'Banner is present' );
 }
 
 export default checkBanner;

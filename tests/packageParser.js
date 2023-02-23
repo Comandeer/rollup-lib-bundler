@@ -45,8 +45,8 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -115,9 +115,9 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			types: 'dist/test-package.d.ts',
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			types: './dist/test-package.d.ts',
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -127,8 +127,8 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -157,10 +157,10 @@ const fixtures = {
 		license: 'MIT',
 		exports: {
 			'.': {
-				import: 'dist/subpath.mjs'
+				import: './dist/subpath.mjs'
 			},
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -171,10 +171,10 @@ const fixtures = {
 		license: 'MIT',
 		exports: {
 			'.': {
-				require: 'dist/subpath.cjs'
+				require: './dist/subpath.cjs'
 			},
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
 		}
 	},
 
@@ -186,8 +186,34 @@ const fixtures = {
 		},
 		license: 'MIT',
 		exports: {
-			import: 'dist/test-package.mjs',
-			require: 'dist/test-package.cjs'
+			import: './dist/test-package.mjs',
+			require: './dist/test-package.cjs'
+		}
+	},
+
+	// 116
+	simpleBin: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			import: './dist/test-package.mjs'
+		},
+		bin: './dist/__bin__/test-package.mjs'
+	},
+
+	// 116
+	complexBin: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			import: './dist/test-package.mjs'
+		},
+		bin: {
+			whatever: './dist/__bin__/whatever.mjs'
 		}
 	}
 };
@@ -252,6 +278,48 @@ const srcFixtures = {
 			'chunk.mjs': ''
 		},
 		'tsconfig.json': ''
+	},
+
+	// #116
+	simpleBinJS: {
+		src: {
+			'index.js': '',
+			'__bin__': {
+				'test-package.js': ''
+			}
+		}
+	},
+
+	// #116
+	simpleBinTS: {
+		src: {
+			'index.ts': '',
+			'__bin__': {
+				'test-package.ts': ''
+			}
+		},
+		'tsconfig.json': ''
+	},
+
+	// #116
+	complexBinJS: {
+		src: {
+			'index.js': '',
+			'__bin__': {
+				'whatever.js': ''
+			}
+		}
+	},
+
+	// #116
+	complexBinTS: {
+		src: {
+			'index.ts': '',
+			'__bin__': {
+				'whatever.ts': ''
+			}
+		},
+		'tsconfig.json': ''
 	}
 };
 const INVALID_ARGUMENT_TYPE_ERROR = 'Provide a path to a package directory.';
@@ -287,7 +355,11 @@ test.before( () => {
 		...createMockedPackage( 'exportsDotRequireOverExportsRequire', 'js' ),
 		...createMockedPackage( 'authorAsObject', 'js' ),
 		...createMockedPackage( 'mixedProject', 'mixedProject' ),
-		...createMockedPackage( 'noTypes', 'ts' )
+		...createMockedPackage( 'noTypes', 'ts' ),
+		...createMockedPackage( 'simpleBin', 'simpleBinJS' ),
+		...createMockedPackage( 'simpleBin', 'simpleBinTS' ),
+		...createMockedPackage( 'complexBin', 'complexBinJS' ),
+		...createMockedPackage( 'complexBin', 'complexBinTS' )
 	} );
 } );
 
@@ -400,8 +472,8 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 		version: '9.0.1',
 		dist: {
 			[ 'src/index.js' ]: {
-				esm: 'dist/test-package.mjs',
-				cjs: 'dist/test-package.cjs',
+				esm: './dist/test-package.mjs',
+				cjs: './dist/test-package.cjs',
 				type: 'js'
 			}
 		}
@@ -518,8 +590,8 @@ test( 'packageParser() correctly detects JS type with single .js entry point', a
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.js' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			type: 'js'
 		}
 	};
@@ -533,8 +605,8 @@ test( 'packageParser() correctly detects JS type with single .mjs entry point', 
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.mjs' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			type: 'js'
 		}
 	};
@@ -548,8 +620,8 @@ test( 'packageParser() correctly detects JS type with .mjs and .js entry point',
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.mjs' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			type: 'js'
 		}
 	};
@@ -605,10 +677,10 @@ test( 'packageParser() correctly detects TS type with single .ts entry point', a
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
-			types: 'dist/test-package.d.ts',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -622,10 +694,10 @@ test( 'packageParser() correctly detects TS type with single .mts entry point', 
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.mts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
-			types: 'dist/test-package.d.ts',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -661,10 +733,10 @@ test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.rlb.json',
-			types: 'dist/test-package.d.ts',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -677,9 +749,9 @@ test( 'packageParser() skips tsConfig metadata if there is no tsconfig?(.rlb).js
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
-			types: 'dist/test-package.d.ts',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
+			types: './dist/test-package.d.ts',
 			type: 'ts'
 		}
 	};
@@ -692,12 +764,92 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
 	const expectedDist =  {
 		[ 'src/index.ts' ]: {
-			esm: 'dist/test-package.mjs',
-			cjs: 'dist/test-package.cjs',
+			esm: './dist/test-package.mjs',
+			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			type: 'ts'
 		}
 	} ;
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #116
+test( 'packageParser() correctly detects bin source file with the .js extension (simple bin format)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'simpleBin', 'simpleBinJS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.js' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'js'
+		},
+
+		[ 'src/__bin__/test-package.js' ]: {
+			esm: './dist/__bin__/test-package.mjs',
+			type: 'js'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #116
+test( 'packageParser() correctly detects bin source file with the .ts extension (simple bin format)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'simpleBin', 'simpleBinTS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.ts' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		},
+
+		[ 'src/__bin__/test-package.ts' ]: {
+			esm: './dist/__bin__/test-package.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #116
+test( 'packageParser() correctly detects bin source file with the .js extension (complex bin format)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'complexBin', 'complexBinJS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.js' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'js'
+		},
+
+		[ 'src/__bin__/whatever.js' ]: {
+			esm: './dist/__bin__/whatever.mjs',
+			type: 'js'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #116
+test( 'packageParser() correctly detects bin source file with the .ts extension (complex bin format)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'complexBin', 'complexBinTS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.ts' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		},
+
+		[ 'src/__bin__/whatever.ts' ]: {
+			esm: './dist/__bin__/whatever.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		}
+	};
 
 	t.deepEqual( actualDist, expectedDist );
 } );

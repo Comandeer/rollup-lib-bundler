@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.19.0]
+## [0.19.0] – 2023-02-23
+### Added
+* [#116]: support for bundling binaries based on the `bin` field from the `package.json` file.
+
 ### Changed
 * [#230]: **BREAKING CHANGE**: bundler now omits bundling files that are marked in `package.json` as bundle entrypoints; such files will be always treated as external and imported.
 * [#243]: **BREAKING CHANGE**: bundler of type definitions loads now the `tsconfig.json` file of the project being bundled.
@@ -19,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	| `@babel/plugin-transform-typescript` | Added         | N/A         | `^7.20.13`  |
 	| `@babel/types`                       | Added         | N/A         | `^7.20.7`   |
 	| `@rollup/plugin-virtual`             | Added         | N/A         | `^3.0.1`    |
+	| `rollup-plugin-preseve-shebang`      | Added         | N/A         | `^1.0.1`    |
 	| `tempy`                              | Removed       | `^3.0.0`    | N/A         |
 
 * [#235]: binary now uses the ESM version of the bundler.
@@ -228,6 +232,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#105]: https://github.com/Comandeer/rollup-lib-bundler/issues/105
 [#110]: https://github.com/Comandeer/rollup-lib-bundler/pull/110
 [#111]: https://github.com/Comandeer/rollup-lib-bundler/pull/111
+[#116]: https://github.com/Comandeer/rollup-lib-bundler/issues/116
 [#129]: https://github.com/Comandeer/rollup-lib-bundler/issues/129
 [#128]: https://github.com/Comandeer/rollup-lib-bundler/issues/128
 [#155]: https://github.com/Comandeer/rollup-lib-bundler/issues/155

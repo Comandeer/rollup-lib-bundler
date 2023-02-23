@@ -36,6 +36,45 @@ const customCheckStrategies = {
 		[ /\.map$/, () => {} ]
 	] )
 };
+const additionalCodeChecks = {
+	checkResolvingOfOtherBundles( expectedImports ) {
+		return ( t, path, code ) => {
+			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
+				return path.endsWith( file );
+			} );
+
+			if ( typeof expectedImportsForCurrentFile === 'undefined' ) {
+				return;
+			}
+
+			const [ file, imports ] = expectedImportsForCurrentFile;
+
+			imports.forEach( ( expectedImport ) => {
+				const expectedImportEscapedForRegex = expectedImport.replace( /[.]/g, '\\.' );
+				const importRegex = file.endsWith( '.cjs' ) ?
+					new RegExp( `require\\(\\s*["']${ expectedImportEscapedForRegex }["']\\s*\\)` ) :
+					new RegExp( `(import|export).+?from\\s*["']${ expectedImportEscapedForRegex }["']` );
+
+				t.regex( code, importRegex, `${ expectedImport } in ${ file }` );
+				t.false( code.includes( 'rlb:' ), 'All placeholder imports were removed' );
+			} );
+		};
+	},
+
+	checkShebang( filesToCheck ) {
+		return ( t, path, code ) => {
+			const isFileToCheck = filesToCheck.some( ( file ) => {
+				return path.endsWith( file );
+			} );
+
+			if ( !isFileToCheck ) {
+				return;
+			}
+
+			t.true( code.startsWith( '#!/usr/bin/env node' ) );
+		};
+	}
+};
 
 test( 'CLI bundles files based on current working directory', testCLI, {
 	fixture: 'testPackage',
@@ -244,66 +283,45 @@ test( 'CLI treats import of other bundles as external dependencies (TS package)'
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		( t, path, code ) => {
-			const expectedImports = new Map( [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'chunk.cjs',
 				[
-					'chunk.cjs',
-					[
-						'./subdir/submodule.cjs'
-					]
-				],
-
-				[
-					'chunk.mjs',
-					[
-						'./subdir/submodule.mjs'
-					]
-				],
-
-				[
-					'index.cjs',
-					[
-						'./chunk.cjs',
-						'./subdir/submodule.cjs'
-					]
-				],
-
-				[
-					'index.mjs',
-					[
-						'./chunk.mjs',
-						'./subdir/submodule.mjs'
-					]
-				],
-
-				[
-					'index.d.ts',
-					[
-						'./chunk.js',
-						'./subdir/submodule.js'
-					]
+					'./subdir/submodule.cjs'
 				]
-			] );
-			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
-				return path.endsWith( file );
-			} );
+			],
 
-			if ( typeof expectedImportsForCurrentFile === 'undefined' ) {
-				return;
-			}
+			[
+				'chunk.mjs',
+				[
+					'./subdir/submodule.mjs'
+				]
+			],
 
-			const [ file, imports ] = expectedImportsForCurrentFile;
+			[
+				'index.cjs',
+				[
+					'./chunk.cjs',
+					'./subdir/submodule.cjs'
+				]
+			],
 
-			imports.forEach( ( expectedImport ) => {
-				const expectedImportEscapedForRegex = expectedImport.replace( /[.]/g, '\\.' );
-				const importRegex = file.endsWith( '.cjs' ) ?
-					new RegExp( `require\\(\\s*["']${ expectedImportEscapedForRegex }["']\\s*\\)` ) :
-					new RegExp( `(import|export).+?from\\s*["']${ expectedImportEscapedForRegex }["']` );
+			[
+				'index.mjs',
+				[
+					'./chunk.mjs',
+					'./subdir/submodule.mjs'
+				]
+			],
 
-				t.regex( code, importRegex, `${ expectedImport } in ${ file }` );
-				t.false( code.includes( 'rlb:' ), 'All placeholder imports were removed' );
-			} );
-		}
+			[
+				'index.d.ts',
+				[
+					'./chunk.js',
+					'./subdir/submodule.js'
+				]
+			]
+		] ) )
 	]
 } );
 
@@ -330,57 +348,192 @@ test( 'CLI treats import of other bundles as external dependencies (JS package)'
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		( t, path, code ) => {
-			const expectedImports = new Map( [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'index.cjs',
 				[
-					'index.cjs',
-					[
-						'./chunk.cjs',
-						'./subdir/submodule.cjs'
-					]
-				],
-
-				[
-					'index.mjs',
-					[
-						'./chunk.mjs',
-						'./subdir/submodule.mjs'
-					]
-				],
-
-				[
-					'subdir/submodule.cjs',
-					[
-						'../chunk.cjs'
-					]
-				],
-
-				[
-					'subdir/submodule.mjs',
-					[
-						'../chunk.mjs'
-					]
+					'./chunk.cjs',
+					'./subdir/submodule.cjs'
 				]
-			] );
-			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
-				return path.endsWith( file );
-			} );
+			],
 
-			if ( typeof expectedImportsForCurrentFile === 'undefined' ) {
+			[
+				'index.mjs',
+				[
+					'./chunk.mjs',
+					'./subdir/submodule.mjs'
+				]
+			],
+
+			[
+				'subdir/submodule.cjs',
+				[
+					'../chunk.cjs'
+				]
+			],
+
+			[
+				'subdir/submodule.mjs',
+				[
+					'../chunk.mjs'
+				]
+			]
+		] ) )
+	]
+} );
+
+// #116
+test( 'CLI correctly bundles binaries (simple bin format, JS package)', testCLI, {
+	fixture: 'simpleBinJSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #116
+test( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI, {
+	fixture: 'simpleBinTSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #116
+test( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI, {
+	fixture: 'complexBinJSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/aside.mjs',
+		'__bin__/aside.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
 				return;
 			}
 
-			const [ file, imports ] = expectedImportsForCurrentFile;
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
 
-			imports.forEach( ( expectedImport ) => {
-				const expectedImportEscapedForRegex = expectedImport.replace( /[.]/g, '\\.' );
-				const importRegex = file.endsWith( '.cjs' ) ?
-					new RegExp( `require\\(\\s*["']${ expectedImportEscapedForRegex }["']\\s*\\)` ) :
-					new RegExp( `(import|export).+?from\\s*["']${ expectedImportEscapedForRegex }["']` );
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
 
-				t.regex( code, importRegex, `${ expectedImport } in ${ file }` );
-				t.false( code.includes( 'rlb:' ), 'All placeholder imports were removed' );
-			} );
+// #116
+test( 'CLI correctly bundles binaries (complex bin format, TS package)', testCLI, {
+	fixture: 'complexBinTSPackage',
+	expectedFiles: [
+		'index.cjs',
+		'index.cjs.map',
+		'index.d.ts',
+		'index.mjs',
+		'index.mjs.map',
+		'__bin__/aside.mjs',
+		'__bin__/aside.mjs.map',
+		'__bin__/test-package.mjs',
+		'__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
 		}
 	]
 } );

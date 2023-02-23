@@ -9,12 +9,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    },
-    "./subdir/submodule": {
-      "types": "./dist/submodule.d.ts",
-      "import": "./dist/subdir/submodule.mjs",
-      "require": "./dist/subdir/submodule.cjs"
     }
+  },
+  "bin": {
+    "main": "./dist/__bin__/test-package.mjs",
+    "aside": "./dist/__bin__/aside.mjs"
   },
   "author": "Comandeer",
   "license": "ISC"

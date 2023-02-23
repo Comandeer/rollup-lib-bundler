@@ -6,19 +6,19 @@
   "description": "Test package",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     },
     "./chunk": {
+      "types": "./dist/chunk.d.ts",
       "import": "./dist/chunk.mjs",
-      "require": "./dist/chunk.cjs",
-      "types": "./dist/chunk.d.ts"
+      "require": "./dist/chunk.cjs"
     },
     "./subdir/submodule": {
+      "types": "./dist/subdir/submodule.d.ts",
       "import": "./dist/subdir/submodule.mjs",
-      "require": "./dist/subdir/submodule.cjs",
-      "types": "./dist/subdir/submodule.d.ts"
+      "require": "./dist/subdir/submodule.cjs"
     }
   },
   "author": "Comandeer",
