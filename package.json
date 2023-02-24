@@ -12,7 +12,7 @@
     "node": ">=16.0.0"
   },
   "bin": {
-    "rlb": "bin/bundler"
+    "rlb": "./bin/rlb.mjs"
   },
   "files": [
     "bin",
