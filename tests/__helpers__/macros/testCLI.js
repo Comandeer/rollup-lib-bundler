@@ -3,7 +3,7 @@ import test from 'ava';
 import checkDistFiles from '../checkDistFiles.js';
 import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.js';
 
-const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'bin', 'bundler.mjs' );
+const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'bin', 'rlb.mjs' );
 
 /**
  * @type {import('execa').execa}
