@@ -4,7 +4,9 @@ import createPackageInfo from './__helpers__/createPackageInfo.js';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
 import bundler from '../src/bundler.js';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
+import getDirName from './__helpers__/getDirName.js';
 
+const __dirname = getDirName( import.meta.url );
 const fixturesPath = resolvePath( __dirname, '__fixtures__' );
 const errorPackageFixturePath = resolvePath( fixturesPath, 'errorPackage' );
 const externalDepPackageFixturePath = resolvePath( fixturesPath, 'externalDepPackage' );
