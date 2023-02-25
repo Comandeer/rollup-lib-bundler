@@ -68,7 +68,6 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
-    "@babel/register": "^7.18.9",
     "@comandeer/eslint-config": "^0.10.0",
     "@comandeer/rollup-lib-bundler": "^0.18.0",
     "ava": "^5.1.1",
