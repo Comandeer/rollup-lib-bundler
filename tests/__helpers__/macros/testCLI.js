@@ -2,7 +2,7 @@ import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import checkDistFiles from '../checkDistFiles.js';
 import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.js';
-import getDirName from '../getDirName.js';
+import getDirName from '../../../src/utils/getDirName.js';
 
 const __dirname = getDirName( import.meta.url );
 const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'bin', 'rlb.mjs' );

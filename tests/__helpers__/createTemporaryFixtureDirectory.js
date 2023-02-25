@@ -1,6 +1,6 @@
 import { cp } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
-import getDirName from './getDirName';
+import getDirName from '../../src/utils/getDirName.js';
 
 const __dirname = getDirName( import.meta.url );
 const FIXTURES_PATH = resolvePath( __dirname, '..', '__fixtures__' );
