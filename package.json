@@ -12,7 +12,7 @@
     "node": ">=16.0.0"
   },
   "bin": {
-    "rlb": "bin/bundler"
+    "rlb": "./bin/rlb.mjs"
   },
   "files": [
     "bin",
@@ -67,7 +67,6 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.20.2",
     "@babel/register": "^7.18.9",
     "@comandeer/eslint-config": "^0.10.0",
     "@comandeer/rollup-lib-bundler": "^0.18.0",
@@ -86,6 +85,7 @@
   "dependencies": {
     "@babel/core": "^7.20.12",
     "@babel/plugin-transform-typescript": "^7.20.13",
+    "@babel/preset-env": "^7.20.2",
     "@babel/types": "^7.20.7",
     "@comandeer/cli-spinner": "^0.3.2",
     "@rollup/plugin-babel": "^6.0.3",
