@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.19.1] – 2023-02-25
+### Fixed
+* [#267]: the `@babel/preset-env` dependency was incorrectly marked as the dev one instead of production one.
+* [#268]: the `package.json` file contained the incorrect path to the `rlb` executable.
+
 ## [0.19.0] – 2023-02-23
 ### Added
 * [#116]: support for bundling binaries based on the `bin` field from the `package.json` file.
@@ -271,7 +276,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#247]: https://github.com/Comandeer/rollup-lib-bundler/issues/247
 [#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
 [#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
+[#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
+[#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 
+[0.19.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.16.1...v0.17.0
