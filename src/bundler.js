@@ -4,6 +4,7 @@ import terser from '@rollup/plugin-terser';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import preset from '@babel/preset-env';
+import babelImportAssertionsPlugin from '@babel/plugin-syntax-import-assertions';
 import preserveShebang from 'rollup-plugin-preserve-shebang';
 import typescript from '@rollup/plugin-typescript';
 import bundleTypes from './bundler/bundleTypes.js';
@@ -72,6 +73,9 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 		babel( {
 			babelrc: false,
 			babelHelpers: 'bundled',
+			plugins: [
+				babelImportAssertionsPlugin
+			],
 			presets: [
 				[
 					preset,
