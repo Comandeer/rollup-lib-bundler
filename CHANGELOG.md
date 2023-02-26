@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [0.20.0]
+## Added
+* [#271]: support for [import assertions](https://v8.dev/features/import-assertions) syntax to enable importing JSON files in the pure ESM packages.
+
 ## Changed
 * [#233]: **BREAKING CHANGE**: package is a pure ESM one now.
 
@@ -287,6 +290,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
+[#271]: https://github.com/Comandeer/rollup-lib-bundler/issues/271
 
 [0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0
 [0.19.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.19.1
