@@ -102,6 +102,27 @@ test( 'CLI bundles package that imports JSON content', testCLI, {
 	]
 } );
 
+// #271
+test( 'CLI bundles ESM package that imports JSON content', testCLI, {
+	fixture: 'jsonESMPackage',
+	expectedFiles: [
+		'test-package.mjs',
+		'test-package.mjs.map'
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			const regex = /["']6\.5\.3["']/;
+
+			t.regex( code, regex );
+		}
+	]
+} );
+
 // #185
 test( 'CLI bundles package based on subpath exports fields', testCLI, {
 	fixture: 'subPathExportsPackage',
