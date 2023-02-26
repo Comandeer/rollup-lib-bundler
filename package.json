@@ -2,10 +2,10 @@
   "name": "@comandeer/rollup-lib-bundler",
   "version": "0.19.1",
   "description": "Simple library bundler",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/rollup-lib-bundler.mjs",
-      "require": "./dist/rollup-lib-bundler.cjs"
+      "import": "./dist/rollup-lib-bundler.mjs"
     }
   },
   "engines": {
@@ -67,7 +67,6 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
-    "@babel/register": "^7.18.9",
     "@comandeer/eslint-config": "^0.10.0",
     "@comandeer/rollup-lib-bundler": "^0.18.0",
     "ava": "^5.1.1",
