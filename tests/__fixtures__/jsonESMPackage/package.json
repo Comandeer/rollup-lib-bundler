@@ -1,0 +1,14 @@
+{
+  "name": "test-package",
+  "private": true,
+  "version": "6.5.3",
+  "description": "Test package",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/test-package.mjs"
+    }
+  },
+  "author": "Comandeer",
+  "license": "ISC"
+}
