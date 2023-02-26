@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.20.0]
+## Changed
+* [#233]: **BREAKING CHANGE**: package is a pure ESM one now.
+
+## Removed
+* [#249]: **BREAKING CHANGE**: CJS bundle.
+
 ## [0.19.1] – 2023-02-25
 ### Fixed
 * [#267]: the `@babel/preset-env` dependency was incorrectly marked as the dev one instead of production one.
@@ -269,16 +276,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 [#228]: https://github.com/Comandeer/rollup-lib-bundler/issues/228
 [#230]: https://github.com/Comandeer/rollup-lib-bundler/issues/230
+[#233]: https://github.com/Comandeer/rollup-lib-bundler/issues/233
 [#235]: https://github.com/Comandeer/rollup-lib-bundler/issues/235
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242
 [#243]: https://github.com/Comandeer/rollup-lib-bundler/issues/243
 [#247]: https://github.com/Comandeer/rollup-lib-bundler/issues/247
 [#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
+[#249]: https://github.com/Comandeer/rollup-lib-bundler/issues/249
 [#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 
+[0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0
 [0.19.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.17.0...v0.18.0
