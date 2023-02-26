@@ -1,12 +1,12 @@
-import { rollup } from 'rollup';
-import convertCJS from '@rollup/plugin-commonjs';
-import terser from '@rollup/plugin-terser';
-import json from '@rollup/plugin-json';
-import babel from '@rollup/plugin-babel';
-import preset from '@babel/preset-env';
 import babelImportAssertionsPlugin from '@babel/plugin-syntax-import-assertions';
-import preserveShebang from 'rollup-plugin-preserve-shebang';
+import babelPreset from '@babel/preset-env';
+import babel from '@rollup/plugin-babel';
+import convertCJS from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import { rollup } from 'rollup';
+import preserveShebang from 'rollup-plugin-preserve-shebang';
 import bundleTypes from './bundler/bundleTypes.js';
 import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
 import resolveOtherBundles from './bundler/rollupPlugins/resolveOtherBundles.js';
@@ -78,7 +78,7 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 			],
 			presets: [
 				[
-					preset,
+					babelPreset,
 					{
 						targets: {
 							node: nodeTarget
