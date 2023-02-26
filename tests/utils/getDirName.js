@@ -9,5 +9,9 @@ test( 'getDirName() returns the directory name from the provided URL', ( t ) => 
 	const pathURL = pathToFileURL( filePath );
 	const actualDirName = getDirName( pathURL );
 
-	t.is( actualDirName, expectedDirName );
+	// I love Windows
+	const diskLetterRegex = /^[A-Z]:/g;
+	const normalizedActualDirName = actualDirName.replace( diskLetterRegex, '' );
+
+	t.is( normalizedActualDirName, expectedDirName );
 } );
