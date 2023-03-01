@@ -1,13 +1,9 @@
 import { access } from 'node:fs/promises';
 import { readFile } from 'node:fs/promises';
+import { globby } from 'globby';
 import { extname } from 'pathe';
 import { join as joinPath } from 'pathe';
 import { normalize as normalizePath } from 'pathe';
-
-/**
- * @type {import('globby').globby}
- */
-let globby;
 
 async function packageParser( packageDir ) {
 	if ( typeof packageDir !== 'string' ) {
@@ -173,12 +169,6 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 }
 
 async function getSubPathFilePath( packageDir, subPath ) {
-	if ( !globby ) {
-		const globbyModule = await import( 'globby' );
-		// eslint-disable-next-line require-atomic-updates
-		globby = globbyModule.globby;
-	}
-
 	const srcPath = joinPath( packageDir, 'src' );
 	const subPathFileName = subPath === '.' ? 'index' : subPath;
 	const subPathGlobPattern = `${ subPathFileName}.{mts,ts,mjs,js,cts,cjs}`;
