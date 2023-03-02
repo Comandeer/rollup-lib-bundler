@@ -1,12 +1,8 @@
 import { readFile } from 'node:fs/promises';
+import { globby } from 'globby';
 import { resolve as resolvePath } from 'pathe';
 import validateSourceMap from 'sourcemap-validator';
 import checkBanner from './checkBanner.js';
-
-/**
- * @type {import('globby').globby}
- */
-let globby;
 
 /**
  * @callback CheckStrategyCallback
@@ -56,12 +52,6 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
 	customCheckStrategies = new Map(),
 	additionalCodeChecks = []
 } = {} ) {
-	if ( !globby ) {
-		const globbyModule = await import( 'globby' );
-		// eslint-disable-next-line require-atomic-updates
-		globby = globbyModule.globby;
-	}
-
 	const distPathRegex = /dist[/\\]?$/g;
 	const distPath = distPathRegex.test( fixturePath ) ? fixturePath : resolvePath( fixturePath, 'dist' );
 	const actualFiles = await globby( '**/*', {

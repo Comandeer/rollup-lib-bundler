@@ -1,3 +1,4 @@
+import { execa } from 'execa';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import checkDistFiles from '../checkDistFiles.js';
@@ -6,11 +7,6 @@ import getDirName from '../../../src/utils/getDirName.js';
 
 const __dirname = getDirName( import.meta.url );
 const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'bin', 'rlb.mjs' );
-
-/**
- * @type {import('execa').execa}
- */
-let execa;
 
 /**
  * @typedef {import('../checkDistFiles').AdditionalCodeCheckCallback} AdditionalCodeCheckCallback
@@ -67,12 +63,6 @@ const testCLI = test.macro( async ( t, {
 	customCheckStrategies = new Map(),
 	additionalCodeChecks = []
 } = {} ) => {
-	if ( !execa ) {
-		const execaModule = await import( 'execa' );
-
-		execa = execaModule.execa; // eslint-disable-line require-atomic-updates
-	}
-
 	return createTemporaryFixtureDirectory( t, fixture, async ( t, tempDirPath ) => {
 		if ( typeof before === 'function' ) {
 			await before( t, tempDirPath );

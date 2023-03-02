@@ -1,14 +1,10 @@
+import { globby } from 'globby';
 import { resolve as resolvePath } from 'pathe';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import virtual from '@rollup/plugin-virtual';
 import ts from 'typescript';
 import fixDTSImportPaths from './rollupPlugins/fixDTSImportPaths.js';
-
-/**
- * @type {import('globby').globby}
- */
-let globby;
 
 async function bundleTypes( {
 	packageInfo,
@@ -17,14 +13,7 @@ async function bundleTypes( {
 	tsConfig,
 	onWarn = () => {}
 } = {} ) {
-	if ( !globby ) {
-		const globbyModule = await import( 'globby' );
-		// eslint-disable-next-line require-atomic-updates
-		globby = globbyModule.globby;
-	}
-
 	const project = packageInfo.project;
-
 	const userCompilerOptions = getUserCompilerOptions( project, tsConfig );
 	const compilerOptions = {
 		...userCompilerOptions,
