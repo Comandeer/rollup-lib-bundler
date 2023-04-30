@@ -52,15 +52,21 @@ async function checkDistFiles( t, fixturePath, expectedFiles, {
 	customCheckStrategies = new Map(),
 	additionalCodeChecks = []
 } = {} ) {
-	const distPathRegex = /dist[/\\]?$/g;
-	const distPath = distPathRegex.test( fixturePath ) ? fixturePath : resolvePath( fixturePath, 'dist' );
 	const actualFiles = await globby( '**/*', {
-		cwd: distPath,
+		cwd: fixturePath,
 		onlyFiles: true,
-		absolute: true
+		unique: true,
+		absolute: true,
+		ignore: [
+			'node_modules/**',
+			'package.json',
+			'tsconfig.json',
+			'tsconfig.rlb.json',
+			'src/**/*'
+		]
 	} );
 	const expectedFilePaths = expectedFiles.map( ( file ) => {
-		return resolvePath( distPath, file );
+		return resolvePath( fixturePath, file );
 	} );
 
 	t.deepEqual( actualFiles, expectedFilePaths, 'All expected files are present' );
