@@ -559,6 +559,191 @@ test( 'CLI correctly bundles binaries (complex bin format, TS package)', testCLI
 	]
 } );
 
+// #265
+test( 'CLI correctly bundles JS package with non-standard dist directory', testCLI, {
+	fixture: 'nonStandardDistJSPackage',
+	expectedFiles: [
+		'./hublabubla/test-package.cjs',
+		'./hublabubla/test-package.cjs.map',
+		'./hublabubla/test-package.mjs',
+		'./hublabubla/test-package.mjs.map'
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles TS package with non-standard dist directory', testCLI, {
+	fixture: 'nonStandardDistTSPackage',
+	expected: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/chunk.cjs',
+		'./hublabubla/chunk.cjs.map',
+		'./hublabubla/chunk.mjs',
+		'./hublabubla/chunk.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	]
+} );
+// #265
+test( 'CLI correctly bundles binaries (simple bin format, JS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistSimpleBinJSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles binaries (simple bin format, TS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistSimpleBinTSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles binaries (complex bin format, JS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistComplexBinJSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/aside.mjs',
+		'./hublabubla/__bin__/aside.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles binaries (complex bin format, TS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistComplexBinTSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/aside.mjs',
+		'./hublabubla/__bin__/aside.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
+
 // #193
 test( 'CLI displays output for valid package', testCLI, {
 	fixture: 'testPackage',
