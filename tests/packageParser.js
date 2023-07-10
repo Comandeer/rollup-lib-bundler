@@ -193,7 +193,7 @@ const fixtures = {
 		}
 	},
 
-	// 116
+	// #116
 	simpleBin: {
 		name: 'test-package',
 		version: '9.0.1',
@@ -205,7 +205,7 @@ const fixtures = {
 		bin: './dist/__bin__/test-package.mjs'
 	},
 
-	// 116
+	// #116
 	complexBin: {
 		name: 'test-package',
 		version: '9.0.1',
@@ -216,6 +216,57 @@ const fixtures = {
 		},
 		bin: {
 			whatever: './dist/__bin__/whatever.mjs'
+		}
+	},
+
+	// #265
+	nonStandardDist: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			import: './hublabubla/test-package.mjs',
+			require: './hublabubla/test-package.cjs'
+		}
+	},
+
+	// #265
+	nonStandardDistTS: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			types: './hublabubla/test-package.d.ts',
+			import: './hublabubla/test-package.mjs',
+			require: './hublabubla/test-package.cjs'
+		}
+	},
+
+	// #265
+	nonStandardDistSimpleBin: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			import: './hublabubla/test-package.mjs'
+		},
+		bin: './hublabubla/__bin__/test-package.mjs'
+	},
+
+	// #265
+	nonStandardDistComplexBin: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			import: './hublabubla/test-package.mjs'
+		},
+		bin: {
+			whatever: './hublabubla/__bin__/whatever.mjs'
 		}
 	}
 };
@@ -361,7 +412,13 @@ test.before( () => {
 		...createMockedPackage( 'simpleBin', 'simpleBinJS' ),
 		...createMockedPackage( 'simpleBin', 'simpleBinTS' ),
 		...createMockedPackage( 'complexBin', 'complexBinJS' ),
-		...createMockedPackage( 'complexBin', 'complexBinTS' )
+		...createMockedPackage( 'complexBin', 'complexBinTS' ),
+		...createMockedPackage( 'nonStandardDist', 'js' ),
+		...createMockedPackage( 'nonStandardDistTS', 'ts' ),
+		...createMockedPackage( 'nonStandardDistSimpleBin', 'simpleBinJS' ),
+		...createMockedPackage( 'nonStandardDistSimpleBin', 'simpleBinTS' ),
+		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinJS' ),
+		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinTS' )
 	} );
 } );
 
@@ -848,6 +905,125 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 
 		[ 'src/__bin__/whatever.ts' ]: {
 			esm: './dist/__bin__/whatever.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #265
+test( 'packageParser() correctly parses JS project with non-standard dist directory', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'nonStandardDist', 'js' );
+	const actualMetadata = await packageParser( mockedPackagePath );
+	const expectedMetadata = {
+		project: mockedPackagePath,
+		name: 'test-package',
+		author: 'Comandeer',
+		license: 'MIT',
+		version: '9.0.1',
+		dist: {
+			[ 'src/index.js' ]: {
+				esm: './hublabubla/test-package.mjs',
+				cjs: './hublabubla/test-package.cjs',
+				type: 'js'
+			}
+		}
+	};
+
+	t.deepEqual( actualMetadata, expectedMetadata );
+} );
+
+// #265
+test( 'packageParser() correctly parses TS project with non-standard dist directory', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistTS', 'ts' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.ts' ]: {
+			esm: './hublabubla/test-package.mjs',
+			cjs: './hublabubla/test-package.cjs',
+			tsConfig: 'tsconfig.json',
+			types: './hublabubla/test-package.d.ts',
+			type: 'ts'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #265
+test( 'packageParser() correctly detects bin source file with the .js extension (simple bin format, non-standard dist directory)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistSimpleBin', 'simpleBinJS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.js' ]: {
+			esm: './hublabubla/test-package.mjs',
+			type: 'js'
+		},
+
+		[ 'src/__bin__/test-package.js' ]: {
+			esm: './hublabubla/__bin__/test-package.mjs',
+			type: 'js'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #265
+test( 'packageParser() correctly detects bin source file with the .ts extension (simple bin format, non-standard dist directory)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistSimpleBin', 'simpleBinTS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.ts' ]: {
+			esm: './hublabubla/test-package.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		},
+
+		[ 'src/__bin__/test-package.ts' ]: {
+			esm: './hublabubla/__bin__/test-package.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #265
+test( 'packageParser() correctly detects bin source file with the .js extension (complex bin format, non-standard dist directory)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistComplexBin', 'complexBinJS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.js' ]: {
+			esm: './hublabubla/test-package.mjs',
+			type: 'js'
+		},
+
+		[ 'src/__bin__/whatever.js' ]: {
+			esm: './hublabubla/__bin__/whatever.mjs',
+			type: 'js'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #265
+test( 'packageParser() correctly detects bin source file with the .ts extension (complex bin format, non-standard dist directory)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistComplexBin', 'complexBinTS' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.ts' ]: {
+			esm: './hublabubla/test-package.mjs',
+			type: 'ts',
+			tsConfig: 'tsconfig.json'
+		},
+
+		[ 'src/__bin__/whatever.ts' ]: {
+			esm: './hublabubla/__bin__/whatever.mjs',
 			type: 'ts',
 			tsConfig: 'tsconfig.json'
 		}
