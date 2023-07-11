@@ -764,30 +764,63 @@ test( 'CLI displays error for invalid package', testCLI, {
 test( 'cleans dist directory before bundling', testCLI, {
 	fixture: 'testPackage',
 	before: async ( t, packagePath ) => {
-		return createDummyDist( t, packagePath );
+		return createDummyDists( packagePath );
 	},
 	after: async ( t, packagePath ) => {
-		const dummyFilePath = resolvePath( packagePath, 'dist', 'dummy.js' );
-
-		return t.throwsAsync( access( dummyFilePath ) );
+		return assertDummyFileIsDeleted( t, packagePath );
 	},
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful
 	]
 } );
 
-async function createDummyDist( t, packagePath ) {
-	const distPath = resolvePath( packagePath, 'dist' );
-	const dummyFilePath = resolvePath( distPath, 'dummy.js' );
+// #265
+test( 'cleans all non-standard dist directories before bundling', testCLI, {
+	fixture: 'nonStandardMultipleDistJSPackage',
+	before: async ( t, packagePath ) => {
+		return createDummyDists( packagePath, [
+			'hublabubla',
+			'grim'
+		] );
+	},
+	after: async ( t, packagePath ) => {
+		return assertDummyFileIsDeleted( t, packagePath, [
+			'hublabubla',
+			'grim'
+		] );
+	},
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
 
-	// If creating the dir fails, it's most probably already there.
-	try {
-		await mkdir( distPath );
-	} catch {
-		// Just silent the error;
-	}
+async function createDummyDists( packagePath, distDirs = [ 'dist' ] ) {
+	const distDirsPromises = distDirs.map( async ( distDir ) => {
+		const distPath = resolvePath( packagePath, distDir );
+		const dummyFilePath = resolvePath( distPath, 'dummy.js' );
 
-	await writeFile( dummyFilePath, 'hublabubla', 'utf-8' );
+		// If creating the dir fails, it's most probably already there.
+		try {
+			await mkdir( distPath, {
+				recursive: true
+			} );
+		} catch {
+			// Just silent the error;
+		}
 
-	return dummyFilePath;
+		await writeFile( dummyFilePath, 'hublabubla', 'utf-8' );
+	} );
+
+	return Promise.all( distDirsPromises );
+}
+
+async function assertDummyFileIsDeleted( t, packagePath, distDirs = [ 'dist' ] ) {
+	const dummyFilesPromises = distDirs.map( async ( distDir ) => {
+		const distPath = resolvePath( packagePath, distDir );
+		const dummyFilePath = resolvePath( distPath, 'dummy.js' );
+
+		return t.throwsAsync( access( dummyFilePath ) );
+	} );
+
+	return Promise.all( dummyFilesPromises );
 }
