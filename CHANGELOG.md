@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.20.0]
 ## Added
+* [#265]: official support for non-standard dist directories.
 * [#271]: support for [import assertions](https://v8.dev/features/import-assertions) syntax to enable importing JSON files in the pure ESM packages.
 
 ## Changed
 * [#233]: **BREAKING CHANGE**: package is a pure ESM one now.
+* [#265]: added docs around import suggestions in VSC.
 
 ## Removed
 * [#249]: **BREAKING CHANGE**: CJS bundle.
@@ -288,6 +290,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
 [#249]: https://github.com/Comandeer/rollup-lib-bundler/issues/249
 [#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
+[#265]: https://github.com/Comandeer/rollup-lib-bundler/issues/265
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 [#271]: https://github.com/Comandeer/rollup-lib-bundler/issues/271
