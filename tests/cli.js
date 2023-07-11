@@ -794,6 +794,24 @@ test( 'cleans all non-standard dist directories before bundling', testCLI, {
 	]
 } );
 
+// #265
+test( 'skip cleaning the root directory if it is the dist one', testCLI, {
+	fixture: 'nonStandardRootDistJSPackage',
+	before: async ( t, packagePath ) => {
+		return createDummyDists( packagePath, [
+			'.'
+		] );
+	},
+	after: async ( t, packagePath ) => {
+		const dummyFilePath = resolvePath( packagePath, 'dummy.js' );
+
+		return t.notThrowsAsync( access( dummyFilePath ) );
+	},
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
+
 async function createDummyDists( packagePath, distDirs = [ 'dist' ] ) {
 	const distDirsPromises = distDirs.map( async ( distDir ) => {
 		const distPath = resolvePath( packagePath, distDir );
