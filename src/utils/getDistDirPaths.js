@@ -1,5 +1,5 @@
-import { dirname } from 'node:path';
-import { resolve as resolvePath } from 'node:path';
+import { dirname } from 'pathe';
+import { resolve as resolvePath } from 'pathe';
 
 function getDistDirPaths( { project, dist } ) {
 	const distDirPaths = new Set();
