@@ -32,7 +32,7 @@ It gets `package.json` from the current working directory, parses it and get nee
 * `exports.import` for saving ESM bundle,
 * `exports.require` to get path for saving CJS bundle (optional).
 
-Then the bundling happens. The default entry point for Rollup is `src/index.js`. Please note that **`dist/` directory is purged before bundling**! So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
+Then the bundling happens. The default entry point for Rollup is `src/index.js`. Please note that **dist directory is purged before bundling**! So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
 
 ### Assumed file structure
 
@@ -187,6 +187,49 @@ some-package/
 |     |         |- whatever.js
 |     |         |- another-one.js
 ```
+
+## Support for non-standard dist directories
+
+From v0.20.0 the bundler officially supports non-standard dist directories (different than the `./dist` one). The dist directory is resolved from the `exports` field in the `package.json`, e.g.:
+
+```json
+"exports": {
+	".": {
+		"require": "./hublabubla/package.cjs",
+		"import": "./hublabubla/package.mjs"
+	}
+}
+```
+
+In the above example, the `./hublabubla` directory will be used instead of the `./dist` one.
+
+The bundler supports also multiple non-standard dist directories, e.g.:
+
+```json
+"exports": {
+	".": {
+		"require": "./hublabubla/package.cjs",
+		"import": "./bublahubla/package.mjs"
+	}
+}
+```
+
+> **Warning**
+> Non-standard dist directories are purged befored the bundling!
+> So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
+
+## Configuring VSC to correctly suggest imports
+
+VSC uses TypeScript rules to suggest imports. However, TS uses CJS rules by default, ignoring the constraints of the `exports` field and suggesting the whole file paths (e.g. `<package>/dist/<file>` instead of `<package>/<submodule-name>`). To fix it, TS must be configured by `tsconfig.json` or `jsconfig.json` file to [resolve modules according to ESM rules](https://www.typescriptlang.org/tsconfig#moduleResolution):
+
+```json5
+{
+	"module": "node16",
+	// or
+	"moduleResolution": "node16"
+}
+```
+
 
 ## License
 
