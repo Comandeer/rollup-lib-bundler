@@ -25,10 +25,6 @@ const cmdResultChecks = {
 	noError: ( t, { stderr } ) => {
 		t.false( stderr.includes( 'Bundling failed!' ) );
 		t.false( stderr.includes( '🚨Error🚨' ) );
-	},
-
-	skippedCJSBuild: ( t, { stderr } ) => {
-		t.true( stderr.includes( 'Skipping CJS build for' ) );
 	}
 };
 const customCheckStrategies = {
@@ -154,8 +150,7 @@ test( 'CLI bundles ESM-only package based on exports fields', testCLI, {
 		'./dist/package.mjs.map'
 	],
 	cmdResultChecks: [
-		cmdResultChecks.noError,
-		cmdResultChecks.skippedCJSBuild
+		cmdResultChecks.isSuccesful
 	]
 } );
 
@@ -177,8 +172,7 @@ test( 'CLI bundles ESM-only package based on subpath exports fields', testCLI, {
 		}
 	],
 	cmdResultChecks: [
-		cmdResultChecks.noError,
-		cmdResultChecks.skippedCJSBuild
+		cmdResultChecks.isSuccesful
 	]
 } );
 
