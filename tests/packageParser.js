@@ -533,7 +533,8 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 			[ 'src/index.js' ]: {
 				esm: './dist/test-package.mjs',
 				cjs: './dist/test-package.cjs',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			}
 		}
 	};
@@ -555,12 +556,14 @@ test( 'packageParser() returns simplified metadata for package with subpath "exp
 			[ 'src/index.js' ]: {
 				cjs: './dist/es5.cjs',
 				esm: './dist/es6.mjs',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			},
 			[ 'src/chunk.mjs' ]: {
 				cjs: './dist/not-related-name.cjs',
 				esm: './dist/also-not-related-name.js',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			}
 		}
 	};
@@ -581,7 +584,8 @@ test( 'packageParser() returns simplified metadata for package with no-CJS "expo
 		dist: {
 			[ 'src/index.js' ]: {
 				esm: './dist/test-package.mjs',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			}
 		}
 	};
@@ -602,11 +606,13 @@ test( 'packageParser() returns simplified metadata for package with no-CJS subpa
 		dist: {
 			[ 'src/index.js' ]: {
 				esm: './dist/es6.mjs',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			},
 			[ 'src/chunk.mjs' ]: {
 				esm: './dist/also-not-related-name.js',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			}
 		}
 	};
@@ -651,7 +657,8 @@ test( 'packageParser() correctly detects JS type with single .js entry point', a
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
 			cjs: './dist/test-package.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	};
 
@@ -666,7 +673,8 @@ test( 'packageParser() correctly detects JS type with single .mjs entry point', 
 		[ 'src/index.mjs' ]: {
 			esm: './dist/test-package.mjs',
 			cjs: './dist/test-package.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	};
 
@@ -681,7 +689,8 @@ test( 'packageParser() correctly detects JS type with .mjs and .js entry point',
 		[ 'src/index.mjs' ]: {
 			esm: './dist/test-package.mjs',
 			cjs: './dist/test-package.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	};
 
@@ -696,13 +705,15 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 		[ 'src/index.js' ]: {
 			esm: './dist/es6.mjs',
 			cjs: './dist/es5.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		},
 
 		[ 'src/chunk.mjs' ]: {
 			esm: './dist/also-not-related-name.js',
 			cjs: './dist/not-related-name.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	};
 
@@ -717,13 +728,15 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 		[ 'src/index.js' ]: {
 			esm: './dist/index.mjs',
 			cjs: './dist/index.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		},
 
 		[ 'src/test/chunk.mjs' ]: {
 			esm: './dist/nested/chunk.mjs',
 			cjs: './dist/nested/chunk.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	};
 
@@ -740,7 +753,8 @@ test( 'packageParser() correctly detects TS type with single .ts entry point', a
 			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			types: './dist/test-package.d.ts',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		}
 	};
 
@@ -757,7 +771,8 @@ test( 'packageParser() correctly detects TS type with single .mts entry point', 
 			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			types: './dist/test-package.d.ts',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		}
 	};
 
@@ -774,13 +789,15 @@ test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 			cjs: './dist/test-package.cjs',
 			types: './dist/test-package.d.ts',
 			tsConfig: 'tsconfig.json',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		},
 
 		[ 'src/chunk.mjs' ]: {
 			esm: './dist/chunk.mjs',
 			cjs: './dist/chunk.cjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	};
 
@@ -796,7 +813,8 @@ test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in
 			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.rlb.json',
 			types: './dist/test-package.d.ts',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		}
 	};
 
@@ -811,7 +829,8 @@ test( 'packageParser() skips tsConfig metadata if there is no tsconfig?(.rlb).js
 			esm: './dist/test-package.mjs',
 			cjs: './dist/test-package.cjs',
 			types: './dist/test-package.d.ts',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		}
 	};
 
@@ -826,7 +845,8 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 			esm: './dist/test-package.mjs',
 			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		}
 	} ;
 
@@ -840,12 +860,14 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		},
 
 		[ 'src/__bin__/test-package.js' ]: {
 			esm: './dist/__bin__/test-package.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: true
 		}
 	};
 
@@ -860,13 +882,15 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: false
 		},
 
 		[ 'src/__bin__/test-package.ts' ]: {
 			esm: './dist/__bin__/test-package.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: true
 		}
 	};
 
@@ -880,12 +904,14 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		},
 
 		[ 'src/__bin__/whatever.js' ]: {
 			esm: './dist/__bin__/whatever.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: true
 		}
 	};
 
@@ -900,13 +926,15 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: false
 		},
 
 		[ 'src/__bin__/whatever.ts' ]: {
 			esm: './dist/__bin__/whatever.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: true
 		}
 	};
 
@@ -927,7 +955,8 @@ test( 'packageParser() correctly parses JS project with non-standard dist direct
 			[ 'src/index.js' ]: {
 				esm: './hublabubla/test-package.mjs',
 				cjs: './hublabubla/test-package.cjs',
-				type: 'js'
+				type: 'js',
+				isBin: false
 			}
 		}
 	};
@@ -945,7 +974,8 @@ test( 'packageParser() correctly parses TS project with non-standard dist direct
 			cjs: './hublabubla/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			types: './hublabubla/test-package.d.ts',
-			type: 'ts'
+			type: 'ts',
+			isBin: false
 		}
 	};
 
@@ -959,12 +989,14 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './hublabubla/test-package.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		},
 
 		[ 'src/__bin__/test-package.js' ]: {
 			esm: './hublabubla/__bin__/test-package.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: true
 		}
 	};
 
@@ -979,13 +1011,15 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 		[ 'src/index.ts' ]: {
 			esm: './hublabubla/test-package.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: false
 		},
 
 		[ 'src/__bin__/test-package.ts' ]: {
 			esm: './hublabubla/__bin__/test-package.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: true
 		}
 	};
 
@@ -999,12 +1033,14 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './hublabubla/test-package.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		},
 
 		[ 'src/__bin__/whatever.js' ]: {
 			esm: './hublabubla/__bin__/whatever.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: true
 		}
 	};
 
@@ -1019,13 +1055,15 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 		[ 'src/index.ts' ]: {
 			esm: './hublabubla/test-package.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: false
 		},
 
 		[ 'src/__bin__/whatever.ts' ]: {
 			esm: './hublabubla/__bin__/whatever.mjs',
 			type: 'ts',
-			tsConfig: 'tsconfig.json'
+			tsConfig: 'tsconfig.json',
+			isBin: true
 		}
 	};
 

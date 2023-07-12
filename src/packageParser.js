@@ -136,14 +136,16 @@ function getBinSubPaths( { bin, name } ) {
 async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
-	const esmTarget = isBinSubPath( subPath ) ?
+	const isBin = isBinSubPath( subPath );
+	const esmTarget = isBin ?
 		getBinTarget( metadata, subPath ) :
 		getESMTarget( metadata, subPath );
 	const cjsTarget = getCJSTarget( metadata, subPath );
 	const exportType = getEntryPointType( srcPath );
 	const exportMetadata = {
 		esm: esmTarget,
-		type: exportType
+		type: exportType,
+		isBin
 	};
 
 	if ( cjsTarget ) {
