@@ -8,6 +8,7 @@ import typescript from '@rollup/plugin-typescript';
 import { rollup } from 'rollup';
 import preserveShebang from 'rollup-plugin-preserve-shebang';
 import bundleTypes from './bundler/bundleTypes.js';
+import fixBinPermissions from './bundler/fixBinPermissions.js';
 import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
 import resolveOtherBundles from './bundler/rollupPlugins/resolveOtherBundles.js';
 import generateBanner from './generateBanner.js';
@@ -46,6 +47,10 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 	}
 
 	await Promise.all( bundlesPromises );
+
+	if ( output.isBin ) {
+		await fixBinPermissions( packageInfo.project, output );
+	}
 
 	if ( output.types ) {
 		await bundleTypes( {
