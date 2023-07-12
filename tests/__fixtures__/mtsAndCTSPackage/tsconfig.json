@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist",
+		"declaration": true,
+		"module": "node16",
+		"moduleResolution": "node16"
+	},
+	"include": [
+		"src/**/*.cts",
+		"src/**/*.mts"
+	],
+	"target": "esnext"
+}
