@@ -43,8 +43,6 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 		const outputConfigCJS = getRollupOutputConfig( output.cjs, banner, 'cjs' );
 
 		bundlesPromises.push( bundle.write( outputConfigCJS ) );
-	} else {
-		onWarn( `Skipping CJS build for ${ source }` );
 	}
 
 	await Promise.all( bundlesPromises );
