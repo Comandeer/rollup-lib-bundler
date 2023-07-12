@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Changed
 * [#233]: **BREAKING CHANGE**: package is a pure ESM one now.
+* [#266]: **BREAKING CHANGE**: remove warning for skipping a CJS build.
 * [#265]: added docs around import suggestions in VSC.
 
 ## Removed
@@ -291,6 +292,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#249]: https://github.com/Comandeer/rollup-lib-bundler/issues/249
 [#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
 [#265]: https://github.com/Comandeer/rollup-lib-bundler/issues/265
+[#266]: https://github.com/Comandeer/rollup-lib-bundler/issues/266
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 [#271]: https://github.com/Comandeer/rollup-lib-bundler/issues/271
