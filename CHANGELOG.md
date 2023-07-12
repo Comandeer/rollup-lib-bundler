@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 * [#265]: official support for non-standard dist directories.
 * [#271]: support for [import assertions](https://v8.dev/features/import-assertions) syntax to enable importing JSON files in the pure ESM packages.
+* [#278]: official support for Node.js 20.
 
 ## Changed
 * [#233]: **BREAKING CHANGE**: package is a pure ESM one now.
@@ -296,6 +297,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 [#271]: https://github.com/Comandeer/rollup-lib-bundler/issues/271
+[#278]: https://github.com/Comandeer/rollup-lib-bundler/issues/278
 
 [0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0
 [0.19.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.19.1
