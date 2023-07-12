@@ -1,4 +1,4 @@
-import { access } from 'node:fs/promises';
+import { access, constants } from 'node:fs/promises';
 import { mkdir } from 'node:fs/promises';
 import { writeFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
@@ -68,6 +68,22 @@ const additionalCodeChecks = {
 			}
 
 			t.true( code.startsWith( '#!/usr/bin/env node' ) );
+		};
+	},
+
+	checkBinPermissions( filesToCheck ) {
+		return async ( t, path ) => {
+			const isFileToCheck = filesToCheck.some( ( file ) => {
+				return path.endsWith( file );
+			} );
+
+			if ( !isFileToCheck ) {
+				return;
+			}
+
+			await t.notThrowsAsync( () => {
+				return access( path, constants.X_OK );
+			} );
 		};
 	}
 };
@@ -425,6 +441,10 @@ test( 'CLI correctly bundles binaries (simple bin format, JS package)', testCLI,
 
 		additionalCodeChecks.checkShebang( [
 			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
+			'__bin__/test-package.mjs'
 		] )
 	]
 } );
@@ -457,6 +477,10 @@ test( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI,
 		] ) ),
 
 		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
 			'__bin__/test-package.mjs'
 		] )
 	]
@@ -491,6 +515,11 @@ test( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI
 		] ) ),
 
 		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
 			'__bin__/aside.mjs',
 			'__bin__/test-package.mjs'
 		] ),
@@ -541,6 +570,11 @@ test( 'CLI correctly bundles binaries (complex bin format, TS package)', testCLI
 			'__bin__/test-package.mjs'
 		] ),
 
+		additionalCodeChecks.checkBinPermissions( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
 		( t, code, path ) => {
 			if ( !path.endsWith( 'aside.mjs' ) ) {
 				return;
@@ -582,6 +616,7 @@ test( 'CLI correctly bundles TS package with non-standard dist directory', testC
 		cmdResultChecks.noError
 	]
 } );
+
 // #265
 test( 'CLI correctly bundles binaries (simple bin format, JS package, non-standard dist directory)', testCLI, {
 	fixture: 'nonStandardDistSimpleBinJSPackage',
@@ -609,6 +644,10 @@ test( 'CLI correctly bundles binaries (simple bin format, JS package, non-standa
 		] ) ),
 
 		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
 			'__bin__/test-package.mjs'
 		] )
 	]
@@ -643,6 +682,10 @@ test( 'CLI correctly bundles binaries (simple bin format, TS package, non-standa
 
 		additionalCodeChecks.checkShebang( [
 			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
+			'__bin__/test-package.mjs'
 		] )
 	]
 } );
@@ -676,6 +719,11 @@ test( 'CLI correctly bundles binaries (complex bin format, JS package, non-stand
 		] ) ),
 
 		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
 			'__bin__/aside.mjs',
 			'__bin__/test-package.mjs'
 		] ),
@@ -722,6 +770,11 @@ test( 'CLI correctly bundles binaries (complex bin format, TS package, non-stand
 		] ) ),
 
 		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
 			'__bin__/aside.mjs',
 			'__bin__/test-package.mjs'
 		] ),
