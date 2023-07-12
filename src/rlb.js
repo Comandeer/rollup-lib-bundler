@@ -14,7 +14,7 @@ async function rlb() {
 		const packageDirectory = process.cwd();
 		const packageInfo = await packageParser( packageDirectory );
 		const distPaths = getDistDirPaths( packageInfo ).filter( ( distDir ) => {
-			return distDir !== packageDirectory;
+			return distDir !== packageInfo.project;
 		} );
 
 		await rimraf( distPaths );
