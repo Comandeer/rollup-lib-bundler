@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { resolve as resolvePath } from 'node:path';
+import { resolve as resolvePath } from 'pathe';
 import getDirName from '../src/utils/getDirName.js';
 
 const __dirname = getDirName( import.meta.url );

@@ -1,0 +1,20 @@
+{
+  "name": "test-package",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Test package",
+  "exports": {
+    ".": {
+      "types": "./hublabubla/index.d.ts",
+      "import": "./hublabubla/index.mjs",
+      "require": "./hublabubla/index.cjs"
+    },
+    "./chunk": {
+      "import": "./hublabubla/chunk.mjs",
+      "require": "./hublabubla/chunk.cjs"
+    }
+  },
+  "author": "Comandeer",
+  "license": "ISC"
+}

@@ -1,9 +1,9 @@
-import { resolve as resolvePath } from 'pathe';
 import { rimraf } from 'rimraf';
 import consoleControlStrings from 'console-control-strings';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';
 import bundler from './bundler.js';
+import getDistDirPaths from './utils/getDistDirPaths.js';
 
 async function rlb() {
 	const outputController = new OutputController();
@@ -12,11 +12,12 @@ async function rlb() {
 		await outputController.showSpinner();
 
 		const packageDirectory = process.cwd();
-		const distPath = resolvePath( packageDirectory, 'dist' );
-
-		await rimraf( distPath );
-
 		const packageInfo = await packageParser( packageDirectory );
+		const distPaths = getDistDirPaths( packageInfo ).filter( ( distDir ) => {
+			return distDir !== packageInfo.project;
+		} );
+
+		await rimraf( distPaths );
 
 		await bundler( {
 			onWarn( warning ) {

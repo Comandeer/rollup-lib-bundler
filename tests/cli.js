@@ -6,10 +6,10 @@ import test from 'ava';
 import testCLI from './__helpers__/macros/testCLI.js';
 
 const defaultExpectedFiles = [
-	'test-package.cjs',
-	'test-package.cjs.map',
-	'test-package.mjs',
-	'test-package.mjs.map'
+	'./dist/test-package.cjs',
+	'./dist/test-package.cjs.map',
+	'./dist/test-package.mjs',
+	'./dist/test-package.mjs.map'
 ];
 const cmdResultChecks = {
 	isSuccesful: ( t, { stdout, stderr } ) => {
@@ -106,8 +106,8 @@ test( 'CLI bundles package that imports JSON content', testCLI, {
 test( 'CLI bundles ESM package that imports JSON content', testCLI, {
 	fixture: 'jsonESMPackage',
 	expectedFiles: [
-		'test-package.mjs',
-		'test-package.mjs.map'
+		'./dist/test-package.mjs',
+		'./dist/test-package.mjs.map'
 	],
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
@@ -127,14 +127,14 @@ test( 'CLI bundles ESM package that imports JSON content', testCLI, {
 test( 'CLI bundles package based on subpath exports fields', testCLI, {
 	fixture: 'subPathExportsPackage',
 	expectedFiles: [
-		'also-not-related-name.js',
-		'also-not-related-name.js.map',
-		'not-related-name.cjs',
-		'not-related-name.cjs.map',
-		'test-package.cjs',
-		'test-package.cjs.map',
-		'test-package.mjs',
-		'test-package.mjs.map'
+		'./dist/also-not-related-name.js',
+		'./dist/also-not-related-name.js.map',
+		'./dist/not-related-name.cjs',
+		'./dist/not-related-name.cjs.map',
+		'./dist/test-package.cjs',
+		'./dist/test-package.cjs.map',
+		'./dist/test-package.mjs',
+		'./dist/test-package.mjs.map'
 	],
 	additionalCodeChecks: [
 		( t, path, code ) => {
@@ -150,8 +150,8 @@ test( 'CLI bundles package based on subpath exports fields', testCLI, {
 test( 'CLI bundles ESM-only package based on exports fields', testCLI, {
 	fixture: 'noCJSPackage',
 	expectedFiles: [
-		'package.mjs',
-		'package.mjs.map'
+		'./dist/package.mjs',
+		'./dist/package.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError,
@@ -163,10 +163,10 @@ test( 'CLI bundles ESM-only package based on exports fields', testCLI, {
 test( 'CLI bundles ESM-only package based on subpath exports fields', testCLI, {
 	fixture: 'noCJSSubPathExportsPackage',
 	expectedFiles: [
-		'also-not-related-name.js',
-		'also-not-related-name.js.map',
-		'es6.mjs',
-		'es6.mjs.map'
+		'./dist/also-not-related-name.js',
+		'./dist/also-not-related-name.js.map',
+		'./dist/es6.mjs',
+		'./dist/es6.mjs.map'
 	],
 	additionalCodeChecks: [
 		( t, path, code ) => {
@@ -186,15 +186,15 @@ test( 'CLI bundles ESM-only package based on subpath exports fields', testCLI, {
 test( 'CLI bundles TypeScript package', testCLI, {
 	fixture: 'tsPackage',
 	expected: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map',
-		'chunk.cjs',
-		'chunk.cjs.map',
-		'chunk.mjs',
-		'chunk.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/chunk.cjs',
+		'./dist/chunk.cjs.map',
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -205,11 +205,11 @@ test( 'CLI bundles TypeScript package', testCLI, {
 test( 'CLI bundles TypeScript package without the tsconfig.json file', testCLI, {
 	fixture: 'noTSConfigTSPackage',
 	expected: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful
@@ -220,16 +220,16 @@ test( 'CLI bundles TypeScript package without the tsconfig.json file', testCLI, 
 test( 'CLI bundles TypeScript package with complex directory structure', testCLI, {
 	fixture: 'tsComplexPackage',
 	expectedFiles: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map',
-		'submodule.d.ts',
-		'subdir/submodule.cjs',
-		'subdir/submodule.cjs.map',
-		'subdir/submodule.mjs',
-		'subdir/submodule.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/submodule.d.ts',
+		'./dist/subdir/submodule.cjs',
+		'./dist/subdir/submodule.cjs.map',
+		'./dist/subdir/submodule.mjs',
+		'./dist/subdir/submodule.mjs.map'
 	],
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
@@ -255,15 +255,15 @@ test( 'CLI preserves dynamic external imports', testCLI, {
 test( 'CLI transpiles bundled JS files down to code understandable by Node v16.0.0', testCLI, {
 	fixture: 'babelTranspilationTSPackage',
 	expectedFiles: [
-		'chunk.cjs',
-		'chunk.cjs.map',
-		'chunk.mjs',
-		'chunk.mjs.map',
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map'
+		'./dist/chunk.cjs',
+		'./dist/chunk.cjs.map',
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map',
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -282,21 +282,21 @@ test( 'CLI transpiles bundled JS files down to code understandable by Node v16.0
 test( 'CLI treats import of other bundles as external dependencies (TS package)', testCLI, {
 	fixture: 'importingOtherBundlesTSPackage',
 	expectedFiles: [
-		'chunk.cjs',
-		'chunk.cjs.map',
-		'chunk.d.ts',
-		'chunk.mjs',
-		'chunk.mjs.map',
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map',
-		'subdir/submodule.cjs',
-		'subdir/submodule.cjs.map',
-		'subdir/submodule.d.ts',
-		'subdir/submodule.mjs',
-		'subdir/submodule.mjs.map'
+		'./dist/chunk.cjs',
+		'./dist/chunk.cjs.map',
+		'./dist/chunk.d.ts',
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map',
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/subdir/submodule.cjs',
+		'./dist/subdir/submodule.cjs.map',
+		'./dist/subdir/submodule.d.ts',
+		'./dist/subdir/submodule.mjs',
+		'./dist/subdir/submodule.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -350,18 +350,18 @@ test( 'CLI treats import of other bundles as external dependencies (TS package)'
 test( 'CLI treats import of other bundles as external dependencies (JS package)', testCLI, {
 	fixture: 'importingOtherBundlesJSPackage',
 	expectedFiles: [
-		'chunk.cjs',
-		'chunk.cjs.map',
-		'chunk.mjs',
-		'chunk.mjs.map',
-		'index.cjs',
-		'index.cjs.map',
-		'index.mjs',
-		'index.mjs.map',
-		'subdir/submodule.cjs',
-		'subdir/submodule.cjs.map',
-		'subdir/submodule.mjs',
-		'subdir/submodule.mjs.map'
+		'./dist/chunk.cjs',
+		'./dist/chunk.cjs.map',
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map',
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/subdir/submodule.cjs',
+		'./dist/subdir/submodule.cjs.map',
+		'./dist/subdir/submodule.mjs',
+		'./dist/subdir/submodule.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -407,12 +407,12 @@ test( 'CLI treats import of other bundles as external dependencies (JS package)'
 test( 'CLI correctly bundles binaries (simple bin format, JS package)', testCLI, {
 	fixture: 'simpleBinJSPackage',
 	expectedFiles: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.mjs',
-		'index.mjs.map',
-		'__bin__/test-package.mjs',
-		'__bin__/test-package.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/__bin__/test-package.mjs',
+		'./dist/__bin__/test-package.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -439,13 +439,13 @@ test( 'CLI correctly bundles binaries (simple bin format, JS package)', testCLI,
 test( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI, {
 	fixture: 'simpleBinTSPackage',
 	expectedFiles: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map',
-		'__bin__/test-package.mjs',
-		'__bin__/test-package.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/__bin__/test-package.mjs',
+		'./dist/__bin__/test-package.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -472,14 +472,14 @@ test( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI,
 test( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI, {
 	fixture: 'complexBinJSPackage',
 	expectedFiles: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.mjs',
-		'index.mjs.map',
-		'__bin__/aside.mjs',
-		'__bin__/aside.mjs.map',
-		'__bin__/test-package.mjs',
-		'__bin__/test-package.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/__bin__/aside.mjs',
+		'./dist/__bin__/aside.mjs.map',
+		'./dist/__bin__/test-package.mjs',
+		'./dist/__bin__/test-package.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -517,15 +517,200 @@ test( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI
 test( 'CLI correctly bundles binaries (complex bin format, TS package)', testCLI, {
 	fixture: 'complexBinTSPackage',
 	expectedFiles: [
-		'index.cjs',
-		'index.cjs.map',
-		'index.d.ts',
-		'index.mjs',
-		'index.mjs.map',
-		'__bin__/aside.mjs',
-		'__bin__/aside.mjs.map',
-		'__bin__/test-package.mjs',
-		'__bin__/test-package.mjs.map'
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/__bin__/aside.mjs',
+		'./dist/__bin__/aside.mjs.map',
+		'./dist/__bin__/test-package.mjs',
+		'./dist/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles JS package with non-standard dist directory', testCLI, {
+	fixture: 'nonStandardDistJSPackage',
+	expectedFiles: [
+		'./hublabubla/test-package.cjs',
+		'./hublabubla/test-package.cjs.map',
+		'./hublabubla/test-package.mjs',
+		'./hublabubla/test-package.mjs.map'
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles TS package with non-standard dist directory', testCLI, {
+	fixture: 'nonStandardDistTSPackage',
+	expected: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/chunk.cjs',
+		'./hublabubla/chunk.cjs.map',
+		'./hublabubla/chunk.mjs',
+		'./hublabubla/chunk.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	]
+} );
+// #265
+test( 'CLI correctly bundles binaries (simple bin format, JS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistSimpleBinJSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles binaries (simple bin format, TS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistSimpleBinTSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles binaries (complex bin format, JS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistComplexBinJSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/aside.mjs',
+		'./hublabubla/__bin__/aside.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/aside.mjs',
+			'__bin__/test-package.mjs'
+		] ),
+
+		( t, code, path ) => {
+			if ( !path.endsWith( 'aside.mjs' ) ) {
+				return;
+			}
+
+			const consoleLogRegex = /console\.log\(\s*['"]aside['"]\s*\);/;
+
+			t.regex( code, consoleLogRegex, 'aside bin correctly imported aside source file' );
+		}
+	]
+} );
+
+// #265
+test( 'CLI correctly bundles binaries (complex bin format, TS package, non-standard dist directory)', testCLI, {
+	fixture: 'nonStandardDistComplexBinTSPackage',
+	expectedFiles: [
+		'./hublabubla/index.cjs',
+		'./hublabubla/index.cjs.map',
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./hublabubla/__bin__/aside.mjs',
+		'./hublabubla/__bin__/aside.mjs.map',
+		'./hublabubla/__bin__/test-package.mjs',
+		'./hublabubla/__bin__/test-package.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
@@ -579,30 +764,81 @@ test( 'CLI displays error for invalid package', testCLI, {
 test( 'cleans dist directory before bundling', testCLI, {
 	fixture: 'testPackage',
 	before: async ( t, packagePath ) => {
-		return createDummyDist( t, packagePath );
+		return createDummyDists( packagePath );
 	},
 	after: async ( t, packagePath ) => {
-		const dummyFilePath = resolvePath( packagePath, 'dist', 'dummy.js' );
-
-		return t.throwsAsync( access( dummyFilePath ) );
+		return assertDummyFileIsDeleted( t, packagePath );
 	},
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful
 	]
 } );
 
-async function createDummyDist( t, packagePath ) {
-	const distPath = resolvePath( packagePath, 'dist' );
-	const dummyFilePath = resolvePath( distPath, 'dummy.js' );
+// #265
+test( 'cleans all non-standard dist directories before bundling', testCLI, {
+	fixture: 'nonStandardMultipleDistJSPackage',
+	before: async ( t, packagePath ) => {
+		return createDummyDists( packagePath, [
+			'hublabubla',
+			'grim'
+		] );
+	},
+	after: async ( t, packagePath ) => {
+		return assertDummyFileIsDeleted( t, packagePath, [
+			'hublabubla',
+			'grim'
+		] );
+	},
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
 
-	// If creating the dir fails, it's most probably already there.
-	try {
-		await mkdir( distPath );
-	} catch {
-		// Just silent the error;
-	}
+// #265
+test( 'skip cleaning the root directory if it is the dist one', testCLI, {
+	fixture: 'nonStandardRootDistJSPackage',
+	before: async ( t, packagePath ) => {
+		return createDummyDists( packagePath, [
+			'.'
+		] );
+	},
+	after: async ( t, packagePath ) => {
+		const dummyFilePath = resolvePath( packagePath, 'dummy.js' );
 
-	await writeFile( dummyFilePath, 'hublabubla', 'utf-8' );
+		return t.notThrowsAsync( access( dummyFilePath ) );
+	},
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	]
+} );
 
-	return dummyFilePath;
+async function createDummyDists( packagePath, distDirs = [ 'dist' ] ) {
+	const distDirsPromises = distDirs.map( async ( distDir ) => {
+		const distPath = resolvePath( packagePath, distDir );
+		const dummyFilePath = resolvePath( distPath, 'dummy.js' );
+
+		// If creating the dir fails, it's most probably already there.
+		try {
+			await mkdir( distPath, {
+				recursive: true
+			} );
+		} catch {
+			// Just silent the error;
+		}
+
+		await writeFile( dummyFilePath, 'hublabubla', 'utf-8' );
+	} );
+
+	return Promise.all( distDirsPromises );
+}
+
+async function assertDummyFileIsDeleted( t, packagePath, distDirs = [ 'dist' ] ) {
+	const dummyFilesPromises = distDirs.map( async ( distDir ) => {
+		const distPath = resolvePath( packagePath, distDir );
+		const dummyFilePath = resolvePath( distPath, 'dummy.js' );
+
+		return t.throwsAsync( access( dummyFilePath ) );
+	} );
+
+	return Promise.all( dummyFilesPromises );
 }
