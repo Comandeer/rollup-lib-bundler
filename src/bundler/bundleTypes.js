@@ -27,7 +27,7 @@ async function bundleTypes( {
 	delete compilerOptions.outFile;
 	delete compilerOptions.rootDir;
 
-	const tsFiles = await globby( 'src/**/*.ts', {
+	const tsFiles = await globby( 'src/**/*.{cts,mts,ts}', {
 		absolute: true,
 		cwd: project
 	} );
@@ -42,6 +42,7 @@ async function bundleTypes( {
 
 	// Prepare and emit the d.ts files
 	const program = ts.createProgram( tsFiles, compilerOptions, host );
+
 	program.emit();
 
 	const input = getOriginalDTsFilePath( project, sourceFile );
@@ -78,10 +79,11 @@ function getUserCompilerOptions( project, tsConfig ) {
 }
 
 function getOriginalDTsFilePath( project, sourceFile ) {
-	// We need the relative path to the .d.ts file. So:
+	// We need the relative path to the .d.(c|m)?ts file. So:
 	// 1. Get the relative path via getRelativePath().
-	// 2. Replace the .ts extension with the .d.ts one.
-	const originalFilePath = getRelativeToProjectPath( project, sourceFile ).replace( /\.ts$/, '.d.ts' );
+	// 2. Replace the .(c|m)?ts extension with the .d.(c|m)?ts one.
+	const tsExtensionRegex = /\.(c|m)?ts$/;
+	const originalFilePath = getRelativeToProjectPath( project, sourceFile ).replace( tsExtensionRegex, '.d.$1ts' );
 
 	return originalFilePath;
 }

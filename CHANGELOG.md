@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.20.0]
+## [0.20.0] – 2023-07-13
 ### Added
+* [#264]: support for bundling `.d.cts` and `.d.mts` type declaration files.
 * [#265]: official support for non-standard dist directories.
 * [#271]: support for [import assertions](https://v8.dev/features/import-assertions) syntax to enable importing JSON files in the pure ESM packages.
 * [#278]: official support for Node.js 20.
@@ -15,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 * [#233]: **BREAKING CHANGE**: package is a pure ESM one now.
 * [#266]: **BREAKING CHANGE**: remove warning for skipping a CJS build.
+* [#264]: updated the `rollup-plugin-dts` dependency from `^5.1.1` to `^5.3.0`.
 * [#265]: added docs around import suggestions in VSC.
 
 ### Removed
@@ -295,6 +297,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#248]: https://github.com/Comandeer/rollup-lib-bundler/issues/248
 [#249]: https://github.com/Comandeer/rollup-lib-bundler/issues/249
 [#255]: https://github.com/Comandeer/rollup-lib-bundler/issues/255
+[#264]: https://github.com/Comandeer/rollup-lib-bundler/issues/264
 [#265]: https://github.com/Comandeer/rollup-lib-bundler/issues/265
 [#266]: https://github.com/Comandeer/rollup-lib-bundler/issues/266
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267

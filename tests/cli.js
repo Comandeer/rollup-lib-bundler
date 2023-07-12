@@ -226,6 +226,25 @@ test( 'CLI bundles TypeScript package without the tsconfig.json file', testCLI, 
 	]
 } );
 
+// #264
+test( 'CLI correctly bundles TypeScript package with .mts and .cts file', testCLI, {
+	fixture: 'tsPackage',
+	expected: [
+		'./dist/index.cjs',
+		'./dist/index.cjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/chunk.cjs',
+		'./dist/chunk.cjs.map',
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	]
+} );
+
 // #242
 test( 'CLI bundles TypeScript package with complex directory structure', testCLI, {
 	fixture: 'tsComplexPackage',
