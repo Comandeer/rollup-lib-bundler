@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.21.0]
+### Changed
+* [#279]: **BREAKING CHANGE**: updated dependencies:
+
+	| Dependency                               | Old version | New version |
+	| ---------------------------------------- | ----------- | ----------- |
+	| `@babel/core`                            | `^7.20.12`  | `^7.22.9`   |
+	| `@babel/plugin-syntax-import-assertions` | `^7.20.0`   | `^7.22.5`   |
+	| `@babel/plugin-transform-typescript`     | `^7.20.13`  | `^7.22.9`   |
+	| `@babel/preset-env`                      | `^7.20.2`   | `^7.22.9`   |
+	| `@babel/types`                           | `^7.20.7`   | `^7.22.5`   |
+	| ⚠️ `@rollup/plugin-commonjs`              | `^24.0.0`   | `^25.0.2`   |
+	| ⚠️ `@rollup/plugin-terser`                | `^0.3.0`    | `^0.4.3`    |
+	| `@rollup/plugin-typescript`              | `^11.0.0`   | `^11.1.2`   |
+	| `globby`                                 | `^13.1.3`   | `^13.2.2`   |
+	| `pathe`                                  | `^1.1.0`    | `^1.1.1`    |
+	| ⚠️ `rimraf`                               | `^4.0.7`    | `^5.0.1`    |
+	| `rollup`                                 | `^3.10.0`   | `^3.26.2`   |
+	| `tslib`                                  | `^2.4.1`    | `^2.6.0`    |
+	| ⚠️ `typescript`                           | `^5.1.6`    | `^4.9.4`    |
+
+	(Dependencies with major version change are marked with the "⚠️" emoji)
+
 ## [0.20.0] – 2023-07-13
 ### Added
 * [#264]: support for bundling `.d.cts` and `.d.mts` type declaration files.
