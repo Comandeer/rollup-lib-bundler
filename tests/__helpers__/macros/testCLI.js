@@ -81,7 +81,7 @@ const testCLI = test.macro( async ( t, {
 			return cmdResultCheck( t, cmdResult );
 		} );
 
-		await cmdResultChecksPromises;
+		await Promise.all( cmdResultChecksPromises );
 
 		if ( Array.isArray( expectedFiles ) ) {
 			await checkDistFiles( t, tempDirPath, expectedFiles, {
