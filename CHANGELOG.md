@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 	(Dependencies with major version change are marked with the "⚠️" emoji)
 
+### Removed
+* [#276]: **BREAKING CHANGE**: outputting CJS bundles; now only the ESM one is produced.
+
 ## [0.20.0] – 2023-07-13
 ### Added
 * [#264]: support for bundling `.d.cts` and `.d.mts` type declaration files.
@@ -326,10 +329,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 [#271]: https://github.com/Comandeer/rollup-lib-bundler/issues/271
+[#276]: https://github.com/Comandeer/rollup-lib-bundler/issues/276
 [#277]: https://github.com/Comandeer/rollup-lib-bundler/issues/277
 [#278]: https://github.com/Comandeer/rollup-lib-bundler/issues/278
 [#279]: https://github.com/Comandeer/rollup-lib-bundler/issues/279
 
+[0.21.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0
 [0.19.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.18.0...v0.19.0
