@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
-import  test from 'ava';
 import { resolve as resolvePath } from 'pathe';
+import  test from 'ava';
 import getDirName from '../src/utils/getDirName.js';
 import * as targets from '../src/targets.js';
 

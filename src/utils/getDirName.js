@@ -1,10 +1,8 @@
+import { fileURLToPath } from 'node:url';
 import { dirname } from 'pathe';
-import { fileURLToPath } from 'url';
 
-function getDirName( url ) {
+export default function getDirName( url ) {
 	const __dirname = dirname( fileURLToPath( url ) );
 
 	return __dirname;
 }
-
-export default getDirName;

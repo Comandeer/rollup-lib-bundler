@@ -1,6 +1,5 @@
 import { Console } from 'node:console';
-import { Writable as WritableStream } from 'node:stream';
-import { Duplex as DuplexStream } from 'node:stream';
+import { Writable as WritableStream, Duplex as DuplexStream } from 'node:stream';
 import Spinner from '@comandeer/cli-spinner';
 import consoleControlStrings from 'console-control-strings';
 
@@ -8,7 +7,7 @@ const stdoutSymbol = Symbol( 'stdout' );
 const stderrSymbol = Symbol( 'stderr' );
 const spinnerSymbol = Symbol( 'spinner' );
 
-class OutputController {
+export default class OutputController {
 	constructor( {
 		stdout = process.stdout,
 		stderr = process.stderr
@@ -101,5 +100,3 @@ function createError( { name, message, stack } ) {
 ${ name }: ${ message }${ consoleControlStrings.color( 'reset' ) }
 ${ newStack }`;
 }
-
-export default OutputController;

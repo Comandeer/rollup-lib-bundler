@@ -1,7 +1,7 @@
 import { globby } from 'globby';
 import { rimraf } from 'rimraf';
 
-async function removeArtifacts( fixturePath ) {
+export default async function removeArtifacts( fixturePath ) {
 	const distPaths = await globby( [
 		'**/*Package/dist'
 	], {
@@ -12,5 +12,3 @@ async function removeArtifacts( fixturePath ) {
 
 	return rimraf( distPaths );
 }
-
-export default removeArtifacts;

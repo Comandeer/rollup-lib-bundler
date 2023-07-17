@@ -1,4 +1,4 @@
-function preserveDynamicImports() {
+export default function preserveDynamicImports() {
 	return {
 		renderDynamicImport() {
 			return {
@@ -8,5 +8,3 @@ function preserveDynamicImports() {
 		}
 	};
 }
-
-export default preserveDynamicImports;

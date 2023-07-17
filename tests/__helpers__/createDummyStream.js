@@ -1,5 +1,4 @@
-import { Duplex as DuplexStream } from 'node:stream';
-import { Writable as WritableStream } from 'node:stream';
+import { Duplex as DuplexStream, Writable as WritableStream } from 'node:stream';
 
 /**
  * @typedef {Object} CreateDummyStreamOptions
@@ -18,7 +17,7 @@ import { Writable as WritableStream } from 'node:stream';
  * @param {CreateDummyStreamOptions} options
  * @returns {DummyStream}
  */
-function createDummyStream( {
+export default function createDummyStream( {
 	type = 'writable',
 	isTTY = true
 } = {} ) {
@@ -39,5 +38,3 @@ function createDummyStream( {
 		output
 	};
 }
-
-export default createDummyStream;

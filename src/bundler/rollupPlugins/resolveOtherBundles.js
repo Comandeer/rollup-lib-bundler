@@ -1,10 +1,8 @@
-import { dirname } from 'pathe';
-import { relative as getRelativePath } from 'pathe';
-import { resolve as resolvePath } from 'pathe';
 import { transformAsync } from '@babel/core';
 import * as t from '@babel/types';
+import { dirname, relative as getRelativePath, resolve as resolvePath } from 'pathe';
 
-function resolveOtherBundles( projectPath, metadata ) {
+export default function resolveOtherBundles( projectPath, metadata ) {
 	return {
 		name: 'rlb-resolve-other-bundles',
 
@@ -120,5 +118,3 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 		return importPath;
 	}
 }
-
-export default resolveOtherBundles;

@@ -1,11 +1,8 @@
-import { access } from 'node:fs/promises';
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { globby } from 'globby';
-import { extname } from 'pathe';
-import { join as joinPath } from 'pathe';
-import { normalize as normalizePath } from 'pathe';
+import { extname, join as joinPath, normalize as normalizePath } from 'pathe';
 
-async function packageParser( packageDir ) {
+export default async function packageParser( packageDir ) {
 	if ( typeof packageDir !== 'string' ) {
 		throw new TypeError( 'Provide a path to a package directory.' );
 	}
@@ -258,5 +255,3 @@ async function getTSConfigPath( packageDir ) {
 
 	return tsConfigPath;
 }
-
-export default packageParser;

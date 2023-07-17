@@ -1,5 +1,5 @@
-import { dirname } from 'pathe';
 import { pathToFileURL } from 'node:url';
+import { dirname } from 'pathe';
 import test from 'ava';
 import getDirName from '../../src/utils/getDirName.js';
 

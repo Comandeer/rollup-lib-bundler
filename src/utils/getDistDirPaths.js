@@ -1,7 +1,6 @@
-import { dirname } from 'pathe';
-import { resolve as resolvePath } from 'pathe';
+import { dirname, resolve as resolvePath } from 'pathe';
 
-function getDistDirPaths( { project, dist } ) {
+export default function getDistDirPaths( { project, dist } ) {
 	const distDirPaths = new Set();
 	const distFilePaths = Object.values( dist );
 
@@ -28,5 +27,3 @@ function getDistDirPaths( { project, dist } ) {
 
 	return [ ...distDirPaths ];
 }
-
-export default getDistDirPaths;
