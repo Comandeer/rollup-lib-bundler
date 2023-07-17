@@ -6,7 +6,7 @@ import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.
 import getDirName from '../../../src/utils/getDirName.js';
 
 const __dirname = getDirName( import.meta.url );
-const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'bin', 'rlb.mjs' );
+const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'src', '__bin__', 'rlb.mjs' );
 
 /**
  * @typedef {import('../checkDistFiles').AdditionalCodeCheckCallback} AdditionalCodeCheckCallback
