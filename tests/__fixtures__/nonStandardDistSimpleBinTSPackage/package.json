@@ -7,8 +7,7 @@
   "exports": {
     ".": {
       "types": "./hublabubla/index.d.ts",
-      "import": "./hublabubla/index.mjs",
-      "require": "./hublabubla/index.cjs"
+      "import": "./hublabubla/index.mjs"
     }
   },
   "bin": "./hublabubla/__bin__/test-package.mjs",

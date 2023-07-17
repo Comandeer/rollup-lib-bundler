@@ -7,12 +7,10 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs"
     },
     "./chunk": {
-      "import": "./dist/chunk.mjs",
-      "require": "./dist/chunk.cjs"
+      "import": "./dist/chunk.mjs"
     }
   },
   "author": "Comandeer",

@@ -5,8 +5,7 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./hublabubla/test-package.mjs",
-      "require": "./hublabubla/test-package.cjs"
+      "import": "./hublabubla/test-package.mjs"
     }
   },
   "author": "Comandeer",

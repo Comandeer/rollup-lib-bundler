@@ -5,8 +5,7 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./dist/test-package.mjs",
-      "require": "./dist/test-package.cjs"
+      "import": "./dist/test-package.mjs"
     }
   },
   "author": {
