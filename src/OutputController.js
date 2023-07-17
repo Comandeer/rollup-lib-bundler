@@ -1,49 +1,68 @@
 import { Console } from 'node:console';
-import { Writable as WritableStream, Duplex as DuplexStream } from 'node:stream';
+import { stdout, stderr } from 'node:process';
 import Spinner from '@comandeer/cli-spinner';
 import consoleControlStrings from 'console-control-strings';
 
-const stdoutSymbol = Symbol( 'stdout' );
-const stderrSymbol = Symbol( 'stderr' );
-const spinnerSymbol = Symbol( 'spinner' );
-
 export default class OutputController {
+	#console;
+	#spinner;
+	#pendingLogs;
+	#pendingWarnings;
+
+	static createWarning( warning ) {
+		if ( warning && typeof warning === 'object' && warning.message ) {
+			warning = warning.message;
+		}
+
+		return `${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ ${ warning }${ consoleControlStrings.color( 'reset' ) }`;
+	}
+
+	static createError( { name, message, stack } ) {
+		const stackParts = stack.split( '\n' );
+
+		stackParts.shift();
+
+		const newStack = stackParts.join( '\n' );
+
+		return `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }🚨Error🚨
+${ name }: ${ message }${ consoleControlStrings.color( 'reset' ) }
+${ newStack }`;
+	}
+
 	constructor( {
-		stdout = process.stdout,
-		stderr = process.stderr
-	} = {} ) {
-		if ( !isValidStream( stdout ) ) {
-			throw new TypeError( 'Custom stdout must be a valid writable/duplex stream' );
-		}
-
-		if ( !isValidStream( stderr ) ) {
-			throw new TypeError( 'Custom stderr must be a valid writable/duplex stream' );
-		}
-
-		this[ stdoutSymbol ] = stdout;
-		this[ stderrSymbol ] = stderr;
-		this.console = new Console( {
+		console = new Console( {
 			stdout,
 			stderr
-		} );
-		this[ spinnerSymbol ] = new Spinner( {
+		} ),
+		spinner = new Spinner( {
 			label: 'Working…',
 			stdout: stderr
-		} );
-		this.pendingLogs = [];
-		this.pendingWarnings = [];
+		} )
+	} = {} ) {
+		if ( !isValidConsole( console ) ) {
+			throw new TypeError( 'Custom console must be a valid Console object' );
+		}
+
+		if ( !isValidSpinner( spinner ) ) {
+			throw new TypeError( 'Custom spinner must be a valid spinner object' );
+		}
+
+		this.#console = console;
+		this.#spinner = spinner;
+		this.#pendingLogs = [];
+		this.#pendingWarnings = [];
 	}
 
 	async showSpinner() {
-		return this[ spinnerSymbol ].show();
+		return this.#spinner.show();
 	}
 
 	async hideSpinner() {
-		return this[ spinnerSymbol ].hide();
+		return this.#spinner.hide();
 	}
 
 	addLog( ...args ) {
-		this.pendingLogs.push( args );
+		this.#pendingLogs.push( args );
 	}
 
 	addWarning( warningMessage ) {
@@ -51,52 +70,38 @@ export default class OutputController {
 			return;
 		}
 
-		const warning = createWarning( warningMessage );
+		const warning = OutputController.createWarning( warningMessage );
 
-		this.pendingWarnings.push( [ warning ] );
+		this.#pendingWarnings.push( [ warning ] );
 	}
 
 	display() {
-		this.pendingWarnings.forEach( ( warning ) => {
-			this.console.warn( ...warning );
+		this.#pendingWarnings.forEach( ( warning ) => {
+			this.#console.warn( ...warning );
 		} );
 
-		this.pendingLogs.forEach( ( log ) => {
-			this.console.log( ...log );
+		this.#pendingLogs.forEach( ( log ) => {
+			this.#console.log( ...log );
 		} );
 	}
 
 	displayError( error ) {
-		const errorLog = createError( error );
+		const errorLog = OutputController.createError( error );
 
-		this.console.error( errorLog );
+		this.#console.error( errorLog );
 	}
 }
 
-function isValidStream( value ) {
-	return value instanceof WritableStream || value instanceof DuplexStream;
+// Duck typing as checking against the Console object does not work correctly.
+function isValidConsole( value ) {
+	return value && typeof value.log === 'function' && typeof value.warn === 'function' &&
+		typeof value.error === 'function';
+}
+
+function isValidSpinner( value ) {
+	return value && typeof value.show === 'function' && typeof value.hide === 'function';
 }
 
 function isExternalDepWarning( log ) {
 	return log && typeof log === 'object' && log.code === 'UNRESOLVED_IMPORT';
-}
-
-function createWarning( warning ) {
-	if ( warning && typeof warning === 'object' && warning.message ) {
-		warning = warning.message;
-	}
-
-	return `${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ ${ warning }${ consoleControlStrings.color( 'reset' ) }`;
-}
-
-function createError( { name, message, stack } ) {
-	const stackParts = stack.split( '\n' );
-
-	stackParts.shift();
-
-	const newStack = stackParts.join( '\n' );
-
-	return `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }🚨Error🚨
-${ name }: ${ message }${ consoleControlStrings.color( 'reset' ) }
-${ newStack }`;
 }
