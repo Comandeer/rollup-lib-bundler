@@ -7,12 +7,10 @@
   "exports": {
     ".": {
       "types": "./hublabubla/index.d.ts",
-      "import": "./hublabubla/index.mjs",
-      "require": "./hublabubla/index.cjs"
+      "import": "./hublabubla/index.mjs"
     },
     "./chunk": {
-      "import": "./hublabubla/chunk.mjs",
-      "require": "./hublabubla/chunk.cjs"
+      "import": "./hublabubla/chunk.mjs"
     }
   },
   "author": "Comandeer",

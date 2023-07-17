@@ -5,11 +5,9 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "require": "./dist/test-package.cjs",
       "import": "./dist/test-package.mjs"
     },
     "./chunk": {
-      "require": "./dist/not-related-name.cjs",
       "import": "./dist/also-not-related-name.js"
     }
   },

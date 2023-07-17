@@ -7,13 +7,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs"
     },
     "./subdir/submodule": {
       "types": "./dist/submodule.d.ts",
-      "import": "./dist/subdir/submodule.mjs",
-      "require": "./dist/subdir/submodule.cjs"
+      "import": "./dist/subdir/submodule.mjs"
     }
   },
   "author": "Comandeer",

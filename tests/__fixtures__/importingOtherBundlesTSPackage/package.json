@@ -7,18 +7,15 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.mjs"
     },
     "./chunk": {
       "types": "./dist/chunk.d.ts",
-      "import": "./dist/chunk.mjs",
-      "require": "./dist/chunk.cjs"
+      "import": "./dist/chunk.mjs"
     },
     "./subdir/submodule": {
       "types": "./dist/subdir/submodule.d.ts",
-      "import": "./dist/subdir/submodule.mjs",
-      "require": "./dist/subdir/submodule.cjs"
+      "import": "./dist/subdir/submodule.mjs"
     }
   },
   "author": "Comandeer",

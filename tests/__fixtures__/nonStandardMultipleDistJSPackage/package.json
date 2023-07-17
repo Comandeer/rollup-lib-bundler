@@ -5,9 +5,9 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./hublabubla/test-package.mjs",
-      "require": "./grim/test-package.cjs"
-    }
+      "import": "./hublabubla/test-package.mjs"
+    },
+    "./chunk": "./grim/chunk.mjs"
   },
   "author": "Comandeer",
   "license": "ISC"

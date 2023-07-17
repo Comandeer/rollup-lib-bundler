@@ -47,8 +47,7 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: './dist/test-package.mjs',
-			require: './dist/test-package.cjs'
+			import: './dist/test-package.mjs'
 		}
 	},
 
@@ -57,12 +56,10 @@ const fixtures = {
 		version: '1.0.0',
 		exports: {
 			'.': {
-				'require': './dist/es5.cjs',
-				'import': './dist/es6.mjs'
+				import: './dist/es6.mjs'
 			},
 			'./chunk': {
-				'require': './dist/not-related-name.cjs',
-				'import': './dist/also-not-related-name.js'
+				import: './dist/also-not-related-name.js'
 			}
 		},
 		author: 'Comandeer',
@@ -74,37 +71,38 @@ const fixtures = {
 		version: '1.0.0',
 		exports: {
 			'.': {
-				'require': './dist/index.cjs',
-				'import': './dist/index.mjs'
+				import: './dist/index.mjs'
 			},
 			'./test/chunk': {
-				'require': './dist/nested/chunk.cjs',
-				'import': './dist/nested/chunk.mjs'
+				import: './dist/nested/chunk.mjs'
 			}
 		},
 		author: 'Comandeer',
 		license: 'ISC'
 	},
 
-	noCJSExports: {
+	withCJSExports: {
 		name: 'test-package',
 		version: '9.0.1',
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: './dist/test-package.mjs'
+			import: './dist/test-package.mjs',
+			require: './dist/tests-package.cjs'
 		}
 	},
 
-	noCJSSubPathExports: {
+	withCJSSubPathExports: {
 		name: 'test-package',
 		version: '1.0.0',
 		exports: {
 			'.': {
-				'import': './dist/es6.mjs'
+				import: './dist/es6.mjs',
+				require: './dist/es6.cjs'
 			},
 			'./chunk': {
-				'import': './dist/also-not-related-name.js'
+				import: './dist/also-not-related-name.js',
+				require: './dist/also-not-related-name.cjs'
 			}
 		},
 		author: 'Comandeer',
@@ -118,8 +116,7 @@ const fixtures = {
 		license: 'MIT',
 		exports: {
 			types: './dist/test-package.d.ts',
-			import: './dist/test-package.mjs',
-			require: './dist/test-package.cjs'
+			import: './dist/test-package.mjs'
 		}
 	},
 
@@ -129,8 +126,7 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: './dist/test-package.mjs',
-			require: './dist/test-package.cjs'
+			import: './dist/test-package.mjs'
 		}
 	},
 
@@ -139,12 +135,10 @@ const fixtures = {
 		version: '1.0.0',
 		exports: {
 			'.': {
-				require: './dist/test-package.cjs',
 				import: './dist/test-package.mjs',
 				types: './dist/test-package.d.ts'
 			},
 			'./chunk': {
-				require: './dist/chunk.cjs',
 				import: './dist/chunk.mjs'
 			}
 		},
@@ -161,22 +155,7 @@ const fixtures = {
 			'.': {
 				import: './dist/subpath.mjs'
 			},
-			import: './dist/test-package.mjs',
-			require: './dist/test-package.cjs'
-		}
-	},
-
-	exportsDotRequireOverExportsRequire: {
-		name: 'test-package',
-		version: '9.0.1',
-		author: 'Comandeer',
-		license: 'MIT',
-		exports: {
-			'.': {
-				require: './dist/subpath.cjs'
-			},
-			import: './dist/test-package.mjs',
-			require: './dist/test-package.cjs'
+			import: './dist/test-package.mjs'
 		}
 	},
 
@@ -188,8 +167,7 @@ const fixtures = {
 		},
 		license: 'MIT',
 		exports: {
-			import: './dist/test-package.mjs',
-			require: './dist/test-package.cjs'
+			import: './dist/test-package.mjs'
 		}
 	},
 
@@ -226,8 +204,7 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: {
-			import: './hublabubla/test-package.mjs',
-			require: './hublabubla/test-package.cjs'
+			import: './hublabubla/test-package.mjs'
 		}
 	},
 
@@ -239,8 +216,7 @@ const fixtures = {
 		license: 'MIT',
 		exports: {
 			types: './hublabubla/test-package.d.ts',
-			import: './hublabubla/test-package.mjs',
-			require: './hublabubla/test-package.cjs'
+			import: './hublabubla/test-package.mjs'
 		}
 	},
 
@@ -398,14 +374,13 @@ test.before( () => {
 		...createMockedPackage( 'validExports', 'mixedJS' ),
 		...createMockedPackage( 'validSubPathExports', 'subPath' ),
 		...createMockedPackage( 'nestedSubPathExports', 'nestedSubPath' ),
-		...createMockedPackage( 'noCJSExports', 'js' ),
-		...createMockedPackage( 'noCJSSubPathExports', 'subPath' ),
+		...createMockedPackage( 'withCJSExports', 'js' ),
+		...createMockedPackage( 'withCJSSubPathExports', 'subPath' ),
 		...createMockedPackage( 'tsProject', 'ts' ),
 		...createMockedPackage( 'tsProject', 'mts' ),
 		...createMockedPackage( 'tsProject', 'tsConfig' ),
 		...createMockedPackage( 'tsProject', 'noTSConfig' ),
 		...createMockedPackage( 'exportsDotImportOverExportsImport', 'js' ),
-		...createMockedPackage( 'exportsDotRequireOverExportsRequire', 'js' ),
 		...createMockedPackage( 'authorAsObject', 'js' ),
 		...createMockedPackage( 'mixedProject', 'mixedProject' ),
 		...createMockedPackage( 'noTypes', 'ts' ),
@@ -532,7 +507,6 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 		dist: {
 			[ 'src/index.js' ]: {
 				esm: './dist/test-package.mjs',
-				cjs: './dist/test-package.cjs',
 				type: 'js',
 				isBin: false
 			}
@@ -554,13 +528,11 @@ test( 'packageParser() returns simplified metadata for package with subpath "exp
 		version: '1.0.0',
 		dist: {
 			[ 'src/index.js' ]: {
-				cjs: './dist/es5.cjs',
 				esm: './dist/es6.mjs',
 				type: 'js',
 				isBin: false
 			},
 			[ 'src/chunk.mjs' ]: {
-				cjs: './dist/not-related-name.cjs',
 				esm: './dist/also-not-related-name.js',
 				type: 'js',
 				isBin: false
@@ -572,8 +544,8 @@ test( 'packageParser() returns simplified metadata for package with subpath "exp
 } );
 
 // #215
-test( 'packageParser() returns simplified metadata for package with no-CJS "exports" field', async ( t ) => {
-	const mockedPackagePath = getMockedPackagePath( 'noCJSExports', 'js' );
+test( 'packageParser() returns simplified metadata for package with CJS "exports" field', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'withCJSExports', 'js' );
 	const actualMetadata = await packageParser( mockedPackagePath );
 	const expectedMetadata = {
 		project: mockedPackagePath,
@@ -594,8 +566,8 @@ test( 'packageParser() returns simplified metadata for package with no-CJS "expo
 } );
 
 // #215
-test( 'packageParser() returns simplified metadata for package with no-CJS subpath "exports" field', async ( t ) => {
-	const mockedPackagePath = getMockedPackagePath( 'noCJSSubPathExports', 'subPath' );
+test( 'packageParser() returns simplified metadata for package with CJS subpath "exports" field', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'withCJSSubPathExports', 'subPath' );
 	const actualMetadata = await packageParser( mockedPackagePath );
 	const expectedMetadata = {
 		project: mockedPackagePath,
@@ -630,16 +602,6 @@ test( 'packageParser() prefers exports[ \'.\' ].import over exports.import', asy
 	t.is( actualDistPath, expectedDistPath );
 } );
 
-// #185
-test( 'packageParser() prefers exports[ \'.\' ].require over exports.require', async ( t ) => {
-	const mockedPackagePath = getMockedPackagePath( 'exportsDotRequireOverExportsRequire', 'js' );
-	const expectedDistPath = fixtures.exportsDotRequireOverExportsRequire.exports[ '.' ].require;
-	const indexDistMetadata = await parseMetadataAndGetDistInfo( mockedPackagePath );
-	const actualDistPath = indexDistMetadata.cjs;
-
-	t.is( actualDistPath, expectedDistPath );
-} );
-
 test( 'packageParser() parses author object into string', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'authorAsObject', 'js' );
 	const expectedAuthor = fixtures.authorAsObject.author.name;
@@ -656,7 +618,6 @@ test( 'packageParser() correctly detects JS type with single .js entry point', a
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			type: 'js',
 			isBin: false
 		}
@@ -672,7 +633,6 @@ test( 'packageParser() correctly detects JS type with single .mjs entry point', 
 	const expectedDist = {
 		[ 'src/index.mjs' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			type: 'js',
 			isBin: false
 		}
@@ -688,7 +648,6 @@ test( 'packageParser() correctly detects JS type with .mjs and .js entry point',
 	const expectedDist = {
 		[ 'src/index.mjs' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			type: 'js',
 			isBin: false
 		}
@@ -704,14 +663,12 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './dist/es6.mjs',
-			cjs: './dist/es5.cjs',
 			type: 'js',
 			isBin: false
 		},
 
 		[ 'src/chunk.mjs' ]: {
 			esm: './dist/also-not-related-name.js',
-			cjs: './dist/not-related-name.cjs',
 			type: 'js',
 			isBin: false
 		}
@@ -727,14 +684,12 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './dist/index.mjs',
-			cjs: './dist/index.cjs',
 			type: 'js',
 			isBin: false
 		},
 
 		[ 'src/test/chunk.mjs' ]: {
 			esm: './dist/nested/chunk.mjs',
-			cjs: './dist/nested/chunk.cjs',
 			type: 'js',
 			isBin: false
 		}
@@ -750,7 +705,6 @@ test( 'packageParser() correctly detects TS type with single .ts entry point', a
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			types: './dist/test-package.d.ts',
 			type: 'ts',
@@ -768,7 +722,6 @@ test( 'packageParser() correctly detects TS type with single .mts entry point', 
 	const expectedDist = {
 		[ 'src/index.mts' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			types: './dist/test-package.d.ts',
 			type: 'ts',
@@ -786,7 +739,6 @@ test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			types: './dist/test-package.d.ts',
 			tsConfig: 'tsconfig.json',
 			type: 'ts',
@@ -795,7 +747,6 @@ test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 
 		[ 'src/chunk.mjs' ]: {
 			esm: './dist/chunk.mjs',
-			cjs: './dist/chunk.cjs',
 			type: 'js',
 			isBin: false
 		}
@@ -810,7 +761,6 @@ test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.rlb.json',
 			types: './dist/test-package.d.ts',
 			type: 'ts',
@@ -827,7 +777,6 @@ test( 'packageParser() skips tsConfig metadata if there is no tsconfig?(.rlb).js
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			types: './dist/test-package.d.ts',
 			type: 'ts',
 			isBin: false
@@ -843,7 +792,6 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 	const expectedDist =  {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
-			cjs: './dist/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			type: 'ts',
 			isBin: false
@@ -954,7 +902,6 @@ test( 'packageParser() correctly parses JS project with non-standard dist direct
 		dist: {
 			[ 'src/index.js' ]: {
 				esm: './hublabubla/test-package.mjs',
-				cjs: './hublabubla/test-package.cjs',
 				type: 'js',
 				isBin: false
 			}
@@ -971,7 +918,6 @@ test( 'packageParser() correctly parses TS project with non-standard dist direct
 	const expectedDist = {
 		[ 'src/index.ts' ]: {
 			esm: './hublabubla/test-package.mjs',
-			cjs: './hublabubla/test-package.cjs',
 			tsConfig: 'tsconfig.json',
 			types: './hublabubla/test-package.d.ts',
 			type: 'ts',

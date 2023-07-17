@@ -140,17 +140,12 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 	const esmTarget = isBin ?
 		getBinTarget( metadata, subPath ) :
 		getESMTarget( metadata, subPath );
-	const cjsTarget = getCJSTarget( metadata, subPath );
 	const exportType = getEntryPointType( srcPath );
 	const exportMetadata = {
 		esm: esmTarget,
 		type: exportType,
 		isBin
 	};
-
-	if ( cjsTarget ) {
-		exportMetadata.cjs = cjsTarget;
-	}
 
 	if ( exportType === 'ts' ) {
 		const typesTarget = getTypesTarget( metadata, subPath );
@@ -226,12 +221,6 @@ function getBinTarget( { bin, name }, subPath ) {
 	}
 
 	return bin[ binName ];
-}
-
-function getCJSTarget( metadata, subPath ) {
-	const exportsTarget = getExportsTarget( metadata, subPath, 'require' );
-
-	return exportsTarget;
 }
 
 function getTypesTarget( metadata, subPath ) {

@@ -33,20 +33,11 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 	const banner = generateBanner( packageInfo );
 	const inputConfig = getRollupInputConfig( packageInfo, source, output, onWarn );
 
-	const otuputConfigESM = getRollupOutputConfig( output.esm, banner, 'esm' );
+	const outputConfig = getRollupOutputConfig( output.esm, banner );
 
 	const bundle = await rollup( inputConfig );
-	const bundlesPromises = [
-		bundle.write( otuputConfigESM )
-	];
 
-	if ( output.cjs ) {
-		const outputConfigCJS = getRollupOutputConfig( output.cjs, banner, 'cjs' );
-
-		bundlesPromises.push( bundle.write( outputConfigCJS ) );
-	}
-
-	await Promise.all( bundlesPromises );
+	await bundle.write( outputConfig );
 
 	if ( output.isBin ) {
 		await fixBinPermissions( packageInfo.project, output );
@@ -122,11 +113,11 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 	};
 }
 
-function getRollupOutputConfig( outputPath, banner, format = 'esm' ) {
+function getRollupOutputConfig( outputPath, banner ) {
 	return {
 		banner,
 		sourcemap: true,
-		format,
+		format: 'esm',
 		file: outputPath,
 		exports: 'auto'
 	};

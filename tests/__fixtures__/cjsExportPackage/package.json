@@ -5,7 +5,8 @@
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./test-package.mjs"
+      "import": "./dist/test-package.mjs",
+      "require": "./dist/test-package.cjs"
     }
   },
   "author": "Comandeer",
