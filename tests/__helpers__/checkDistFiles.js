@@ -48,7 +48,7 @@ const defaultCheckStrategies = new Map( [
  * @param {CheckDistFilesOptions} options
  * @returns {Promise<void>}
  */
-async function checkDistFiles( t, fixturePath, expectedFiles, {
+export default async function checkDistFiles( t, fixturePath, expectedFiles, {
 	customCheckStrategies = new Map(),
 	additionalCodeChecks = []
 } = {} ) {
@@ -210,5 +210,3 @@ async function checkDTSFile( t, path, code, {
 
 	return Promise.all( additionalCodeChecksPromises );
 }
-
-export default checkDistFiles;

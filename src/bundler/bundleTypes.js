@@ -1,12 +1,12 @@
+import virtual from '@rollup/plugin-virtual';
 import { globby } from 'globby';
 import { resolve as resolvePath } from 'pathe';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
-import virtual from '@rollup/plugin-virtual';
 import ts from 'typescript';
 import fixDTSImportPaths from './rollupPlugins/fixDTSImportPaths.js';
 
-async function bundleTypes( {
+export default async function bundleTypes( {
 	packageInfo,
 	sourceFile,
 	outputFile,
@@ -98,5 +98,3 @@ function getRelativeToProjectPath( project, filePath ) {
 
 	return relativeFilePath;
 }
-
-export default bundleTypes;

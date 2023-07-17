@@ -1,11 +1,11 @@
 import { rimraf } from 'rimraf';
 import consoleControlStrings from 'console-control-strings';
+import bundler from './bundler.js';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';
-import bundler from './bundler.js';
 import getDistDirPaths from './utils/getDistDirPaths.js';
 
-async function rlb() {
+export default async function rlb() {
 	const outputController = new OutputController();
 
 	try {
@@ -35,5 +35,3 @@ async function rlb() {
 		outputController.display();
 	}
 }
-
-export default rlb;

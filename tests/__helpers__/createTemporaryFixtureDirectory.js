@@ -19,7 +19,7 @@ const FIXTURES_PATH = resolvePath( __dirname, '..', '__fixtures__' );
  * @param {TemporaryFixtureDirectoryCallback} callback
  * @returns {Promise<void>}
  */
-async function createTemporaryFixtureDirectory( t, fixture, callback ) {
+export default async function createTemporaryFixtureDirectory( t, fixture, callback ) {
 	return tempy( async ( tempDirPath ) => {
 		const fixturePath = resolvePath( FIXTURES_PATH, fixture );
 
@@ -30,5 +30,3 @@ async function createTemporaryFixtureDirectory( t, fixture, callback ) {
 		await callback( t, tempDirPath );
 	} );
 }
-
-export default createTemporaryFixtureDirectory;

@@ -14,7 +14,7 @@ import resolveOtherBundles from './bundler/rollupPlugins/resolveOtherBundles.js'
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 
-async function bundler( {
+export default async function bundler( {
 	onWarn,
 	packageInfo
 } ) {
@@ -122,5 +122,3 @@ function getRollupOutputConfig( outputPath, banner ) {
 		exports: 'auto'
 	};
 }
-
-export default bundler;

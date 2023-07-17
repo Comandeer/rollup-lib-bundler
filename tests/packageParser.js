@@ -1,8 +1,8 @@
-import test from 'ava';
-import { resolve as resolvePath } from 'pathe';
 import mockFS from 'mock-fs';
-import packageParser from '../src/packageParser.js';
+import { resolve as resolvePath } from 'pathe';
+import test from 'ava';
 import getDirName from '../src/utils/getDirName.js';
+import packageParser from '../src/packageParser.js';
 
 const __dirname = getDirName( import.meta.url );
 const fixtures = {

@@ -51,7 +51,7 @@ const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'src', '__bin__', 'rl
  * @param {TestCLIOptions} options
  * @returns {Promise<void>}
  */
-const testCLI = test.macro( async ( t, {
+export default test.macro( async ( t, {
 	before,
 	after,
 	cliPath = BIN_PATH,
@@ -95,5 +95,3 @@ const testCLI = test.macro( async ( t, {
 		}
 	} );
 } );
-
-export default testCLI;

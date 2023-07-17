@@ -1,6 +1,4 @@
-import { access, constants } from 'node:fs/promises';
-import { mkdir } from 'node:fs/promises';
-import { writeFile } from 'node:fs/promises';
+import { access, constants, mkdir, writeFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import testCLI from './__helpers__/macros/testCLI.js';

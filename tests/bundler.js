@@ -2,9 +2,9 @@ import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import createPackageInfo from './__helpers__/createPackageInfo.js';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
-import bundler from '../src/bundler.js';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import getDirName from '../src/utils/getDirName.js';
+import bundler from '../src/bundler.js';
 
 const __dirname = getDirName( import.meta.url );
 const fixturesPath = resolvePath( __dirname, '__fixtures__' );

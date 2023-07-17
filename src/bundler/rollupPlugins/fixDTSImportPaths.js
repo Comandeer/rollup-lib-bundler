@@ -1,8 +1,6 @@
-import { dirname } from 'pathe';
-import { join as joinPath } from 'pathe';
-import { relative as getRelativePath } from 'pathe';
+import { dirname, join as joinPath, relative as getRelativePath } from 'pathe';
 
-function fixDTSImportPaths( distMetadata ) {
+export default function fixDTSImportPaths( distMetadata ) {
 	const virtualSrcPrefix = '\0virtual:src';
 
 	return {
@@ -54,5 +52,3 @@ function checkIfBundle( distMetadata, distPath ) {
 		return types === distPath;
 	} );
 }
-
-export default fixDTSImportPaths;

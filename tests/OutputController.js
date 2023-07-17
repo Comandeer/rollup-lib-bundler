@@ -1,6 +1,6 @@
-import test from 'ava';
 import { Console } from 'node:console';
 import consoleControlStrings from 'console-control-strings';
+import test from 'ava';
 import createDummyStream from './__helpers__/createDummyStream.js';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
 import OutputController from '../src/OutputController.js';

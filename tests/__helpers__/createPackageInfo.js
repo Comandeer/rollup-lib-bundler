@@ -7,7 +7,7 @@ const DEFAULT_METADATA = {
 	version: '9.0.1'
 };
 
-function createPackageInfo( fixturePath, distMetadata = {}, projectMetadata = DEFAULT_METADATA ) {
+export default function createPackageInfo( fixturePath, distMetadata = {}, projectMetadata = DEFAULT_METADATA ) {
 	const parsedDistMetadata = Object.fromEntries( Object.entries( distMetadata ).map( ( metadata ) => {
 		return createFileMetadata( fixturePath, metadata );
 	} ) );
@@ -32,5 +32,3 @@ function createFileMetadata( fixturePath, [ filePath, entryPoints ] ) {
 
 	return [ fullFilePath, parsedEntryPoints ];
 }
-
-export default createPackageInfo;
