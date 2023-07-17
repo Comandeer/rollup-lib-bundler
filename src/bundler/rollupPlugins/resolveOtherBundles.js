@@ -59,7 +59,7 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 					return;
 				}
 
-				const importPath = getCorrectImportPath( importee, 'esm' );
+				const importPath = getCorrectImportPath( importee );
 
 				path.replaceWith(
 					t.importDeclaration(
@@ -77,7 +77,7 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 					return;
 				}
 
-				const importPath = getCorrectImportPath( source.value, 'esm' );
+				const importPath = getCorrectImportPath( source.value );
 
 				path.replaceWith(
 					t.exportNamedDeclaration(
@@ -96,52 +96,20 @@ function transformImports( projectPath, metadata, importerFullPath ) {
 					return;
 				}
 
-				const importPath = getCorrectImportPath( source.value, 'esm' );
+				const importPath = getCorrectImportPath( source.value );
 
 				path.replaceWith(
 					t.exportAllDeclaration(
 						t.stringLiteral( importPath )
 					)
 				);
-			},
-
-			CallExpression( path ) {
-				const { node } = path;
-				const { callee, arguments: args } = node;
-
-				if ( !t.isIdentifier( callee ) || callee.name !== 'require' ) {
-					return;
-				}
-
-				const [ requiredModuleArg ] = args;
-
-				if ( !t.isStringLiteral( requiredModuleArg ) ) {
-					return;
-				}
-
-				const importee = requiredModuleArg.value;
-
-				if ( !importee.startsWith( 'rlb:' ) ) {
-					return;
-				}
-
-				const importPath = getCorrectImportPath( importee, 'cjs' );
-
-				path.replaceWith(
-					t.callExpression(
-						t.identifier( 'require' ),
-						[
-							t.stringLiteral( importPath )
-						]
-					)
-				);
 			}
 		}
 	};
 
-	function getCorrectImportPath( importee, importType ) {
+	function getCorrectImportPath( importee ) {
 		const srcPathRelativeToProject = importee.slice( 4 );
-		const distPathRelativeToProject = metadata[ srcPathRelativeToProject ][ importType ];
+		const distPathRelativeToProject = metadata[ srcPathRelativeToProject ].esm;
 		const distFullPath = resolvePath( projectPath, distPathRelativeToProject );
 		const chunkDirectoryPath = dirname( importerFullPath );
 		const distPathRelativeToChunk = getRelativePath( chunkDirectoryPath, distFullPath );
