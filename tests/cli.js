@@ -686,6 +686,30 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package, no
 	]
 } );
 
+// #300
+test.serial( 'CLI correctly bundles type definitions for bundles without type definition file', testCLI, {
+	fixture: 'types/bundleWithoutDTSFilePackage',
+	expected: [
+		'./dist/fn.mjs',
+		'./dist/fn.mjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	],
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			if ( !path.endsWith( 'index.d.ts' ) ) {
+				return;
+			}
+
+			t.regex( code, /declare function fn(): number;/ );
+		}
+	]
+} );
+
 // #193
 test.serial( 'CLI displays output for valid package', testCLI, {
 	fixture: 'testPackage',
