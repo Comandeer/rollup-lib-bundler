@@ -19,7 +19,7 @@ import checkBanner from './checkBanner.js';
 const defaultCheckStrategies = new Map( [
 	[ /\.(c|m)?js$/, checkJSFile ],
 	[ /\.map$/, checkSourceMapFile ],
-	[ /\.d\.ts$/, checkDTSFile ]
+	[ /\.d\.(c|m)?ts$/, checkDTSFile ]
 ] );
 
 /**
