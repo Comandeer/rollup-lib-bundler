@@ -723,9 +723,7 @@ test.serial( 'CLI skips bundling the CJS output', testCLI, {
 } );
 
 // #265
-// Disabled due to #288.
-// eslint-disable-next-line ava/no-skip-test
-test.serial.skip( 'cleans all non-standard dist directories before bundling', testCLI, {
+test.serial( 'cleans all non-standard dist directories before bundling', testCLI, {
 	fixture: 'nonStandardMultipleDistJSPackage',
 	before: async ( t, packagePath ) => {
 		return createDummyDists( packagePath, [
