@@ -7,7 +7,9 @@
     ".": {
       "import": "./hublabubla/test-package.mjs"
     },
-    "./chunk": "./grim/chunk.mjs"
+    "./chunk": {
+      "import": "./grim/chunk.mjs"
+    }
   },
   "author": "Comandeer",
   "license": "ISC"
