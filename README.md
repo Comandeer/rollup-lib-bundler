@@ -29,8 +29,7 @@ No configuration. Consider it a feature.
 It gets `package.json` from the current working directory, parses it and get neeeded info:
 
 * `name`, `author`, `version` and `license` to create beautiful banner comment,
-* `exports.import` for saving ESM bundle,
-* `exports.require` to get path for saving CJS bundle (optional).
+* `exports.import` for saving ESM bundle.
 
 Then the bundling happens. The default entry point for Rollup is `src/index.js`. Please note that **dist directory is purged before bundling**! So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
 
@@ -45,12 +44,8 @@ package/
 |     |- index.js
 |     |- some-other-chunk.js
 |- dist/
-|      |- bundled-index.cjs
-|      |- bundled-index.cjs.map
 |      |- bundled-index.mjs
 |      |- bundled-index.mjs.map
-|      |- bundled-some-other-chunk.cjs
-|      |- bundled-some-other-chunk.cjs.map
 |      |- bundled-some-other-chunk.mjs
 |      |- bundled-some-other-chunk.mjs.map
 ```
@@ -61,6 +56,15 @@ package/
 	* `some-other-chunk.js` is the optional additional entrypoint (see [#mutliple-bundles](Multiple bundles) section for more info),
 * `dist/` directory contains bundled code.
 
+Bundler search for source files with the following extensions in the following order:
+
+* `.mts`,
+* `.ts`,
+* `.mjs`,
+* `.js`,
+* `.cts`,
+* `.cjs`.
+
 ### Multiple bundles
 
 By default, `src/index.js` is treated as the only entry point. However, using [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) you can create several bundled chunks/files. Example:
@@ -68,12 +72,10 @@ By default, `src/index.js` is treated as the only entry point. However, using [s
 ```json
 "exports": {
 	".": {
-		"require": "./dist/package.cjs",
 		"import": "./dist/package.mjs"
 	},
 
 	"./chunk": {
-		"require": "./dist/chunk.cjs",
 		"import": "./dist/chunk.mjs"
 	}
 }
@@ -82,14 +84,12 @@ By default, `src/index.js` is treated as the only entry point. However, using [s
 In this case two source files will be bundled:
 * `src/index.js`:
 	* ESM output: `dist/package.mjs`,
-	* CJS output: `dist/package.cjs`,
 * `src/chunk.js`:
-	* ESM output: `dist/chunk.mjs`,
-	* CJS output: `dist/chunk.cjs`.
+	* ESM output: `dist/chunk.mjs`.
 
-Although Node.js supports several different syntaxes for subpath exports, this bundler supports only the form presented on the example above (so each subpath needs two properties – `require` for CJS bundle and `import` for ESM bundle).
+Although Node.js supports several different syntaxes for subpath exports, this bundler supports only the form presented on the example above (so each subpath an `import` property for ESM bundle).
 
-Each subpath is translated to appropriate file in `src` directory. Basically, `./` at the beginning is translated to `src/` and the name of the subpath is translated to `<subpath>.js` (e.g. `./chunk` → `src/chunk.js`). The only exception is the `.` subpath, which is translated to `src/index.js`.
+Each subpath is translated to appropriate file in `src` directory. Basically, `./` at the beginning is translated to `src/` and the name of the subpath is translated to `<subpath>.<extension>` (e.g. `./chunk` → `src/chunk.js`). The only exception is the `.` subpath, which is translated to `src/index.js`.
 
 As of version 0.19.0 the bundler also automatically omits bundling bundles inside other bundles. If there were an import of the `src/chunk.js` file inside the `src/index.js` file in the above structure, then the `dist/package.(c|m)js` file would contain an import from `dist/chunk.(c|m)js` file instead of the content of the other bundle.
 
@@ -104,13 +104,11 @@ Sample configuration for a TS project:
 ```json
 "exports": {
 	".": {
-		"require": "./dist/index.cjs",
 		"import": "./dist/index.mjs",
 		"types": "./dist/index.d.ts"
 	},
 
 	"./chunk": {
-		"require": "./dist/chunk.cjs",
 		"import": "./dist/chunk.mjs"
 	}
 }
@@ -119,18 +117,16 @@ Sample configuration for a TS project:
 In this case two source files will be bundled:
 * `src/index.ts`:
 	* ESM output: `dist/index.mjs`,
-	* CJS output: `dist/index.cjs`,
 	* DTS output: `dist/index.d.ts`,
 * `src/chunk.ts`:
 	* ESM output: `dist/chunk.mjs`,
-	* CJS output: `dist/chunk.cjs`,
 	* DTS output: none (there's no `types` field).
 
-## Bundling binaries
+## Bundling executables (aka binaries)
 
-From v0.19.0 `rlb` can also bundle binaries defined in the `bin` field of the `package.json`. It supports both the simple format of that field and the complex one. Source files for binaries must be placed in the `src/__bin__` directory with the same name as in the `bin` field. All source file formats supported for `exports` bundles are also supported for the `bin` ones.
+From v0.19.0 `rlb` can also bundle executables defined in the [`bin` field](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#bin) of the `package.json`. It supports both the simple format of that field and the complex one. Source files for binaries must be placed in the `src/__bin__` directory with the same name as in the `bin` field. All source file formats supported for `exports` bundles are also supported for the `bin` ones.
 
-All bundles created from the `bin` field are saved in the ESM format. The bundler will also preserve shebang in the produced bundle. Please also note that in case of referencing some other bundles inside executables, their ESM versions will be used.
+All bundles created from the `bin` field are saved in the ESM format. The bundler will also preserve shebang in the produced bundle.
 
 ### Example with the simple `bin` format
 
@@ -195,7 +191,6 @@ From v0.20.0 the bundler officially supports non-standard dist directories (diff
 ```json
 "exports": {
 	".": {
-		"require": "./hublabubla/package.cjs",
 		"import": "./hublabubla/package.mjs"
 	}
 }
@@ -208,9 +203,9 @@ The bundler supports also multiple non-standard dist directories, e.g.:
 ```json
 "exports": {
 	".": {
-		"require": "./hublabubla/package.cjs",
 		"import": "./bublahubla/package.mjs"
-	}
+	},
+	"./chunk": "./hublabubla/chunk.mjs"
 }
 ```
 
