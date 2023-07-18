@@ -85,19 +85,19 @@ const additionalCodeChecks = {
 };
 
 test.serial( 'CLI bundles files based on current working directory', testCLI, {
-	fixture: 'testPackage',
+	fixture: 'generic/testPackage',
 	expectedFiles: defaultExpectedFiles
 } );
 
 // #61
 test.serial( 'CLI bundles package based on exports fields', testCLI, {
-	fixture: 'exportsPackage',
+	fixture: 'generic/exportsPackage',
 	expectedFiles: defaultExpectedFiles
 } );
 
 // #155
 test.serial( 'CLI bundles package that imports JSON content', testCLI, {
-	fixture: 'jsonPackage',
+	fixture: 'json/jsonPackage',
 	expectedFiles: defaultExpectedFiles,
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
@@ -112,7 +112,7 @@ test.serial( 'CLI bundles package that imports JSON content', testCLI, {
 
 // #271
 test.serial( 'CLI bundles ESM package that imports JSON content with import assertion', testCLI, {
-	fixture: 'jsonESMPackage',
+	fixture: 'json/jsonESMPackage',
 	expectedFiles: [
 		'./dist/test-package.mjs',
 		'./dist/test-package.mjs.map'
@@ -133,7 +133,7 @@ test.serial( 'CLI bundles ESM package that imports JSON content with import asse
 
 // #185
 test.serial( 'CLI bundles package based on subpath exports fields', testCLI, {
-	fixture: 'subPathExportsPackage',
+	fixture: 'generic/subPathExportsPackage',
 	expectedFiles: [
 		'./dist/also-not-related-name.js',
 		'./dist/also-not-related-name.js.map',
@@ -152,7 +152,7 @@ test.serial( 'CLI bundles package based on subpath exports fields', testCLI, {
 
 // #220, #237
 test.serial( 'CLI bundles TypeScript package', testCLI, {
-	fixture: 'tsPackage',
+	fixture: 'typescript/tsPackage',
 	expectedFiles: [
 		'./dist/chunk.mjs',
 		'./dist/chunk.mjs.map',
@@ -168,7 +168,7 @@ test.serial( 'CLI bundles TypeScript package', testCLI, {
 
 // #220
 test.serial( 'CLI bundles TypeScript package without the tsconfig.json file', testCLI, {
-	fixture: 'noTSConfigTSPackage',
+	fixture: 'typescript/noTSConfigTSPackage',
 	expectedFiles: [
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
@@ -182,7 +182,7 @@ test.serial( 'CLI bundles TypeScript package without the tsconfig.json file', te
 
 // #264
 test.serial( 'CLI correctly bundles TypeScript package with .mts and .cts files', testCLI, {
-	fixture: 'mtsAndCTSPackage',
+	fixture: 'typescript/mtsAndCTSPackage',
 	expectedFiles: [
 		'./dist/chunk.d.ts',
 		'./dist/chunk.mjs',
@@ -199,7 +199,7 @@ test.serial( 'CLI correctly bundles TypeScript package with .mts and .cts files'
 
 // #242
 test.serial( 'CLI bundles TypeScript package with complex directory structure', testCLI, {
-	fixture: 'tsComplexPackage',
+	fixture: 'typescript/tsComplexPackage',
 	expectedFiles: [
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
@@ -217,7 +217,7 @@ test.serial( 'CLI bundles TypeScript package with complex directory structure', 
 
 // #222
 test.serial( 'CLI preserves dynamic external imports', testCLI, {
-	fixture: 'dynamicExternalImport',
+	fixture: 'generic/dynamicExternalImport',
 	expectedFiles: defaultExpectedFiles,
 	additionalCodeChecks: [
 		( t, path, code ) => {
@@ -230,7 +230,7 @@ test.serial( 'CLI preserves dynamic external imports', testCLI, {
 
 // #255
 test.serial( 'CLI transpiles bundled JS files down to code understandable by Node v16.0.0', testCLI, {
-	fixture: 'babelTranspilationTSPackage',
+	fixture: 'typescript/babelTranspilationTSPackage',
 	expectedFiles: [
 		'./dist/chunk.mjs',
 		'./dist/chunk.mjs.map',
@@ -253,7 +253,7 @@ test.serial( 'CLI transpiles bundled JS files down to code understandable by Nod
 
 // #230
 test.serial( 'CLI treats import of other bundles as external dependencies (TS package)', testCLI, {
-	fixture: 'importingOtherBundlesTSPackage',
+	fixture: 'bundles/importingOtherBundlesTSPackage',
 	expectedFiles: [
 		'./dist/chunk.d.ts',
 		'./dist/chunk.mjs',
@@ -300,7 +300,7 @@ test.serial( 'CLI treats import of other bundles as external dependencies (TS pa
 
 // #230
 test.serial( 'CLI treats import of other bundles as external dependencies (JS package)', testCLI, {
-	fixture: 'importingOtherBundlesJSPackage',
+	fixture: 'bundles/importingOtherBundlesJSPackage',
 	expectedFiles: [
 		'./dist/chunk.mjs',
 		'./dist/chunk.mjs.map',
@@ -336,7 +336,7 @@ test.serial( 'CLI treats import of other bundles as external dependencies (JS pa
 
 // #116
 test.serial( 'CLI correctly bundles binaries (simple bin format, JS package)', testCLI, {
-	fixture: 'simpleBinJSPackage',
+	fixture: 'bin/simpleBinJSPackage',
 	expectedFiles: [
 		'./dist/index.mjs',
 		'./dist/index.mjs.map',
@@ -370,7 +370,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, JS package)', t
 
 // #116
 test.serial( 'CLI correctly bundles binaries (simple bin format, TS package)', testCLI, {
-	fixture: 'simpleBinTSPackage',
+	fixture: 'bin/simpleBinTSPackage',
 	expectedFiles: [
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
@@ -405,7 +405,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, TS package)', t
 
 // #116
 test.serial( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI, {
-	fixture: 'complexBinJSPackage',
+	fixture: 'bin/complexBinJSPackage',
 	expectedFiles: [
 		'./dist/index.mjs',
 		'./dist/index.mjs.map',
@@ -453,7 +453,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, JS package)', 
 
 // #116
 test.serial( 'CLI correctly bundles binaries (complex bin format, TS package)', testCLI, {
-	fixture: 'complexBinTSPackage',
+	fixture: 'bin/complexBinTSPackage',
 	expectedFiles: [
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
@@ -502,7 +502,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package)', 
 
 // #265
 test.serial( 'CLI correctly bundles JS package with non-standard dist directory', testCLI, {
-	fixture: 'nonStandardDistJSPackage',
+	fixture: 'distDirs/nonStandardDistJSPackage',
 	expectedFiles: [
 		'./hublabubla/test-package.mjs',
 		'./hublabubla/test-package.mjs.map'
@@ -511,7 +511,7 @@ test.serial( 'CLI correctly bundles JS package with non-standard dist directory'
 
 // #265
 test.serial( 'CLI correctly bundles TS package with non-standard dist directory', testCLI, {
-	fixture: 'nonStandardDistTSPackage',
+	fixture: 'distDirs/nonStandardDistTSPackage',
 	expectedFiles: [
 		'./hublabubla/chunk.mjs',
 		'./hublabubla/chunk.mjs.map',
@@ -527,7 +527,7 @@ test.serial( 'CLI correctly bundles TS package with non-standard dist directory'
 
 // #265
 test.serial( 'CLI correctly bundles binaries (simple bin format, JS package, non-standard dist directory)', testCLI, {
-	fixture: 'nonStandardDistSimpleBinJSPackage',
+	fixture: 'distDirs/nonStandardDistSimpleBinJSPackage',
 	expectedFiles: [
 		'./hublabubla/index.mjs',
 		'./hublabubla/index.mjs.map',
@@ -561,7 +561,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, JS package, non
 
 // #265
 test.serial( 'CLI correctly bundles binaries (simple bin format, TS package, non-standard dist directory)', testCLI, {
-	fixture: 'nonStandardDistSimpleBinTSPackage',
+	fixture: 'distDirs/nonStandardDistSimpleBinTSPackage',
 	expectedFiles: [
 		'./hublabubla/index.d.ts',
 		'./hublabubla/index.mjs',
@@ -596,7 +596,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, TS package, non
 
 // #265
 test.serial( 'CLI correctly bundles binaries (complex bin format, JS package, non-standard dist directory)', testCLI, {
-	fixture: 'nonStandardDistComplexBinJSPackage',
+	fixture: 'distDirs/nonStandardDistComplexBinJSPackage',
 	expectedFiles: [
 		'./hublabubla/index.mjs',
 		'./hublabubla/index.mjs.map',
@@ -644,7 +644,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, JS package, no
 
 // #265
 test.serial( 'CLI correctly bundles binaries (complex bin format, TS package, non-standard dist directory)', testCLI, {
-	fixture: 'nonStandardDistComplexBinTSPackage',
+	fixture: 'distDirs/nonStandardDistComplexBinTSPackage',
 	expectedFiles: [
 		'./hublabubla/index.d.ts',
 		'./hublabubla/index.mjs',
@@ -718,7 +718,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles without type de
 
 // #193
 test.serial( 'CLI displays output for valid package', testCLI, {
-	fixture: 'testPackage',
+	fixture: 'generic/testPackage',
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful
 	]
@@ -726,7 +726,7 @@ test.serial( 'CLI displays output for valid package', testCLI, {
 
 // #156
 test.serial( 'CLI displays error for invalid package', testCLI, {
-	fixture: 'errorPackage',
+	fixture: 'generic/errorPackage',
 	cmdResultChecks: [
 		cmdResultChecks.isFailed
 	]
@@ -734,7 +734,7 @@ test.serial( 'CLI displays error for invalid package', testCLI, {
 
 // #204
 test.serial( 'cleans dist directory before bundling', testCLI, {
-	fixture: 'testPackage',
+	fixture: 'generic/testPackage',
 	before: async ( t, packagePath ) => {
 		return createDummyDists( packagePath );
 	},
@@ -748,13 +748,13 @@ test.serial( 'cleans dist directory before bundling', testCLI, {
 
 // #275
 test.serial( 'CLI skips bundling the CJS output', testCLI, {
-	fixture: 'cjsExportPackage',
+	fixture: 'generic/cjsExportPackage',
 	expectedFiles: defaultExpectedFiles
 } );
 
 // #265
 test.serial( 'cleans all non-standard dist directories before bundling', testCLI, {
-	fixture: 'nonStandardMultipleDistJSPackage',
+	fixture: 'distDirs/nonStandardMultipleDistJSPackage',
 	before: async ( t, packagePath ) => {
 		return createDummyDists( packagePath, [
 			'hublabubla',
@@ -774,7 +774,7 @@ test.serial( 'cleans all non-standard dist directories before bundling', testCLI
 
 // #265
 test.serial( 'skip cleaning the root directory if it is the dist one', testCLI, {
-	fixture: 'nonStandardRootDistJSPackage',
+	fixture: 'distDirs/nonStandardRootDistJSPackage',
 	before: async ( t, packagePath ) => {
 		return createDummyDists( packagePath, [
 			'.'

@@ -26,7 +26,7 @@ export default function fixDTSImportPaths( distMetadata ) {
 			const importeeFullPath = joinPath( importerDir, importee );
 			const distImporteePath = importeeFullPath.replace( virtualSrcPrefix, './dist' );
 			const isBundle = checkIfBundle( distMetadata, distImporteePath );
-
+			console.log( importeeFullPath, distImporteePath, isBundle );
 			if ( !isBundle ) {
 				return importeeFullPath;
 			}

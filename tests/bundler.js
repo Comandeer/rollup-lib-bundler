@@ -8,8 +8,8 @@ import bundler from '../src/bundler.js';
 
 const __dirname = getDirName( import.meta.url );
 const fixturesPath = resolvePath( __dirname, '__fixtures__' );
-const errorPackageFixturePath = resolvePath( fixturesPath, 'errorPackage' );
-const externalDepPackageFixturePath = resolvePath( fixturesPath, 'externalDepPackage' );
+const errorPackageFixturePath = resolvePath( fixturesPath, 'generic', 'errorPackage' );
+const externalDepPackageFixturePath = resolvePath( fixturesPath, 'generic', 'externalDepPackage' );
 
 test( 'bundler() is a function', ( t ) => {
 	t.is( typeof bundler, 'function' );
