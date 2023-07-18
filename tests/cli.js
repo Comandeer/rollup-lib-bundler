@@ -153,26 +153,28 @@ test.serial( 'CLI bundles package based on subpath exports fields', testCLI, {
 // #220, #237
 test.serial( 'CLI bundles TypeScript package', testCLI, {
 	fixture: 'tsPackage',
-	expected: [
+	expectedFiles: [
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map',
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
-		'./dist/index.mjs.map',
-		'./dist/chunk.mjs',
-		'./dist/chunk.mjs.map'
+		'./dist/index.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
-	]
+	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps
 } );
 
 // #220
 test.serial( 'CLI bundles TypeScript package without the tsconfig.json file', testCLI, {
 	fixture: 'noTSConfigTSPackage',
-	expected: [
+	expectedFiles: [
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
 		'./dist/index.mjs.map'
 	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful
 	]
@@ -181,16 +183,18 @@ test.serial( 'CLI bundles TypeScript package without the tsconfig.json file', te
 // #264
 test.serial( 'CLI correctly bundles TypeScript package with .mts and .cts files', testCLI, {
 	fixture: 'mtsAndCTSPackage',
-	expected: [
+	expectedFiles: [
+		'./dist/chunk.d.ts',
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map',
 		'./dist/index.d.ts',
 		'./dist/index.mjs',
-		'./dist/index.mjs.map',
-		'./dist/chunk.mjs',
-		'./dist/chunk.mjs.map'
+		'./dist/index.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
-	]
+	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps
 } );
 
 // #242
@@ -508,16 +512,17 @@ test.serial( 'CLI correctly bundles JS package with non-standard dist directory'
 // #265
 test.serial( 'CLI correctly bundles TS package with non-standard dist directory', testCLI, {
 	fixture: 'nonStandardDistTSPackage',
-	expected: [
+	expectedFiles: [
+		'./hublabubla/chunk.mjs',
+		'./hublabubla/chunk.mjs.map',
 		'./hublabubla/index.d.ts',
 		'./hublabubla/index.mjs',
-		'./hublabubla/index.mjs.map',
-		'./hublabubla/chunk.mjs',
-		'./hublabubla/chunk.mjs.map'
+		'./hublabubla/index.mjs.map'
 	],
 	cmdResultChecks: [
 		cmdResultChecks.noError
-	]
+	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps
 } );
 
 // #265
@@ -689,7 +694,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package, no
 // #300
 test.serial( 'CLI correctly bundles type definitions for bundles without type definition file', testCLI, {
 	fixture: 'types/bundleWithoutDTSFilePackage',
-	expected: [
+	expectedFiles: [
 		'./dist/fn.mjs',
 		'./dist/fn.mjs.map',
 		'./dist/index.d.ts',
@@ -699,13 +704,14 @@ test.serial( 'CLI correctly bundles type definitions for bundles without type de
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful
 	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
 		( t, path, code ) => {
 			if ( !path.endsWith( 'index.d.ts' ) ) {
 				return;
 			}
 
-			t.regex( code, /declare function fn(): number;/ );
+			t.regex( code, /declare function fn\(\): number;/ );
 		}
 	]
 } );
