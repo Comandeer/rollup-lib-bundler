@@ -4,7 +4,7 @@ import { resolve as resolvePath } from 'pathe';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 import ts from 'typescript';
-import fixDTSImportPaths from './rollupPlugins/fixDTSImportPaths.js';
+import resolveOtherBundles from './rollupPlugins/resolveOtherBundles.js';
 
 export default async function bundleTypes( {
 	packageInfo,
@@ -13,8 +13,8 @@ export default async function bundleTypes( {
 	tsConfig,
 	onWarn = () => {}
 } = {} ) {
-	const project = packageInfo.project;
-	const userCompilerOptions = getUserCompilerOptions( project, tsConfig );
+	const projectPath = packageInfo.project;
+	const userCompilerOptions = getUserCompilerOptions( projectPath, tsConfig );
 	const compilerOptions = {
 		...userCompilerOptions,
 		declaration: true,
@@ -29,13 +29,13 @@ export default async function bundleTypes( {
 
 	const tsFiles = await globby( 'src/**/*.{cts,mts,ts}', {
 		absolute: true,
-		cwd: project
+		cwd: projectPath
 	} );
 	const emittedFiles = {};
 
 	const host = ts.createCompilerHost( compilerOptions );
 	host.writeFile = ( filePath, contents ) => {
-		const relativeFilePath = getRelativeToProjectPath( project, filePath );
+		const relativeFilePath = getRelativeToProjectPath( projectPath, filePath );
 
 		emittedFiles[ relativeFilePath ] = contents;
 	};
@@ -45,13 +45,15 @@ export default async function bundleTypes( {
 
 	program.emit();
 
-	const input = getOriginalDTsFilePath( project, sourceFile );
+	const input = getOriginalDTsFilePath( projectPath, sourceFile );
 	const rollupConfig = {
 		input,
 		plugins: [
-			fixDTSImportPaths( packageInfo.dist ),
-
 			virtual( emittedFiles ),
+
+			resolveOtherBundles( projectPath, packageInfo.dist, {
+				isTypeBundling: true
+			} ),
 
 			dts()
 		],

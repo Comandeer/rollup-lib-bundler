@@ -1,24 +1,28 @@
 import MagicString from 'magic-string';
 import { dirname, relative as getRelativePath, resolve as resolvePath } from 'pathe';
+import fixDTSImportPaths from '../fixDTSImportPaths.js';
 
-export default function resolveOtherBundles( projectPath, metadata ) {
+export default function resolveOtherBundles( projectPath, metadata, {
+	isTypeBundling = false
+} = {} ) {
 	return {
 		name: 'rlb-resolve-other-bundles',
 
 		async resolveId( importee, importer ) {
-			if ( !importee.startsWith( '.' ) ) {
+			if ( !importee.startsWith( '.' ) || !importer ) {
 				return null;
 			}
 
-			const resolved = await this.resolve( importee, importer, {
-				skipSelf: true
-			} );
-			const srcFullPath = resolved.id;
-			const srcPathRelativeToProject = getRelativePath( projectPath, srcFullPath );
-			const isBundle = typeof metadata[ srcPathRelativeToProject ] !== 'undefined';
+			const resolved = isTypeBundling ?
+				fixDTSImportPaths( importee, importer ) :
+				await this.resolve( importee, importer, {
+					skipSelf: true
+				} );
+			const srcPathRelativeToProject = getSrcPathRelativeToProject( projectPath, resolved, isTypeBundling );
+			const isBundle = checkIfBundle( srcPathRelativeToProject, metadata, isTypeBundling );
 
 			if ( !isBundle ) {
-				return null;
+				return isTypeBundling ? resolved.id : null;
 			}
 
 			const distPlaceholderPath = `rlb:${ srcPathRelativeToProject }`;
@@ -60,5 +64,23 @@ export default function resolveOtherBundles( projectPath, metadata ) {
 			`./${ distPathRelativeToChunk }`;
 
 		return importPath;
+	}
+
+	function getSrcPathRelativeToProject( projectPath, resolved, isTypeBundling ) {
+		if ( isTypeBundling ) {
+			return resolved.tsSourceFilePath;
+		}
+
+		return getRelativePath( projectPath, resolved.id );
+	}
+
+	function checkIfBundle( srcPath, metadata, isTypeBundling ) {
+		const isEntryPreset = typeof metadata[ srcPath ] !== 'undefined';
+
+		if ( !isTypeBundling ) {
+			return isEntryPreset;
+		}
+
+		return isEntryPreset && metadata[ srcPath ].types;
 	}
 }
