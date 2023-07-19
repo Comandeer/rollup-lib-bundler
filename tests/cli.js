@@ -290,8 +290,8 @@ test.serial( 'CLI treats import of other bundles as external dependencies (TS pa
 			[
 				'index.d.ts',
 				[
-					'./chunk.js',
-					'./subdir/submodule.js'
+					'./chunk.mjs',
+					'./subdir/submodule.mjs'
 				]
 			]
 		] ) )
@@ -732,13 +732,21 @@ test.serial( 'CLI correctly bundles type definitions for bundles in non-standard
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		( t, path, code ) => {
-			if ( !path.endsWith( 'index.d.ts' ) ) {
-				return;
-			}
+		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+			[
+				'index.mjs',
+				[
+					'../some-dist/fn.mjs'
+				]
+			],
 
-			t.regex( code, /export \{ default as fn \} from '..\/some-dist\/fn.mjs';/ );
-		}
+			[
+				'index.d.ts',
+				[
+					'../some-dist/fn.mjs'
+				]
+			]
+		] ) )
 	]
 } );
 
