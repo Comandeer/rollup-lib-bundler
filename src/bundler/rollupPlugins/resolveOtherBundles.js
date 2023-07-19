@@ -1,5 +1,4 @@
-import { transformAsync } from '@babel/core';
-import * as t from '@babel/types';
+import MagicString from 'magic-string';
 import { dirname, relative as getRelativePath, resolve as resolvePath } from 'pathe';
 
 export default function resolveOtherBundles( projectPath, metadata ) {
@@ -32,11 +31,16 @@ export default function resolveOtherBundles( projectPath, metadata ) {
 
 		async renderChunk( code, chunk, { file } ) {
 			const chunkFullPath = resolvePath( projectPath, file );
-			const { code: transformedCode, map } = await transformAsync( code, {
-				plugins: [
-					transformImports( projectPath, metadata, chunkFullPath )
-				]
+			const magicString = new MagicString( code );
+
+			magicString.replaceAll( /(?:import|export).+?from\s*["'](rlb:.+?)["']/g, ( importOrExportString, importee ) => {
+				const bundlePath = getCorrectImportPath( importee, metadata, chunkFullPath );
+
+				return importOrExportString.replace( importee, bundlePath );
 			} );
+
+			const transformedCode = magicString.toString();
+			const map = magicString.generateMap();
 
 			return {
 				code: transformedCode,
@@ -44,68 +48,8 @@ export default function resolveOtherBundles( projectPath, metadata ) {
 			};
 		}
 	};
-}
 
-function transformImports( projectPath, metadata, importerFullPath ) {
-	return {
-		visitor: {
-			ImportDeclaration( path ) {
-				const { node } = path;
-				const { value: importee } = node.source;
-
-				if ( !importee.startsWith( 'rlb:' ) ) {
-					return;
-				}
-
-				const importPath = getCorrectImportPath( importee );
-
-				path.replaceWith(
-					t.importDeclaration(
-						node.specifiers,
-						t.stringLiteral( importPath )
-					)
-				);
-			},
-
-			ExportNamedDeclaration( path ) {
-				const { node } = path;
-				const { source } = node;
-
-				if ( !source || !source.value.startsWith( 'rlb:' ) ) {
-					return;
-				}
-
-				const importPath = getCorrectImportPath( source.value );
-
-				path.replaceWith(
-					t.exportNamedDeclaration(
-						node.declaration,
-						node.specifiers,
-						t.stringLiteral( importPath )
-					)
-				);
-			},
-
-			ExportAllDeclaration( path ) {
-				const { node } = path;
-				const { source } = node;
-
-				if ( !source.value.startsWith( 'rlb:' ) ) {
-					return;
-				}
-
-				const importPath = getCorrectImportPath( source.value );
-
-				path.replaceWith(
-					t.exportAllDeclaration(
-						t.stringLiteral( importPath )
-					)
-				);
-			}
-		}
-	};
-
-	function getCorrectImportPath( importee ) {
+	function getCorrectImportPath( importee, metadata, importerFullPath ) {
 		const srcPathRelativeToProject = importee.slice( 4 );
 		const distPathRelativeToProject = metadata[ srcPathRelativeToProject ].esm;
 		const distFullPath = resolvePath( projectPath, distPathRelativeToProject );
