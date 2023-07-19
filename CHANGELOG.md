@@ -21,13 +21,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	| ⚠️ `@rollup/plugin-terser`                | `^0.3.0`    | `^0.4.3`    |
 	| `@rollup/plugin-typescript`              | `^11.0.0`   | `^11.1.2`   |
 	| `globby`                                 | `^13.1.3`   | `^13.2.2`   |
+	| ⭐ `magic-string`                         | N/A         | `^0.30.1`   |
 	| `pathe`                                  | `^1.1.0`    | `^1.1.1`    |
 	| ⚠️ `rimraf`                               | `^4.0.7`    | `^5.0.1`    |
 	| `rollup`                                 | `^3.10.0`   | `^3.26.2`   |
 	| `tslib`                                  | `^2.4.1`    | `^2.6.0`    |
 	| ⚠️ `typescript`                           | `^5.1.6`    | `^4.9.4`    |
 
-	(Dependencies with major version change are marked with the "⚠️" emoji)
+	New dependencies are marked with the "⭐" emoji.
+	
+	Dependencies with major version change are marked with the "⚠️" emoji.
 
 ### Removed
 * [#276]: **BREAKING CHANGE**: outputting CJS bundles; now only the ESM one is produced.
