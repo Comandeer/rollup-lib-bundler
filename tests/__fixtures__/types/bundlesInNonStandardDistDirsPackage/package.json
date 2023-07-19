@@ -1,0 +1,19 @@
+{
+  "name": "test-package",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Test package",
+  "exports": {
+    ".": {
+      "types": "./hublabubla/index.d.ts",
+      "import": "./hublabubla/index.mjs"
+    },
+    "./fn": {
+      "types": "./some-dist/fn.d.ts",
+      "import": "./some-dist/fn.mjs"
+    }
+  },
+  "author": "Comandeer",
+  "license": "ISC"
+}

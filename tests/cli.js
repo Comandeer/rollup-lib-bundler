@@ -716,6 +716,32 @@ test.serial( 'CLI correctly bundles type definitions for bundles without type de
 	]
 } );
 
+// #300
+test.serial( 'CLI correctly bundles type definitions for bundles in non-standard dist directories', testCLI, {
+	fixture: 'types/bundlesInNonStandardDistDirsPackage',
+	expectedFiles: [
+		'./hublabubla/index.d.ts',
+		'./hublabubla/index.mjs',
+		'./hublabubla/index.mjs.map',
+		'./some-dist/fn.d.ts',
+		'./some-dist/fn.mjs',
+		'./some-dist/fn.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.isSuccesful
+	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		( t, path, code ) => {
+			if ( !path.endsWith( 'index.d.ts' ) ) {
+				return;
+			}
+
+			t.regex( code, /export \{ default as fn \} from '..\/some-dist\/fn.mjs';/ );
+		}
+	]
+} );
+
 // #193
 test.serial( 'CLI displays output for valid package', testCLI, {
 	fixture: 'generic/testPackage',
