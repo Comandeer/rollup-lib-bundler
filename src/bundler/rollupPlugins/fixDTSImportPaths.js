@@ -1,7 +1,8 @@
-import { dirname, join as joinPath, relative as getRelativePath } from 'pathe';
+import { dirname, join as joinPath, extname } from 'pathe';
 
-export default function fixDTSImportPaths( distMetadata ) {
-	const virtualSrcPrefix = '\0virtual:src';
+export default function fixDTSImportPaths() {
+	const virtualPrefix = '\0virtual:';
+	const virtualPrefixRegex = new RegExp( `^${ virtualPrefix }` );
 
 	return {
 		resolveId( importee, importer ) {
@@ -10,45 +11,15 @@ export default function fixDTSImportPaths( distMetadata ) {
 				return null;
 			}
 
-			const importerDir = dirname( importer );
-			const jsExtensionRegex = /\.(m|c)?js$/;
-			const originalExtension = importee.match( jsExtensionRegex )?.[ 0 ] ?? '';
+			const originalExtension = extname( importee );
+			const tsExtension = originalExtension.replace( /js$/, 'ts' );
+			const originalExtensionRegex = new RegExp( `${ originalExtension }$` );
+			const importeeWithDTSExtension = importee.replace( originalExtensionRegex, `.d${ tsExtension }` );
+			const importerWithoutVirtualPrefix = importer.replace( virtualPrefixRegex, '' );
+			const importerDir = dirname( importerWithoutVirtualPrefix );
+			const importeeFullPath = joinPath( importerDir, importeeWithDTSExtension );
 
-			// We need a file path, with extension here.
-			// Due to that we need to:
-			// 1. Remove JS extension (in ESM-based projects
-			//    TS tends to add it).
-			// 2. Add the .d.ts extension.
-			if ( !importee.endsWith( '.d.ts' ) ) {
-				importee = `${ importee.replace( jsExtensionRegex, '' ) }.d.ts`;
-			}
-
-			const importeeFullPath = joinPath( importerDir, importee );
-			const distImporteePath = importeeFullPath.replace( virtualSrcPrefix, './dist' );
-			const isBundle = checkIfBundle( distMetadata, distImporteePath );
-			console.log( importeeFullPath, distImporteePath, isBundle );
-			if ( !isBundle ) {
-				return importeeFullPath;
-			}
-
-			const distImporterPath = importer.replace( virtualSrcPrefix, './dist' );
-			const distImporterDirectory = dirname( distImporterPath );
-			const importeePathRelativeToImporter = getRelativePath( distImporterDirectory, distImporteePath );
-
-			// As TS does not accept the .d.ts extension in import paths, we need to reused the original one.
-			const importeeImportSpecifier = `./${ importeePathRelativeToImporter.
-				replace( /\.d\.ts$/, originalExtension ) }`;
-
-			return {
-				id: importeeImportSpecifier,
-				external: true
-			};
+			return `${ virtualPrefix }${ importeeFullPath }`;
 		}
 	};
-}
-
-function checkIfBundle( distMetadata, distPath ) {
-	return Object.entries( distMetadata ).some( ( [ , { types } ] ) => {
-		return types === distPath;
-	} );
 }
