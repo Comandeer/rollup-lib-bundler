@@ -83,9 +83,7 @@
   "dependencies": {
     "@babel/core": "^7.22.9",
     "@babel/plugin-syntax-import-assertions": "^7.22.5",
-    "@babel/plugin-transform-typescript": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
-    "@babel/types": "^7.22.5",
     "@comandeer/cli-spinner": "^0.3.2",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^25.0.2",
