@@ -1,6 +1,6 @@
 import MagicString from 'magic-string';
 import { dirname, relative as getRelativePath, resolve as resolvePath } from 'pathe';
-import fixDTSImportPaths from '../fixDTSImportPaths.js';
+import resolveDTSImportPaths from '../resolveDTSImportPaths.js';
 
 export default function resolveOtherBundles( projectPath, metadata, {
 	isTypeBundling = false
@@ -14,7 +14,7 @@ export default function resolveOtherBundles( projectPath, metadata, {
 			}
 
 			const resolved = isTypeBundling ?
-				fixDTSImportPaths( importee, importer ) :
+				resolveDTSImportPaths( importee, importer ) :
 				await this.resolve( importee, importer, {
 					skipSelf: true
 				} );

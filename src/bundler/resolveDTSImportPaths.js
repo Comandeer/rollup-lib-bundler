@@ -3,7 +3,7 @@ import { dirname, join as joinPath, extname } from 'pathe';
 const virtualPrefix = '\0virtual:';
 const virtualPrefixRegex = new RegExp( `^${ virtualPrefix }` );
 
-export default function fixDTSImportPaths( importee, importer ) {
+export default function resolveDTSImportPaths( importee, importer ) {
 	const originalExtension = extname( importee );
 	const tsExtension = originalExtension.replace( /js$/, 'ts' );
 	const originalExtensionRegex = new RegExp( `${ originalExtension }$` );
