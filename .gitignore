@@ -7,7 +7,7 @@ node_modules/
 coverage/
 .coverage
 dist
-bin/
+/bin
 docs/dist
 npm-debug.log
 /.nyc_output

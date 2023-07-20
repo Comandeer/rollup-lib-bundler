@@ -6,31 +6,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.21.0]
+## [0.21.0] – 2023-07-20
 ### Changed
+* [#300]: **BREAKING CHANGE**: updated the logic for linking to other bundles.
 * [#279]: **BREAKING CHANGE**: updated dependencies:
 
 	| Dependency                               | Old version | New version |
 	| ---------------------------------------- | ----------- | ----------- |
 	| `@babel/core`                            | `^7.20.12`  | `^7.22.9`   |
 	| `@babel/plugin-syntax-import-assertions` | `^7.20.0`   | `^7.22.5`   |
-	| `@babel/plugin-transform-typescript`     | `^7.20.13`  | `^7.22.9`   |
+	| ☠️ `@babel/plugin-transform-typescript`   | `^7.20.13`  | N/A         |
 	| `@babel/preset-env`                      | `^7.20.2`   | `^7.22.9`   |
-	| `@babel/types`                           | `^7.20.7`   | `^7.22.5`   |
+	| ☠️ `@babel/types`                         | `^7.20.7`   | N/A         |
 	| ⚠️ `@rollup/plugin-commonjs`              | `^24.0.0`   | `^25.0.2`   |
 	| ⚠️ `@rollup/plugin-terser`                | `^0.3.0`    | `^0.4.3`    |
 	| `@rollup/plugin-typescript`              | `^11.0.0`   | `^11.1.2`   |
 	| `globby`                                 | `^13.1.3`   | `^13.2.2`   |
+	| ⭐ `magic-string`                         | N/A         | `^0.30.1`   |
 	| `pathe`                                  | `^1.1.0`    | `^1.1.1`    |
 	| ⚠️ `rimraf`                               | `^4.0.7`    | `^5.0.1`    |
 	| `rollup`                                 | `^3.10.0`   | `^3.26.2`   |
 	| `tslib`                                  | `^2.4.1`    | `^2.6.0`    |
 	| ⚠️ `typescript`                           | `^5.1.6`    | `^4.9.4`    |
 
-	(Dependencies with major version change are marked with the "⚠️" emoji)
+	New dependencies are marked with the "⭐" emoji.
+
+	Dependencies with major version change are marked with the "⚠️" emoji.
+
+	Removed dependencies are marked with the "☠️" emoji.
 
 ### Removed
 * [#276]: **BREAKING CHANGE**: outputting CJS bundles; now only the ESM one is produced.
+
+### Fixed
+* [#300]: incorrect linking to other bundles in `.d.ts` files.
 
 ## [0.20.0] – 2023-07-13
 ### Added
@@ -333,6 +342,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#277]: https://github.com/Comandeer/rollup-lib-bundler/issues/277
 [#278]: https://github.com/Comandeer/rollup-lib-bundler/issues/278
 [#279]: https://github.com/Comandeer/rollup-lib-bundler/issues/279
+[#300]: https://github.com/Comandeer/rollup-lib-bundler/issues/300
 
 [0.21.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0

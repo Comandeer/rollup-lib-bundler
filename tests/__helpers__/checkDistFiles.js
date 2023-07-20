@@ -19,7 +19,7 @@ import checkBanner from './checkBanner.js';
 const defaultCheckStrategies = new Map( [
 	[ /\.(c|m)?js$/, checkJSFile ],
 	[ /\.map$/, checkSourceMapFile ],
-	[ /\.d\.ts$/, checkDTSFile ]
+	[ /\.d\.(c|m)?ts$/, checkDTSFile ]
 ] );
 
 /**
@@ -65,9 +65,12 @@ export default async function checkDistFiles( t, fixturePath, expectedFiles, {
 			'src/**/*'
 		]
 	} );
+
+	actualFiles.sort();
+
 	const expectedFilePaths = expectedFiles.map( ( file ) => {
 		return resolvePath( fixturePath, file );
-	} );
+	} ).sort();
 
 	t.deepEqual( actualFiles, expectedFilePaths, 'All expected files are present' );
 

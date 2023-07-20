@@ -1,14 +1,17 @@
 {
   "name": "test-package",
   "private": true,
+  "type": "module",
   "version": "1.0.0",
   "description": "Test package",
   "exports": {
     ".": {
-      "import": "./dist/es6.mjs"
+      "types": "./hublabubla/index.d.ts",
+      "import": "./hublabubla/index.mjs"
     },
-    "./chunk": {
-      "import": "./dist/also-not-related-name.js"
+    "./fn": {
+      "types": "./some-dist/fn.d.ts",
+      "import": "./some-dist/fn.mjs"
     }
   },
   "author": "Comandeer",
