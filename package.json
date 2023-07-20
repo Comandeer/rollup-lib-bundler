@@ -66,6 +66,7 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
+    "@ava/typescript": "^4.1.0",
     "@comandeer/eslint-config": "^0.10.0",
     "@comandeer/rollup-lib-bundler": "^0.20.0",
     "ava": "^5.3.1",
