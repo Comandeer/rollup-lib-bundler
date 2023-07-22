@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
-		"composite": true,
-		"declaration": true,
+		"rootDir": "./",
+		"declaration": false,
 		"esModuleInterop": true,
 		"exactOptionalPropertyTypes": true,
 		"importHelpers": true,
@@ -15,15 +15,15 @@
 		"noUncheckedIndexedAccess": true,
 		"outDir": "build/",
 		"skipLibCheck": true,
-		"sourceMap": true,
+		"sourceMap": false,
 		"strictNullChecks": true,
 		// It needs to wait after the code is rewritten.
 		// "strict": true,
 		"target": "esnext"
 	},
 	"include": [
-		"src/**/*.ts",
-		"tests/**/*.ts"
+		"src/**/*",
+		"tests/**/*"
 	],
 	"exclude": [
 		"tests/__fixtures__/**/*"
