@@ -5,6 +5,10 @@ import OutputController from '../src/OutputController.js';
 import createDummyConsole from './__helpers__/createDummyConsole.js';
 import createDummySpinner from './__helpers__/createDummySpinner.js';
 
+const boldYellow: string = consoleControlStrings.color( [ 'yellow', 'bold' ] );
+const boldRed: string = consoleControlStrings.color( [ 'bold', 'red' ] );
+const colorReset: string = consoleControlStrings.color( 'reset' );
+
 test( 'OutputController is a class', ( t ) => {
 	t.is( typeof OutputController, 'function' );
 } );
@@ -16,15 +20,16 @@ test( 'OutputController#constructor() allows passing custom console object', ( t
 		{},
 		[],
 		{
-			write() {}
+			write(): void {}
 		},
 		null,
-		() => {}
+		(): void => {}
 	];
 
 	invalidArguments.forEach( ( argument ) => {
 		t.throws( () => {
 			new OutputController( {
+				// @ts-expect-error
 				console: argument
 			} );
 		}, {
@@ -49,10 +54,10 @@ test( 'OutputController#constructor() allows passing custom spinner object', ( t
 		{},
 		[],
 		{
-			write() {}
+			write(): void {}
 		},
 		null,
-		() => {}
+		(): void => {}
 	];
 
 	invalidArguments.forEach( ( argument ) => {
@@ -76,23 +81,42 @@ test( 'OutputController#constructor() allows passing custom spinner object', ( t
 } );
 
 test( 'OutputController.createWarning() creates a warning', ( t ) => {
-	const expected = `${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }`;
+	const expected = `${ boldYellow }⚠️ Warning!⚠️ hublabubla${ colorReset }`;
 	const actual = OutputController.createWarning( 'hublabubla' );
 
 	t.deepEqual( actual, expected );
 } );
 
-test( 'OutputController.createError() creates an error', ( t ) => {
-	const expectedBeginning = `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }🚨Error🚨
-Error: hublabubla${ consoleControlStrings.color( 'reset' ) }`;
-	const actual = OutputController.createError( new Error( 'hublabubla' ) );
+test( 'OutputController.createError() creates an error with a stack', ( t ) => {
+	const expected = `${ boldRed }🚨Error🚨
+Error: hublabubla${ colorReset }
+2
+3`;
+	const error = new Error( 'hublabubla' );
 
-	t.true( actual.startsWith( expectedBeginning ) );
+	error.stack = '1\n2\n3';
+
+	const actual = OutputController.createError( error );
+
+	t.is( actual, expected );
+} );
+
+test( 'OutputController.createError() creates an error without a stack', ( t ) => {
+	const expected = `${ boldRed }🚨Error🚨
+Error: hublabubla${ colorReset }
+`;
+	const error = new Error( 'hublabubla' );
+
+	delete error.stack;
+
+	const actual = OutputController.createError( error );
+
+	t.is( actual, expected );
 } );
 
 test( 'OutputController#addWarning() uses warning#message property as a warning content', ( t ) => {
 	const expected = [
-		`${ consoleControlStrings.color( [ 'yellow', 'bold' ] ) }⚠️ Warning!⚠️ hublabubla${ consoleControlStrings.color( 'reset' ) }\n`
+		`${ boldYellow }⚠️ Warning!⚠️ hublabubla${ colorReset }\n`
 	];
 	const warning = {
 		message: 'hublabubla'
@@ -152,9 +176,9 @@ test( 'OutputController#display() displays all pending logs in order', testWithS
 // #208
 test( 'OutputController#display() displays all pending warnings in order', testWithSinonSandbox, ( t, sandbox ) => {
 	const warnings = [
-		[ 5, 'hublabubla', { a: 3 } ],
-		[ 'whatever', false ],
-		[ { b: 123 } ]
+		'hublabubla',
+		'whatever',
+		'test'
 	];
 	const { console } = createDummyConsole();
 	const outputController = new OutputController( {
@@ -163,7 +187,7 @@ test( 'OutputController#display() displays all pending warnings in order', testW
 	const spy = sandbox.spy( console, 'warn' );
 
 	warnings.forEach( ( warning ) => {
-		outputController.addWarning( ...warning );
+		outputController.addWarning( warning );
 	} );
 
 	outputController.display();
@@ -171,7 +195,7 @@ test( 'OutputController#display() displays all pending warnings in order', testW
 	t.true( spy.calledThrice );
 
 	warnings.forEach( ( warning, i ) => {
-		const formattedWarning = OutputController.createWarning( ...warning );
+		const formattedWarning = OutputController.createWarning( warning );
 
 		t.true( spy.getCall( i ).calledWithExactly( formattedWarning ) );
 	} );
@@ -179,12 +203,12 @@ test( 'OutputController#display() displays all pending warnings in order', testW
 
 test( 'OutputController#display() displays warnings before logs', testWithSinonSandbox, ( t, sandbox ) => {
 	const logs = [
-		[ 'log1' ],
-		[ 'log2' ]
+		'log1',
+		'log2'
 	];
 	const warnings = [
-		[ 'warning1' ],
-		[ 'warning2' ]
+		'warning1',
+		'warning2'
 	];
 	const { console } = createDummyConsole();
 	const outputController = new OutputController( {
@@ -194,11 +218,11 @@ test( 'OutputController#display() displays warnings before logs', testWithSinonS
 	const logSpy = sandbox.spy( console, 'log' );
 
 	logs.forEach( ( log ) => {
-		outputController.addLog( ...log );
+		outputController.addLog( log );
 	} );
 
 	warnings.forEach( ( warning ) => {
-		outputController.addWarning( ...warning );
+		outputController.addWarning( warning );
 	} );
 
 	outputController.display();
@@ -221,26 +245,26 @@ test( 'OutputController#displayError() outputs error into stderr', ( t ) => {
 	t.not( stderr.length, 0 );
 } );
 
-test( 'OutputController#showSpinner() calls spinner\'s show method', testWithSinonSandbox, ( t, sandbox ) => {
+test( 'OutputController#showSpinner() calls spinner\'s show method', testWithSinonSandbox, async ( t, sandbox ) => {
 	const spinner = createDummySpinner();
 	const outputController = new OutputController( {
 		spinner
 	} );
 	const spy = sandbox.spy( spinner, 'show' );
 
-	outputController.showSpinner();
+	await outputController.showSpinner();
 
 	t.true( spy.calledOnce );
 } );
 
-test( 'OutputController#showSpinner() calls spinner\'s hide method', testWithSinonSandbox, ( t, sandbox ) => {
+test( 'OutputController#showSpinner() calls spinner\'s hide method', testWithSinonSandbox, async ( t, sandbox ) => {
 	const spinner = createDummySpinner();
 	const outputController = new OutputController( {
 		spinner
 	} );
 	const spy = sandbox.spy( spinner, 'hide' );
 
-	outputController.hideSpinner();
+	await outputController.hideSpinner();
 
 	t.true( spy.calledOnce );
 } );
