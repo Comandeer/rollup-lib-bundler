@@ -8,6 +8,7 @@ coverage/
 .coverage
 dist
 /bin
+/build
 docs/dist
 npm-debug.log
 /.nyc_output
