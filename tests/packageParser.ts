@@ -2,7 +2,13 @@ import mockFS from 'mock-fs';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import getDirName from '../src/utils/getDirName.js';
-import packageParser from '../src/packageParser.js';
+import packageParser, { SubPathMetadata } from '../src/packageParser.js';
+
+type MockedFSEntry = Record<string, string | Buffer>;
+
+interface CreateMockedPackageOptions {
+	stringify?: boolean;
+}
 
 const __dirname = getDirName( import.meta.url );
 const fixtures = {
@@ -404,11 +410,13 @@ test( 'packageParser() is a function', ( t ) => {
 } );
 
 test( 'packageParser() expects argument to be a path to a package directory', async ( t ) => {
+	// @ts-expect-error
 	await t.throwsAsync( packageParser(), {
 		instanceOf: TypeError,
 		message: INVALID_ARGUMENT_TYPE_ERROR
 	} );
 
+	// @ts-expect-error
 	await t.throwsAsync( packageParser( 1 ), {
 		instanceOf: TypeError,
 		message: INVALID_ARGUMENT_TYPE_ERROR
@@ -1016,15 +1024,15 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 	t.deepEqual( actualDist, expectedDist );
 } );
 
-async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ) {
+async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ): Promise<SubPathMetadata> {
 	const parsedMetadata = await packageParser( mockedPackagePath );
 
-	return parsedMetadata.dist[ srcFile ];
+	return parsedMetadata.dist[ srcFile ]!;
 }
 
-function createMockedPackage( fixtureName, srcFixtureName = 'js', {
+function createMockedPackage( fixtureName: string, srcFixtureName: string = 'js', {
 	stringify = true
-} = {} ) {
+}: CreateMockedPackageOptions = {} ): MockedFSEntry {
 	const mockedPackagePath = getMockedPackagePath( fixtureName, srcFixtureName );
 	const packageJSON = stringify ? JSON.stringify( fixtures[ fixtureName ] ) : fixtures[ fixtureName ];
 	const srcFixture = srcFixtures[ srcFixtureName ];
@@ -1037,6 +1045,6 @@ function createMockedPackage( fixtureName, srcFixtureName = 'js', {
 	};
 }
 
-function getMockedPackagePath( fixtureName, srcFixtureName ) {
+function getMockedPackagePath( fixtureName: string, srcFixtureName: string ): string {
 	return `/${ fixtureName }-${ srcFixtureName }`;
 }
