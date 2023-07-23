@@ -6,7 +6,7 @@ import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.
 import getDirName from '../../../src/utils/getDirName.js';
 
 const __dirname = getDirName( import.meta.url );
-const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'src', '__bin__', 'rlb.mjs' );
+const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'src', '__bin__', 'rlb.mts' );
 
 type TestCLIBeforeCallback = ( t: ExecutionContext, tempDirPath: string ) => Promise<void> | void;
 type TestCLIAfterCallback = TestCLIBeforeCallback;
@@ -46,7 +46,7 @@ export default test.macro( async ( t: ExecutionContext, {
 			await before( t, tempDirPath );
 		}
 
-		const cmdResult = await execa( 'node', [
+		const cmdResult = await execa( 'tsx', [
 			cliPath,
 			...params
 		], {
