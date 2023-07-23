@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.22.0] – 2023-07-23
+### Added
+* [#232]: type definitions for the library.
+
+### Changed
+* [#232]: **BREAKING CHANGE**: rewrote the project in TS.
+
 ## [0.21.0] – 2023-07-20
 ### Changed
 * [#300]: **BREAKING CHANGE**: updated the logic for linking to other bundles.
@@ -323,6 +330,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#225]: https://github.com/Comandeer/rollup-lib-bundler/issues/225
 [#228]: https://github.com/Comandeer/rollup-lib-bundler/issues/228
 [#230]: https://github.com/Comandeer/rollup-lib-bundler/issues/230
+[#232]: https://github.com/Comandeer/rollup-lib-bundler/issues/232
 [#233]: https://github.com/Comandeer/rollup-lib-bundler/issues/233
 [#235]: https://github.com/Comandeer/rollup-lib-bundler/issues/235
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
@@ -344,6 +352,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#279]: https://github.com/Comandeer/rollup-lib-bundler/issues/279
 [#300]: https://github.com/Comandeer/rollup-lib-bundler/issues/300
 
+[0.22.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0
 [0.19.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.19.1
