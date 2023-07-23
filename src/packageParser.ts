@@ -11,7 +11,7 @@ export interface SubPathMetadata {
 	tsConfig?: string;
 }
 
-type SubPathMap = Record<string, SubPathMetadata>;
+export type DistMetadata = Record<string, SubPathMetadata>;
 type EntryPointType = 'js' | 'ts';
 type ExportType = 'import' | 'types';
 type SemVerString = `${ number}.${ number }.${ number }`;
@@ -22,7 +22,7 @@ export interface PackageMetadata {
 	version: SemVerString;
 	author: string;
 	license: string;
-	dist: SubPathMap;
+	dist: DistMetadata;
 }
 
 export default async function packageParser( packageDir: string ): Promise<PackageMetadata> {
@@ -106,7 +106,7 @@ function prepareAuthorMetadata( author: PackageJson['author'] ): string {
 	return author.name;
 }
 
-async function prepareDistMetadata( packageDir: string, metadata: PackageJson ): Promise<SubPathMap> {
+async function prepareDistMetadata( packageDir: string, metadata: PackageJson ): Promise<DistMetadata> {
 	const subpaths = getSubPaths( metadata );
 	const subPathsMetadata = await Promise.all( subpaths.map( ( subPath ) => {
 		return prepareSubPathMetadata( packageDir, metadata, subPath );
@@ -154,7 +154,7 @@ function getBinSubPaths( { bin, name }: PackageJson ): Array<string> {
 	return binSubPaths;
 }
 
-async function prepareSubPathMetadata( packageDir, metadata, subPath ): Promise<SubPathMap> {
+async function prepareSubPathMetadata( packageDir, metadata, subPath ): Promise<DistMetadata> {
 	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const isBin = isBinSubPath( subPath );

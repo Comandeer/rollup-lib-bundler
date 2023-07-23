@@ -4,8 +4,13 @@ import bundler from './bundler.js';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';
 import getDistDirPaths from './utils/getDistDirPaths.js';
+import { RollupWarning } from 'rollup';
 
-export default async function rlb() {
+const boldGreen: string = consoleControlStrings.color( [ 'bold', 'green' ] );
+const boldRed: string = consoleControlStrings.color( [ 'bold', 'red' ] );
+const colorReset: string = consoleControlStrings.color( 'reset' );
+
+export default async function rlb(): Promise<void> {
 	const outputController = new OutputController();
 
 	try {
@@ -20,16 +25,16 @@ export default async function rlb() {
 		await rimraf( distPaths );
 
 		await bundler( {
-			onWarn( warning ) {
+			onWarn( warning: RollupWarning ): void {
 				outputController.addWarning( warning );
 			},
 			packageInfo
 		} );
 
-		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'green' ] ) }Bundling complete!${ consoleControlStrings.color( 'reset' ) }` );
+		outputController.addLog( `${ boldGreen }Bundling complete!${ colorReset }` );
 	} catch ( error ) {
 		outputController.displayError( error );
-		outputController.addLog( `${ consoleControlStrings.color( [ 'bold', 'red' ] ) }Bundling failed!${ consoleControlStrings.color( 'reset' ) }` );
+		outputController.addLog( `${ boldRed }Bundling failed!${ colorReset }` );
 	} finally {
 		await outputController.hideSpinner();
 		outputController.display();

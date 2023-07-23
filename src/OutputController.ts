@@ -3,6 +3,8 @@ import { stdout, stderr } from 'node:process';
 import Spinner from '@comandeer/cli-spinner';
 import consoleControlStrings from 'console-control-strings';
 
+export type OnWarnCallback = ( warning: string | Warning ) => void;
+
 interface SpinnerLike {
 	show: () => Promise<void>;
 	hide: () => Promise<void>;

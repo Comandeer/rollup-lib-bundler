@@ -1,23 +1,17 @@
 import { dirname, resolve as resolvePath } from 'pathe';
+import { PackageMetadata } from '../packageParser.js';
 
-export default function getDistDirPaths( { project, dist } ) {
-	const distDirPaths = new Set();
+export default function getDistDirPaths( { project, dist }: PackageMetadata ): Array<string> {
+	const distDirPaths = new Set<string>();
 	const distFilePaths = Object.values( dist );
 
-	distFilePaths.forEach( ( { esm, cjs, types } ) => {
+	distFilePaths.forEach( ( { esm, types } ) => {
 		const esmFilePath = resolvePath( project, esm );
 		const esmDistDirPath = dirname( esmFilePath );
 
 		distDirPaths.add( esmDistDirPath );
 
-		if ( cjs ) {
-			const cjsFilePath = resolvePath( project, cjs );
-			const cjsDistDirPath = dirname( cjsFilePath );
-
-			distDirPaths.add( cjsDistDirPath );
-		}
-
-		if ( types ) {
+		if ( types !== undefined ) {
 			const typesFilePath = resolvePath( project, types );
 			const typesDistDirPath = dirname( typesFilePath );
 

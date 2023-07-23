@@ -6,6 +6,7 @@ type SinonTestCallback = ( t: ExecutionContext, sandbox: SinonSandbox ) => void 
 export default test.macro( ( t, callback: SinonTestCallback ) => {
 	const sandbox = sinon.createSandbox();
 
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	t.teardown( sandbox.restore );
 
 	return callback( t, sandbox );

@@ -1,18 +1,28 @@
 import virtual from '@rollup/plugin-virtual';
 import { globby } from 'globby';
 import { resolve as resolvePath } from 'pathe';
-import { rollup } from 'rollup';
+import { OutputOptions, rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
-import ts from 'typescript';
-import resolveOtherBundles from './rollupPlugins/resolveOtherBundles.js';
+import ts, { CompilerOptions } from 'typescript';
+import resolveLinkedBundles from './rollupPlugins/resolveLinkedBundles.js';
+import { PackageMetadata } from '../packageParser.js';
+import { OnWarnCallback } from '../OutputController.js';
+
+interface BundleTypesOptions {
+	packageInfo: PackageMetadata;
+	sourceFile: string;
+	outputFile: string;
+	tsConfig: string | undefined;
+	onWarn: OnWarnCallback;
+}
 
 export default async function bundleTypes( {
 	packageInfo,
 	sourceFile,
 	outputFile,
 	tsConfig,
-	onWarn = () => {}
-} = {} ) {
+	onWarn = (): void => {}
+}: BundleTypesOptions ): Promise<void> {
 	const projectPath = packageInfo.project;
 	const userCompilerOptions = getUserCompilerOptions( projectPath, tsConfig );
 	const compilerOptions = {
@@ -34,7 +44,7 @@ export default async function bundleTypes( {
 	const emittedFiles = {};
 
 	const host = ts.createCompilerHost( compilerOptions );
-	host.writeFile = ( filePath, contents ) => {
+	host.writeFile = ( filePath: string, contents: string ): void => {
 		const relativeFilePath = getRelativeToProjectPath( projectPath, filePath );
 
 		emittedFiles[ relativeFilePath ] = contents;
@@ -49,9 +59,10 @@ export default async function bundleTypes( {
 	const rollupConfig = {
 		input,
 		plugins: [
+			// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 			virtual( emittedFiles ),
 
-			resolveOtherBundles( projectPath, packageInfo.dist, {
+			resolveLinkedBundles( projectPath, packageInfo.dist, {
 				isTypeBundling: true
 			} ),
 
@@ -59,7 +70,7 @@ export default async function bundleTypes( {
 		],
 		onwarn: onWarn
 	};
-	const outputConfig = {
+	const outputConfig: OutputOptions = {
 		file: outputFile,
 		format: 'es'
 	};
@@ -68,19 +79,20 @@ export default async function bundleTypes( {
 	await bundle.write( outputConfig );
 }
 
-function getUserCompilerOptions( project, tsConfig ) {
-	if ( !tsConfig ) {
+function getUserCompilerOptions( project: string, tsConfig: string | undefined ): CompilerOptions {
+	if ( tsConfig === undefined ) {
 		return {};
 	}
 
 	const tsConfigFilePath = resolvePath( project, tsConfig );
+	// eslint-disable-next-line @typescript-eslint/unbound-method
 	const tsConfigContent = ts.readConfigFile( tsConfigFilePath, ts.sys.readFile );
 	const parsedOptions = ts.parseJsonConfigFileContent( tsConfigContent.config, ts.sys, project );
 
 	return parsedOptions.options;
 }
 
-function getOriginalDTsFilePath( project, sourceFile ) {
+function getOriginalDTsFilePath( project: string, sourceFile: string ): string {
 	// We need the relative path to the .d.(c|m)?ts file. So:
 	// 1. Get the relative path via getRelativePath().
 	// 2. Replace the .(c|m)?ts extension with the .d.(c|m)?ts one.
@@ -90,7 +102,7 @@ function getOriginalDTsFilePath( project, sourceFile ) {
 	return originalFilePath;
 }
 
-function getRelativeToProjectPath( project, filePath ) {
+function getRelativeToProjectPath( project: string, filePath: string ): string {
 	// We need the relative path to the .d.ts file. So:
 	// 1. Remove the project path.
 	// 2. Remove the leading slash/backslash.
