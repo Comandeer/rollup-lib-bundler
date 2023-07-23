@@ -24,7 +24,7 @@
     }
   },
   "scripts": {
-    "build": "node ./src/__bin__/rlb.mjs",
+    "build": "rlb",
     "lint": "eslint \"./src\" \"./tests\"",
     "test": "c8 ava",
     "version": "npm test && npm run build && git add -f dist/",
