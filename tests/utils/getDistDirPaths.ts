@@ -14,9 +14,9 @@ test( '#getDistDirPaths() returns an array of absolute paths to dist directories
 		author: 'Comandeer',
 		project: '/dummy-project',
 		dist: {
-			[ 'src/index.js' ]: {
+			[ 'src/index.ts' ]: {
 				esm: './dist/test-package.mjs',
-				types: './dist/test-package.d.ts',
+				types: './hublabubla/test-package.d.ts',
 				type: 'ts',
 				isBin: false
 			},
@@ -31,6 +31,12 @@ test( '#getDistDirPaths() returns an array of absolute paths to dist directories
 				esm: './grim/another-submodule.js',
 				type: 'js',
 				isBin: false
+			},
+
+			[ 'src/__bin__/bin.mjs' ]: {
+				esm: './bin.js',
+				type: 'js',
+				isBin: true
 			}
 		}
 	};
