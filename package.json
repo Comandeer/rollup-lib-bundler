@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/rollup-lib-bundler.mjs"
+      "import": "./dist/rollup-lib-bundler.mjs",
+      "types": "./dist/rollup-lib-bundler.d.ts"
     }
   },
   "engines": {
@@ -25,7 +26,7 @@
   },
   "scripts": {
     "build": "rlb",
-    "lint": "eslint --ext .js,.cjs,.mjs,.ts,.cjs,.mts \"./src\" \"./tests\"",
+    "lint": "eslint \"./src\" \"./tests\"",
     "test": "c8 ava",
     "version": "npm test && npm run build && git add -f dist/",
     "postversion": "git rm -r --cached dist/ && git commit -m \"chore(dist): clean after release [ci skip]\" && git push origin && git push origin --tags",
@@ -66,8 +67,9 @@
     "scope": "\\S+.*"
   },
   "devDependencies": {
-    "@comandeer/eslint-config": "^0.10.0",
-    "@comandeer/rollup-lib-bundler": "^0.20.0",
+    "@comandeer/eslint-config": "^0.11.1",
+    "@comandeer/rollup-lib-bundler": "^0.21.0",
+    "@types/sinon": "^10.0.15",
     "ava": "^5.3.1",
     "c8": "^8.0.0",
     "commitplease": "^3.2.0",
@@ -78,7 +80,9 @@
     "mock-fs": "^5.2.0",
     "sinon": "^15.2.0",
     "sourcemap-validator": "^2.1.0",
-    "tempy": "^3.1.0"
+    "tempy": "^3.1.0",
+    "tsx": "^3.12.7",
+    "type-fest": "^4.0.0"
   },
   "dependencies": {
     "@babel/core": "^7.22.9",

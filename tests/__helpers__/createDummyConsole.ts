@@ -1,17 +1,13 @@
 import { Console } from 'node:console';
 import createDummyStream from './createDummyStream.js';
 
-/**
- * @typedef {Object} DummyConsole
- * @property {Array<unknown>} stdout
- * @property {Array<unknown>} stderr
- * @property {typeof console} console
- */
+interface DummyConsole {
+	stdout: Array<unknown>;
+	stderr: Array<unknown>;
+	console: typeof console;
+}
 
-/**
- * @returns {DummyConsole}
- */
-export default function createDummyConsole() {
+export default function createDummyConsole(): DummyConsole {
 	const stdout = createDummyStream();
 	const stderr = createDummyStream();
 	const console = new Console( {

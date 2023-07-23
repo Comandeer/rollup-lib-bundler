@@ -1,8 +1,31 @@
 import { access, readFile } from 'node:fs/promises';
 import { globby } from 'globby';
 import { extname, join as joinPath, normalize as normalizePath } from 'pathe';
+import { PackageJson } from 'type-fest';
 
-export default async function packageParser( packageDir ) {
+export interface SubPathMetadata {
+	esm: string;
+	type: EntryPointType;
+	isBin: boolean;
+	types?: string;
+	tsConfig?: string;
+}
+
+export type DistMetadata = Record<string, SubPathMetadata>;
+type EntryPointType = 'js' | 'ts';
+type ExportType = 'import' | 'types';
+type SemVerString = `${ number}.${ number }.${ number }`;
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface PackageMetadata {
+	project: string;
+	name: string;
+	version: SemVerString;
+	author: string;
+	license: string;
+	dist: DistMetadata;
+}
+
+export default async function packageParser( packageDir: string ): Promise<PackageMetadata> {
 	if ( typeof packageDir !== 'string' ) {
 		throw new TypeError( 'Provide a path to a package directory.' );
 	}
@@ -13,7 +36,7 @@ export default async function packageParser( packageDir ) {
 	return prepareMetadata( packageDir, metadata );
 }
 
-async function loadAndParsePackageJSONFile( dirPath ) {
+async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJson> {
 	const path = joinPath( dirPath, 'package.json' );
 
 	try {
@@ -34,7 +57,7 @@ async function loadAndParsePackageJSONFile( dirPath ) {
 	return parsed;
 }
 
-function lintObject( obj ) {
+function lintObject( obj: PackageJson ): void {
 	if ( typeof obj.name === 'undefined' ) {
 		throw new ReferenceError( 'Package metadata must contain "name" property.' );
 	}
@@ -43,6 +66,7 @@ function lintObject( obj ) {
 		throw new ReferenceError( 'Package metadata must contain "version" property.' );
 	}
 
+	// @ts-expect-error Seems like PackageJson type does not contain all exports variants.
 	const isESMEntryPointPresent = typeof obj.exports?.import !== 'undefined' ||
 		typeof obj.exports?.[ '.' ]?.import !== 'undefined';
 
@@ -61,20 +85,20 @@ function lintObject( obj ) {
 	}
 }
 
-async function prepareMetadata( packageDir, metadata ) {
+async function prepareMetadata( packageDir, metadata: PackageJson ): Promise<PackageMetadata> {
 	const project = normalizePath( packageDir );
 
 	return {
 		project,
-		name: metadata.name,
-		version: metadata.version,
+		name: metadata.name!,
+		version: metadata.version! as SemVerString,
 		author: prepareAuthorMetadata( metadata.author ),
-		license: metadata.license,
+		license: metadata.license!,
 		dist: await prepareDistMetadata( packageDir, metadata )
 	};
 }
 
-function prepareAuthorMetadata( author ) {
+function prepareAuthorMetadata( author: PackageJson['author'] ): string {
 	if ( typeof author !== 'object' ) {
 		return String( author );
 	}
@@ -82,7 +106,7 @@ function prepareAuthorMetadata( author ) {
 	return author.name;
 }
 
-async function prepareDistMetadata( packageDir, metadata ) {
+async function prepareDistMetadata( packageDir: string, metadata: PackageJson ): Promise<DistMetadata> {
 	const subpaths = getSubPaths( metadata );
 	const subPathsMetadata = await Promise.all( subpaths.map( ( subPath ) => {
 		return prepareSubPathMetadata( packageDir, metadata, subPath );
@@ -94,8 +118,8 @@ async function prepareDistMetadata( packageDir, metadata ) {
 	return distMetadata;
 }
 
-function getSubPaths( metadata ) {
-	const exports = metadata.exports;
+function getSubPaths( metadata: PackageJson ): Array<string> {
+	const exports = metadata.exports!;
 
 	const subPaths = Object.keys( exports ).filter( ( subpath ) => {
 		return subpath.startsWith( '.' );
@@ -112,14 +136,14 @@ function getSubPaths( metadata ) {
 	return subPaths;
 }
 
-function getBinSubPaths( { bin, name } ) {
+function getBinSubPaths( { bin, name }: PackageJson ): Array<string> {
 	if ( typeof bin === 'undefined' ) {
 		return [];
 	}
 
 	if ( typeof bin === 'string' ) {
 		return [
-			`./__bin__/${ name }`
+			`./__bin__/${ name! }`
 		];
 	}
 
@@ -130,7 +154,7 @@ function getBinSubPaths( { bin, name } ) {
 	return binSubPaths;
 }
 
-async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
+async function prepareSubPathMetadata( packageDir, metadata, subPath ): Promise<DistMetadata> {
 	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const isBin = isBinSubPath( subPath );
@@ -138,7 +162,7 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 		getBinTarget( metadata, subPath ) :
 		getESMTarget( metadata, subPath );
 	const exportType = getEntryPointType( srcPath );
-	const exportMetadata = {
+	const exportMetadata: SubPathMetadata = {
 		esm: esmTarget,
 		type: exportType,
 		isBin
@@ -152,7 +176,7 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 			exportMetadata.types = typesTarget;
 		}
 
-		if ( tsConfigPath ) {
+		if ( tsConfigPath !== undefined ) {
 			exportMetadata.tsConfig = tsConfigPath;
 		}
 	}
@@ -162,7 +186,7 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ) {
 	};
 }
 
-async function getSubPathFilePath( packageDir, subPath ) {
+async function getSubPathFilePath( packageDir: string, subPath: string ): Promise<string> {
 	const srcPath = joinPath( packageDir, 'src' );
 	const subPathFileName = subPath === '.' ? 'index' : subPath;
 	const subPathGlobPattern = `${ subPathFileName}.{mts,ts,mjs,js,cts,cjs}`;
@@ -174,7 +198,7 @@ async function getSubPathFilePath( packageDir, subPath ) {
 	return desirableEntryPoint;
 }
 
-function getEntryPoint( matchedFiles ) {
+function getEntryPoint( matchedFiles: Array<string> ): string {
 	const fileExtensions = [
 		'.mts',
 		'.ts',
@@ -190,26 +214,26 @@ function getEntryPoint( matchedFiles ) {
 		return aIndex - bIndex;
 	} );
 
-	return orderedFiles[ 0 ];
+	return orderedFiles[ 0 ]!;
 }
 
-function getEntryPointType( srcPath ) {
+function getEntryPointType( srcPath: string ): EntryPointType  {
 	const isTS = srcPath.toLowerCase().endsWith( 'ts' );
 
 	return isTS ? 'ts' : 'js';
 }
 
-function isBinSubPath( subPath ) {
+function isBinSubPath( subPath: string ): boolean {
 	return subPath.startsWith( './__bin__' );
 }
 
-function getESMTarget( metadata, subPath ) {
-	const exportsTarget = getExportsTarget( metadata, subPath, 'import' );
+function getESMTarget( metadata: PackageJson, subPath: string ): string {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'import' )!;
 
 	return exportsTarget;
 }
 
-function getBinTarget( { bin, name }, subPath ) {
+function getBinTarget( { bin, name }: PackageJson, subPath: string ): string {
 	const subPathPrefixRegex = /^\.\/__bin__\//g;
 	const binName = subPath.replace( subPathPrefixRegex, '' );
 
@@ -217,41 +241,41 @@ function getBinTarget( { bin, name }, subPath ) {
 		return bin;
 	}
 
-	return bin[ binName ];
+	return bin![ binName ];
 }
 
-function getTypesTarget( metadata, subPath ) {
-	const exportsTarget = getExportsTarget( metadata, subPath, 'types' );
+function getTypesTarget( metadata: PackageJson, subPath: string ): string {
+	const exportsTarget = getExportsTarget( metadata, subPath, 'types' )!;
 
 	return exportsTarget;
 }
 
-function getExportsTarget( metadata, subPath, type ) {
-	const exports = metadata.exports;
+function getExportsTarget( metadata: PackageJson, subPath: string, type: ExportType ): string | undefined {
+	const exports = metadata.exports!;
 
-	if ( exports[ subPath ] ) {
+	if ( exports[ subPath ] !== undefined ) {
 		return exports[ subPath ][ type ];
 	}
 
-	if ( !exports[ subPath ] && subPath === '.' ) {
+	if ( exports[ subPath ] === undefined && subPath === '.' ) {
 		return exports[ type ];
 	}
 }
 
-async function getTSConfigPath( packageDir ) {
+async function getTSConfigPath( packageDir ): Promise<string | undefined> {
 	const tsConfigGlobPattern = 'tsconfig?(.rlb).json';
 	const matchedFiles = await globby( tsConfigGlobPattern, {
 		cwd: packageDir
 	} );
 
 	if ( matchedFiles.length === 0 ) {
-		return null;
+		return;
 	}
 
 	const rlbSpecificPath = matchedFiles.find( ( path ) => {
 		return path.endsWith( '.rlb.json' );
 	} );
-	const tsConfigPath = rlbSpecificPath || matchedFiles[ 0 ];
+	const tsConfigPath = rlbSpecificPath ?? matchedFiles[ 0 ];
 
 	return tsConfigPath;
 }

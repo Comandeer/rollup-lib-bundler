@@ -1,36 +1,40 @@
 import { access, constants, mkdir, writeFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
-import test from 'ava';
+import test, { ExecutionContext } from 'ava';
 import testCLI from './__helpers__/macros/testCLI.js';
+import { ExecaReturnValue } from 'execa';
+import { AdditionalCodeCheckCallback, CheckStrategiesMap } from './__helpers__/checkDistFiles.js';
+
+type LinkedBundleMap = Map<string, Array<string>>;
 
 const defaultExpectedFiles = [
 	'./dist/test-package.mjs',
 	'./dist/test-package.mjs.map'
 ];
 const cmdResultChecks = {
-	isSuccesful: ( t, { stdout, stderr } ) => {
+	isSuccesful: ( t: ExecutionContext, { stdout, stderr }: ExecaReturnValue ): void => {
 		t.true( stdout.includes( 'Bundling complete!' ) );
 		t.is( stderr, '' );
 	},
 
-	isFailed: ( t, { stdout, stderr } ) => {
+	isFailed: ( t: ExecutionContext, { stdout, stderr }: ExecaReturnValue ): void => {
 		t.true( stdout.includes( 'Bundling failed!' ) );
 		t.true( stderr.includes( '🚨Error🚨' ) );
 	},
 
-	noError: ( t, { stderr } ) => {
+	noError: ( t: ExecutionContext, { stderr }: ExecaReturnValue ): void => {
 		t.false( stderr.includes( 'Bundling failed!' ) );
 		t.false( stderr.includes( '🚨Error🚨' ) );
 	}
 };
-const customCheckStrategies = {
+const customCheckStrategies: Record<string, CheckStrategiesMap> = {
 	skipSourceMaps: new Map( [
-		[ /\.map$/, () => {} ]
+		[ /\.map$/, (): void => {} ]
 	] )
 };
 const additionalCodeChecks = {
-	checkResolvingOfOtherBundles( expectedImports ) {
-		return ( t, path, code ) => {
+	checkResolvingOfLinkedBundles( expectedImports: LinkedBundleMap ): AdditionalCodeCheckCallback {
+		return ( t: ExecutionContext, path: string, code: string ): void => {
 			const expectedImportsForCurrentFile = [ ...expectedImports ].find( ( [ file ] ) => {
 				return path.endsWith( file );
 			} );
@@ -53,7 +57,7 @@ const additionalCodeChecks = {
 		};
 	},
 
-	checkShebang( filesToCheck ) {
+	checkShebang( filesToCheck: Array<string> ): AdditionalCodeCheckCallback {
 		return ( t, path, code ) => {
 			const isFileToCheck = filesToCheck.some( ( file ) => {
 				return path.endsWith( file );
@@ -67,7 +71,7 @@ const additionalCodeChecks = {
 		};
 	},
 
-	checkBinPermissions( filesToCheck ) {
+	checkBinPermissions( filesToCheck: Array<string> ): AdditionalCodeCheckCallback {
 		return async ( t, path ) => {
 			const isFileToCheck = filesToCheck.some( ( file ) => {
 				return path.endsWith( file );
@@ -102,7 +106,7 @@ test.serial( 'CLI bundles package that imports JSON content', testCLI, {
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		( t, path, code ) => {
+		( t: ExecutionContext, path: string, code: string ): void => {
 			const regex = /name:\s?["']Piotr Kowalski["']/;
 
 			t.regex( code, regex );
@@ -123,7 +127,7 @@ test.serial( 'CLI bundles ESM package that imports JSON content with import asse
 		cmdResultChecks.noError
 	],
 	additionalCodeChecks: [
-		( t, path, code ) => {
+		( t: ExecutionContext, path: string, code: string ): void => {
 			const regex = /["']6\.5\.3["']/;
 
 			t.regex( code, regex );
@@ -141,7 +145,7 @@ test.serial( 'CLI bundles package based on subpath exports fields', testCLI, {
 		'./dist/test-package.mjs.map'
 	],
 	additionalCodeChecks: [
-		( t, path, code ) => {
+		( t: ExecutionContext, path: string, code: string ): void => {
 			const isChunk = path.includes( 'related-name' );
 			const expectedString = `console.log("${ isChunk ? 'chunk' : 'index' }");`;
 
@@ -220,7 +224,7 @@ test.serial( 'CLI preserves dynamic external imports', testCLI, {
 	fixture: 'generic/dynamicExternalImport',
 	expectedFiles: defaultExpectedFiles,
 	additionalCodeChecks: [
-		( t, path, code ) => {
+		( t: ExecutionContext, path: string, code: string ): void => {
 			const dynamicImportRegex = /await import\(\s*['"]node:fs['"]\s*\)/;
 
 			t.regex( code, dynamicImportRegex );
@@ -245,7 +249,7 @@ test.serial( 'CLI transpiles bundled JS files down to code understandable by Nod
 	// failes sourcemap check.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		( t, path, code ) => {
+		( t: ExecutionContext, path: string, code: string ): void => {
 			t.false( code.includes( 'static{' ) );
 		}
 	]
@@ -271,7 +275,7 @@ test.serial( 'CLI treats import of other bundles as external dependencies (TS pa
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'chunk.mjs',
 				[
@@ -315,7 +319,7 @@ test.serial( 'CLI treats import of other bundles as external dependencies (JS pa
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'index.mjs',
 				[
@@ -349,7 +353,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, JS package)', t
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -384,7 +388,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, TS package)', t
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -420,7 +424,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, JS package)', 
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -439,7 +443,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, JS package)', 
 			'__bin__/test-package.mjs'
 		] ),
 
-		( t, code, path ) => {
+		( t: ExecutionContext, code: string, path: string ): void => {
 			if ( !path.endsWith( 'aside.mjs' ) ) {
 				return;
 			}
@@ -469,7 +473,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package)', 
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -488,7 +492,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package)', 
 			'__bin__/test-package.mjs'
 		] ),
 
-		( t, code, path ) => {
+		( t: ExecutionContext, code: string, path: string ): void => {
 			if ( !path.endsWith( 'aside.mjs' ) ) {
 				return;
 			}
@@ -540,7 +544,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, JS package, non
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -575,7 +579,7 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, TS package, non
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -611,7 +615,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, JS package, no
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -630,7 +634,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, JS package, no
 			'__bin__/test-package.mjs'
 		] ),
 
-		( t, code, path ) => {
+		( t: ExecutionContext, code: string, path: string ): void => {
 			if ( !path.endsWith( 'aside.mjs' ) ) {
 				return;
 			}
@@ -660,7 +664,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package, no
 	// For some reason source map check fails.
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'__bin__/test-package.mjs',
 				[
@@ -679,7 +683,7 @@ test.serial( 'CLI correctly bundles binaries (complex bin format, TS package, no
 			'__bin__/test-package.mjs'
 		] ),
 
-		( t, code, path ) => {
+		( t: ExecutionContext, code: string, path: string ): void => {
 			if ( !path.endsWith( 'aside.mjs' ) ) {
 				return;
 			}
@@ -706,7 +710,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles without type de
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		( t, path, code ) => {
+		( t: ExecutionContext, path: string, code: string ): void => {
 			if ( !path.endsWith( 'index.d.ts' ) ) {
 				return;
 			}
@@ -732,7 +736,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles in non-standard
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
-		additionalCodeChecks.checkResolvingOfOtherBundles( new Map( [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
 			[
 				'index.mjs',
 				[
@@ -769,7 +773,7 @@ test.serial( 'CLI displays error for invalid package', testCLI, {
 // #204
 test.serial( 'cleans dist directory before bundling', testCLI, {
 	fixture: 'generic/testPackage',
-	before: async ( t, packagePath ) => {
+	before: async ( t: ExecutionContext, packagePath: string ) => {
 		return createDummyDists( packagePath );
 	},
 	after: async ( t, packagePath ) => {
@@ -824,7 +828,7 @@ test.serial( 'skip cleaning the root directory if it is the dist one', testCLI, 
 	]
 } );
 
-async function createDummyDists( packagePath, distDirs = [ 'dist' ] ) {
+async function createDummyDists( packagePath, distDirs = [ 'dist' ] ): Promise<void> {
 	const distDirsPromises = distDirs.map( async ( distDir ) => {
 		const distPath = resolvePath( packagePath, distDir );
 		const dummyFilePath = resolvePath( distPath, 'dummy.js' );
@@ -841,10 +845,14 @@ async function createDummyDists( packagePath, distDirs = [ 'dist' ] ) {
 		await writeFile( dummyFilePath, 'hublabubla', 'utf-8' );
 	} );
 
-	return Promise.all( distDirsPromises );
+	await Promise.all( distDirsPromises );
 }
 
-async function assertDummyFileIsDeleted( t, packagePath, distDirs = [ 'dist' ] ) {
+async function assertDummyFileIsDeleted(
+	t: ExecutionContext,
+	packagePath: string,
+	distDirs = [ 'dist' ]
+): Promise<void> {
 	const dummyFilesPromises = distDirs.map( async ( distDir ) => {
 		const distPath = resolvePath( packagePath, distDir );
 		const dummyFilePath = resolvePath( distPath, 'dummy.js' );
@@ -852,5 +860,5 @@ async function assertDummyFileIsDeleted( t, packagePath, distDirs = [ 'dist' ] )
 		return t.throwsAsync( access( dummyFilePath ) );
 	} );
 
-	return Promise.all( dummyFilesPromises );
+	await Promise.all( dummyFilesPromises );
 }

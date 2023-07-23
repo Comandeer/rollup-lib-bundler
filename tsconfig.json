@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"rootDir": "./",
+		"declaration": false,
+		"esModuleInterop": true,
+		"exactOptionalPropertyTypes": true,
+		"importHelpers": true,
+		"incremental": true,
+		"lib": [
+			"es2023"
+		],
+		"module": "node16",
+		"moduleResolution": "node16",
+		"noImplicitOverride": true,
+		"noUncheckedIndexedAccess": true,
+		"outDir": "build/",
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		// It needs to wait after the code is rewritten.
+		// "strict": true,
+		"target": "esnext"
+	},
+	"include": [
+		"src/**/*",
+		"tests/**/*"
+	],
+	"exclude": [
+		"tests/__fixtures__/**/*"
+	]
+}

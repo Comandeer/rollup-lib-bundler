@@ -5,23 +5,30 @@ import convertCJS from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
-import { rollup } from 'rollup';
+import { InputOptions, OutputOptions, rollup } from 'rollup';
 import preserveShebang from 'rollup-plugin-preserve-shebang';
 import bundleTypes from './bundler/bundleTypes.js';
 import fixBinPermissions from './bundler/fixBinPermissions.js';
 import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
-import resolveOtherBundles from './bundler/rollupPlugins/resolveOtherBundles.js';
+import resolveLinkedBundles from './bundler/rollupPlugins/resolveLinkedBundles.js';
 import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
+import { PackageMetadata, SubPathMetadata } from './packageParser.js';
+import { OnWarnCallback } from './OutputController.js';
+
+interface BundlerOptions {
+	onWarn?: OnWarnCallback;
+	packageInfo: PackageMetadata;
+}
 
 export default async function bundler( {
 	onWarn,
 	packageInfo
-} ) {
+}: BundlerOptions ): Promise<void> {
 	await Promise.all( bundleChunks( packageInfo, onWarn ) );
 }
 
-function bundleChunks( packageInfo, onWarn = () => {} ) {
+function bundleChunks( packageInfo: PackageMetadata, onWarn: OnWarnCallback = (): void => {} ): Array<Promise<void>> {
 	const distInfo = Object.entries( packageInfo.dist );
 
 	return distInfo.map( ( [ source, output ] ) => {
@@ -29,7 +36,16 @@ function bundleChunks( packageInfo, onWarn = () => {} ) {
 	} );
 }
 
-async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } = {} ) {
+async function bundleChunk(
+	packageInfo: PackageMetadata,
+	source: string,
+	output: SubPathMetadata,
+	{
+		onWarn = (): void => {}
+	}: {
+		onWarn?: OnWarnCallback;
+	} = {}
+): Promise<void> {
 	const banner = generateBanner( packageInfo );
 	const inputConfig = getRollupInputConfig( packageInfo, source, output, onWarn );
 
@@ -43,7 +59,7 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 		await fixBinPermissions( packageInfo.project, output );
 	}
 
-	if ( output.types ) {
+	if ( output.types !== undefined ) {
 		await bundleTypes( {
 			packageInfo,
 			sourceFile: source,
@@ -54,16 +70,24 @@ async function bundleChunk( packageInfo, source, output, { onWarn = () => {} } =
 	}
 }
 
-function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
+function getRollupInputConfig(
+	packageInfo: PackageMetadata,
+	input: string,
+	output: SubPathMetadata,
+	onwarn: OnWarnCallback = (): void => {}
+): InputOptions {
 	const plugins = [
+		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		convertCJS(),
 
+		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		json(),
 
-		resolveOtherBundles( packageInfo.project, packageInfo.dist ),
+		resolveLinkedBundles( packageInfo.project, packageInfo.dist ),
 
 		preserveDynamicImports(),
 
+		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		babel( {
 			babelrc: false,
 			babelHelpers: 'bundled',
@@ -92,6 +116,7 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 
 		preserveShebang(),
 
+		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		terser()
 	];
 
@@ -100,8 +125,9 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 	// and after the custom resolver, so it's at index 3.
 	// Yep, it's not too elegant…
 	if ( output.type === 'ts' ) {
+		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		plugins.splice( 3, 0, typescript( {
-			tsconfig: output.tsConfig ? output.tsConfig : false,
+			tsconfig: output.tsConfig ?? false,
 			declaration: false
 		} ) );
 	}
@@ -113,7 +139,7 @@ function getRollupInputConfig( packageInfo, input, output, onwarn = () => {} ) {
 	};
 }
 
-function getRollupOutputConfig( outputPath, banner ) {
+function getRollupOutputConfig( outputPath, banner ): OutputOptions {
 	return {
 		banner,
 		sourcemap: true,
