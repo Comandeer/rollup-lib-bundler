@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.22.1] – 2023-07-28
+### Fixed
+* [#303]: incorrect package published on GitHub.
+* [#306]: incorrect orderd of `exports` in the `package.json` file.
+
 ## [0.22.0] – 2023-07-23
 ### Added
 * [#232]: type definitions for the library.
@@ -351,7 +356,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#278]: https://github.com/Comandeer/rollup-lib-bundler/issues/278
 [#279]: https://github.com/Comandeer/rollup-lib-bundler/issues/279
 [#300]: https://github.com/Comandeer/rollup-lib-bundler/issues/300
+[#303]: https://github.com/Comandeer/rollup-lib-bundler/issues/303
+[#306]: https://github.com/Comandeer/rollup-lib-bundler/issues/306
 
+[0.22.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.20.0...v0.21.0
 [0.20.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.19.0...v0.20.0
