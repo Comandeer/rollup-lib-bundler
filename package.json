@@ -5,8 +5,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/rollup-lib-bundler.mjs",
-      "types": "./dist/rollup-lib-bundler.d.ts"
+      "types": "./dist/rollup-lib-bundler.d.ts",
+      "import": "./dist/rollup-lib-bundler.mjs"
     }
   },
   "engines": {
