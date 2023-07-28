@@ -78,6 +78,7 @@
     "execa": "^7.1.1",
     "husky": "^8.0.3",
     "mock-fs": "^5.2.0",
+    "publint": "^0.2.0",
     "sinon": "^15.2.0",
     "sourcemap-validator": "^2.1.0",
     "tempy": "^3.1.0",
