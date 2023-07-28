@@ -21,10 +21,12 @@ export default function createDummyStream( {
 	const output: Array<string> = [];
 	const StreamConstructor = type === 'writable' ? WritableStream : DuplexStream;
 	const stream: ttyStream = new StreamConstructor( {
-		write( chunk: unknown ): boolean {
+		write( chunk: unknown, encoding, callback ): void {
 			output.push( String( chunk ) );
 
-			return true;
+			callback();
+
+			return;
 		}
 	} );
 

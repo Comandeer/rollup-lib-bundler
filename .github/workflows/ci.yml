@@ -25,8 +25,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint code
+        run: npm run lint
+      - name: Run tests
+        run: npm test
       - name: Upload coverage data to Codecov
         uses: codecov/codecov-action@v3
+      - name: Build package
+        run: npm run build
+      - name: Lint package
+        run: npm run lint-package
