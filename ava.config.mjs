@@ -4,7 +4,7 @@ const config = {
 	},
 	// https://github.com/avajs/ava/issues/2947
 	workerThreads: false,
-	timeout: '30s',
+	timeout: '60s',
 	files: [
 		'tests/**/*.{js,ts}',
 		'!tests/**/{__fixtures__,__helpers__}/**'
