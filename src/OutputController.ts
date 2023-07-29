@@ -1,7 +1,7 @@
 import { Console } from 'node:console';
 import { stdout, stderr } from 'node:process';
 import Spinner from '@comandeer/cli-spinner';
-import consoleControlStrings from 'console-control-strings';
+import chalk from 'chalk';
 
 export type OnWarnCallback = ( warning: string | Warning ) => void;
 
@@ -25,10 +25,6 @@ interface Warning {
 	message?: string;
 }
 
-const boldYellow: string = consoleControlStrings.color( [ 'yellow', 'bold' ] );
-const boldRed: string = consoleControlStrings.color( [ 'bold', 'red' ] );
-const colorReset: string = consoleControlStrings.color( 'reset' );
-
 export default class OutputController {
 	#console: ConsoleLike;
 	#spinner: SpinnerLike;
@@ -40,7 +36,7 @@ export default class OutputController {
 			warning = warning.message;
 		}
 
-		return `${ boldYellow }⚠️ Warning!⚠️ ${ warning as string }${ colorReset }`;
+		return chalk.yellow.bold( `⚠️ Warning!⚠️ ${ warning as string }` );
 	}
 
 	static createError( { name, message, stack }: StackableError ): string {
@@ -50,8 +46,8 @@ export default class OutputController {
 
 		const newStack = stackParts.join( '\n' );
 
-		return `${ boldRed }🚨Error🚨
-${ name }: ${ message }${ colorReset }
+		return `${ chalk.red.bold( `🚨Error🚨
+${ name }: ${ message }` ) }
 ${ newStack }`;
 	}
 

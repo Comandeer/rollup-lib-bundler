@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.23.0]
+### Changed
+* [#304]: **BREAKING CHANGE**: updated dependencies:
+
+	| Dependency                  | Old version | New version |
+	| --------------------------- | ----------- | ----------- |
+	| ⭐ `chalk`                   | N/A         | `^5.3.0`    |
+	| ☠️ `console-control-strings` | `^1.1.0`    | N/A         |
+
+	New dependencies are marked with the "⭐" emoji.
+
+	Dependencies with major version change are marked with the "⚠️" emoji.
+
+	Removed dependencies are marked with the "☠️" emoji.
+
 ## [0.22.1] – 2023-07-28
 ### Fixed
 * [#303]: incorrect package published on GitHub.
@@ -357,8 +372,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#279]: https://github.com/Comandeer/rollup-lib-bundler/issues/279
 [#300]: https://github.com/Comandeer/rollup-lib-bundler/issues/300
 [#303]: https://github.com/Comandeer/rollup-lib-bundler/issues/303
+[#304]: https://github.com/Comandeer/rollup-lib-bundler/issues/304
 [#306]: https://github.com/Comandeer/rollup-lib-bundler/issues/306
 
+[0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.20.0...v0.21.0

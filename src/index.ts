@@ -1,14 +1,10 @@
 import { rimraf } from 'rimraf';
-import consoleControlStrings from 'console-control-strings';
+import chalk from 'chalk';
 import bundler from './bundler.js';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';
 import getDistDirPaths from './utils/getDistDirPaths.js';
 import { RollupWarning } from 'rollup';
-
-const boldGreen: string = consoleControlStrings.color( [ 'bold', 'green' ] );
-const boldRed: string = consoleControlStrings.color( [ 'bold', 'red' ] );
-const colorReset: string = consoleControlStrings.color( 'reset' );
 
 export default async function rlb(): Promise<void> {
 	const outputController = new OutputController();
@@ -31,10 +27,10 @@ export default async function rlb(): Promise<void> {
 			packageInfo
 		} );
 
-		outputController.addLog( `${ boldGreen }Bundling complete!${ colorReset }` );
+		outputController.addLog( chalk.green.bold( 'Bundling complete!' ) );
 	} catch ( error ) {
 		outputController.displayError( error );
-		outputController.addLog( `${ boldRed }Bundling failed!${ colorReset }` );
+		outputController.addLog( chalk.red.bold( 'Bundling failed!' ) );
 	} finally {
 		await outputController.hideSpinner();
 		outputController.display();

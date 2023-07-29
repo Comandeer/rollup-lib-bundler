@@ -1,13 +1,9 @@
-import consoleControlStrings from 'console-control-strings';
+import chalk from 'chalk';
 import test from 'ava';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
 import OutputController from '../src/OutputController.js';
 import createDummyConsole from './__helpers__/createDummyConsole.js';
 import createDummySpinner from './__helpers__/createDummySpinner.js';
-
-const boldYellow: string = consoleControlStrings.color( [ 'yellow', 'bold' ] );
-const boldRed: string = consoleControlStrings.color( [ 'bold', 'red' ] );
-const colorReset: string = consoleControlStrings.color( 'reset' );
 
 test( 'OutputController is a class', ( t ) => {
 	t.is( typeof OutputController, 'function' );
@@ -81,15 +77,15 @@ test( 'OutputController#constructor() allows passing custom spinner object', ( t
 } );
 
 test( 'OutputController.createWarning() creates a warning', ( t ) => {
-	const expected = `${ boldYellow }⚠️ Warning!⚠️ hublabubla${ colorReset }`;
+	const expected = chalk.yellow.bold( '⚠️ Warning!⚠️ hublabubla' );
 	const actual = OutputController.createWarning( 'hublabubla' );
 
 	t.deepEqual( actual, expected );
 } );
 
 test( 'OutputController.createError() creates an error with a stack', ( t ) => {
-	const expected = `${ boldRed }🚨Error🚨
-Error: hublabubla${ colorReset }
+	const expected = `${ chalk.red.bold( `🚨Error🚨
+Error: hublabubla` ) }
 2
 3`;
 	const error = new Error( 'hublabubla' );
@@ -102,8 +98,8 @@ Error: hublabubla${ colorReset }
 } );
 
 test( 'OutputController.createError() creates an error without a stack', ( t ) => {
-	const expected = `${ boldRed }🚨Error🚨
-Error: hublabubla${ colorReset }
+	const expected = `${ chalk.red.bold( `🚨Error🚨
+Error: hublabubla` ) }
 `;
 	const error = new Error( 'hublabubla' );
 
@@ -116,7 +112,7 @@ Error: hublabubla${ colorReset }
 
 test( 'OutputController#addWarning() uses warning#message property as a warning content', ( t ) => {
 	const expected = [
-		`${ boldYellow }⚠️ Warning!⚠️ hublabubla${ colorReset }\n`
+		chalk.yellow.bold( '⚠️ Warning!⚠️ hublabubla\n' )
 	];
 	const warning = {
 		message: 'hublabubla'
