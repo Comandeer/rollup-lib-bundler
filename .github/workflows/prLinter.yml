@@ -1,0 +1,11 @@
+name: Lint PR title
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: comandeer/lint-pr-title@v1
