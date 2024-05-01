@@ -59,6 +59,7 @@ test( 'OutputController#constructor() allows passing custom spinner object', ( t
 	invalidArguments.forEach( ( argument ) => {
 		t.throws( () => {
 			new OutputController( {
+				// @ts-expect-error
 				spinner: argument
 			} );
 		}, {

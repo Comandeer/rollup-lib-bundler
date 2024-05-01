@@ -1,11 +1,11 @@
 interface DummySpinner {
-	show: () => void;
-	hide: () => void;
+	show: () => Promise<void>;
+	hide: () => Promise<void>;
 }
 
 export default function createDummySpinner(): DummySpinner {
 	return {
-		show(): void {},
-		hide(): void {}
+		async show(): Promise<void> {},
+		async hide(): Promise<void> {}
 	};
 }

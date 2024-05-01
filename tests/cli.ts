@@ -825,7 +825,7 @@ test.serial( 'skip cleaning the root directory if it is the dist one', testCLI, 
 	after: async ( t, packagePath ) => {
 		const dummyFilePath = resolvePath( packagePath, 'dummy.js' );
 
-		return t.notThrowsAsync( access( dummyFilePath ) );
+		await t.notThrowsAsync( access( dummyFilePath ) );
 	},
 	cmdResultChecks: [
 		cmdResultChecks.isSuccesful

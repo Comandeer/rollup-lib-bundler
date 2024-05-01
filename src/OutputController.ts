@@ -25,11 +25,40 @@ interface Warning {
 	message?: string;
 }
 
+interface OutputControllerOptions {
+	readonly console?: ConsoleLike;
+	readonly spinner?: SpinnerLike;
+}
+
 export default class OutputController {
 	#console: ConsoleLike;
 	#spinner: SpinnerLike;
 	#pendingLogs: Array<Array<unknown>>;
 	#pendingWarnings: Array<Array<unknown>>;
+
+	constructor( {
+		console = new Console( {
+			stdout,
+			stderr
+		} ),
+		spinner = new Spinner( {
+			label: 'Working…',
+			stdout: stderr
+		} )
+	}: OutputControllerOptions = {} ) {
+		if ( !isValidConsole( console ) ) {
+			throw new TypeError( 'Custom console must be a valid Console object' );
+		}
+
+		if ( !isValidSpinner( spinner ) ) {
+			throw new TypeError( 'Custom spinner must be a valid spinner object' );
+		}
+
+		this.#console = console;
+		this.#spinner = spinner;
+		this.#pendingLogs = [];
+		this.#pendingWarnings = [];
+	}
 
 	static createWarning( warning: string | Warning ): string {
 		if ( typeof warning === 'object' && warning.message !== undefined ) {
@@ -49,30 +78,6 @@ export default class OutputController {
 		return `${ chalk.red.bold( `🚨Error🚨
 ${ name }: ${ message }` ) }
 ${ newStack }`;
-	}
-
-	constructor( {
-		console = new Console( {
-			stdout,
-			stderr
-		} ),
-		spinner = new Spinner( {
-			label: 'Working…',
-			stdout: stderr
-		} )
-	} = {} ) {
-		if ( !isValidConsole( console ) ) {
-			throw new TypeError( 'Custom console must be a valid Console object' );
-		}
-
-		if ( !isValidSpinner( spinner ) ) {
-			throw new TypeError( 'Custom spinner must be a valid spinner object' );
-		}
-
-		this.#console = console;
-		this.#spinner = spinner;
-		this.#pendingLogs = [];
-		this.#pendingWarnings = [];
 	}
 
 	async showSpinner(): Promise<void> {
