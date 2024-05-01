@@ -36,26 +36,6 @@ export default class OutputController {
 	#pendingLogs: Array<Array<unknown>>;
 	#pendingWarnings: Array<Array<unknown>>;
 
-	static createWarning( warning: string | Warning ): string {
-		if ( typeof warning === 'object' && warning.message !== undefined ) {
-			warning = warning.message;
-		}
-
-		return chalk.yellow.bold( `⚠️ Warning!⚠️ ${ warning as string }` );
-	}
-
-	static createError( { name, message, stack }: StackableError ): string {
-		const stackParts = stack?.split( '\n' ) ?? [];
-
-		stackParts.shift();
-
-		const newStack = stackParts.join( '\n' );
-
-		return `${ chalk.red.bold( `🚨Error🚨
-${ name }: ${ message }` ) }
-${ newStack }`;
-	}
-
 	constructor( {
 		console = new Console( {
 			stdout,
@@ -78,6 +58,26 @@ ${ newStack }`;
 		this.#spinner = spinner;
 		this.#pendingLogs = [];
 		this.#pendingWarnings = [];
+	}
+
+	static createWarning( warning: string | Warning ): string {
+		if ( typeof warning === 'object' && warning.message !== undefined ) {
+			warning = warning.message;
+		}
+
+		return chalk.yellow.bold( `⚠️ Warning!⚠️ ${ warning as string }` );
+	}
+
+	static createError( { name, message, stack }: StackableError ): string {
+		const stackParts = stack?.split( '\n' ) ?? [];
+
+		stackParts.shift();
+
+		const newStack = stackParts.join( '\n' );
+
+		return `${ chalk.red.bold( `🚨Error🚨
+${ name }: ${ message }` ) }
+${ newStack }`;
 	}
 
 	async showSpinner(): Promise<void> {
