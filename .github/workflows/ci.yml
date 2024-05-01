@@ -21,9 +21,9 @@ jobs:
     continue-on-error: ${{ matrix.os == 'windows-latest' && matrix.node == '22' }}
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
@@ -33,7 +33,7 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Upload coverage data to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
       - name: Build package
         run: npm run build
       - name: Lint package
