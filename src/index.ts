@@ -4,7 +4,7 @@ import bundler from './bundler.js';
 import OutputController from './OutputController.js';
 import packageParser from './packageParser.js';
 import getDistDirPaths from './utils/getDistDirPaths.js';
-import { RollupWarning } from 'rollup';
+import { RollupLog } from 'rollup';
 
 export default async function rlb(): Promise<void> {
 	const outputController = new OutputController();
@@ -21,7 +21,7 @@ export default async function rlb(): Promise<void> {
 		await rimraf( distPaths );
 
 		await bundler( {
-			onWarn( warning: RollupWarning ): void {
+			onWarn( warning: RollupLog ): void {
 				outputController.addWarning( warning );
 			},
 			packageInfo

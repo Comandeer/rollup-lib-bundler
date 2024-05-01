@@ -25,6 +25,11 @@ interface Warning {
 	message?: string;
 }
 
+interface OutputControllerOptions {
+	readonly console?: ConsoleLike;
+	readonly spinner?: SpinnerLike;
+}
+
 export default class OutputController {
 	#console: ConsoleLike;
 	#spinner: SpinnerLike;
@@ -60,7 +65,7 @@ ${ newStack }`;
 			label: 'Working…',
 			stdout: stderr
 		} )
-	} = {} ) {
+	}: OutputControllerOptions = {} ) {
 		if ( !isValidConsole( console ) ) {
 			throw new TypeError( 'Custom console must be a valid Console object' );
 		}
