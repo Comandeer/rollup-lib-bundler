@@ -232,8 +232,8 @@ test.serial( 'CLI preserves dynamic external imports', testCLI, {
 	]
 } );
 
-// #255
-test.serial( 'CLI transpiles bundled JS files down to code understandable by Node v16.0.0', testCLI, {
+// #255, #314
+test.serial( 'CLI transpiles bundled JS files down to code understandable by Node v20.0.0', testCLI, {
 	fixture: 'typescript/babelTranspilationTSPackage',
 	expectedFiles: [
 		'./dist/chunk.mjs',
@@ -250,7 +250,11 @@ test.serial( 'CLI transpiles bundled JS files down to code understandable by Nod
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
 		( t: ExecutionContext, path: string, code: string ): void => {
-			t.false( code.includes( 'static{' ) );
+			if ( !path.endsWith( '.mjs' ) ) {
+				return;
+			}
+
+			t.true( code.includes( 'static{' ) );
 		}
 	]
 } );
