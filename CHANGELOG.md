@@ -11,12 +11,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [#314]: support for Node 22.
 
 ### Changed
-* [#304]: **BREAKING CHANGE**: updated dependencies:
+* [#311]: **BREAKING CHANGE**: updated dependencies:
 
-	| Dependency                  | Old version | New version |
-	| --------------------------- | ----------- | ----------- |
-	| ⭐ `chalk`                   | N/A         | `^5.3.0`    |
-	| ☠️ `console-control-strings` | `^1.1.0`    | N/A         |
+	| Dependency                               | Old version | New version |
+	| ---------------------------------------- | ----------- | ----------- |
+	| `@babel/core`                            | `^7.22.0`   | `^7.24.5`   |
+	| `@babel/plugin-syntax-import-assertions` | `^7.22.5`   | `^7.24.1`   |
+	| `@babel/preset-env`                      | `^7.22.9`   | `^7.24.5`   |
+	| ⚠️ `@comandeer/cli-spinner`               | `^0.3.2`    | `^1.0.2`    |
+	| `@rollup/plugin-babel`                   | `^6.0.3`    | `^6.0.4`    |
+	| `@rollup/plugin-commonjs`                | `^25.0.2`   | `^25.0.7`   |
+	| `@rollup/plugin-json`                    | `^6.0.0`    | `^6.1.0`    |
+	| `@rollup/plugin-terser`                  | `^0.4.3`    | `^0.4.4`    |
+	| `@rollup/plugin-typescript`              | `^11.1.2`   | `^11.1.6`   |
+	| `@rollup/plugin-virtual`                 | `^3.0.1`    | `^3.0.2`    |
+	| ⭐ `chalk`                                | N/A         | `^5.3.0`    |
+	| ☠️ `console-control-strings`              | `^1.1.0`    | N/A         |
+	| ⚠️ `globby`                               | `^13.2.2`   | `^14.0.1`   |
+	| `pathe`                                  | `^1.1.1`    | `^1.1.2`    |
+	| `rimraf`                                 | `^5.0.1`    | `^5.0.5`    |
+	| ⚠️ `rollup`                               | `^3.26.2`   | `^4.17.2`   |
+	| ⚠️ `rollup-plugin-dts`                    | `^5.3.0`    | `^6.1.0`    |
+	| `tslib`                                  | `^2.6.0`    | `^2.6.2`    |
+	| `typescript`                             | `^5.1.6`    | `^5.4.5`    |
 
 	New dependencies are marked with the "⭐" emoji.
 
@@ -378,8 +395,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#279]: https://github.com/Comandeer/rollup-lib-bundler/issues/279
 [#300]: https://github.com/Comandeer/rollup-lib-bundler/issues/300
 [#303]: https://github.com/Comandeer/rollup-lib-bundler/issues/303
-[#304]: https://github.com/Comandeer/rollup-lib-bundler/issues/304
 [#306]: https://github.com/Comandeer/rollup-lib-bundler/issues/306
+[#311]: https://github.com/Comandeer/rollup-lib-bundler/issues/311
 [#314]: https://github.com/Comandeer/rollup-lib-bundler/issues/314
 
 [0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
