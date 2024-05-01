@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ---
 
 ## [0.23.0]
+### Added
+* [#314]: support for Node 22.
+
 ### Changed
 * [#304]: **BREAKING CHANGE**: updated dependencies:
 
@@ -20,6 +23,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	Dependencies with major version change are marked with the "⚠️" emoji.
 
 	Removed dependencies are marked with the "☠️" emoji.
+
+### Removed
+* [#314]: **BREAKING CHANGE**: support for Node 16 & 18.
 
 ## [0.22.1] – 2023-07-28
 ### Fixed
@@ -374,6 +380,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#303]: https://github.com/Comandeer/rollup-lib-bundler/issues/303
 [#304]: https://github.com/Comandeer/rollup-lib-bundler/issues/304
 [#306]: https://github.com/Comandeer/rollup-lib-bundler/issues/306
+[#314]: https://github.com/Comandeer/rollup-lib-bundler/issues/314
 
 [0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.0...v0.22.1
