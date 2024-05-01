@@ -10,7 +10,7 @@ const config = {
 		'!tests/**/{__fixtures__,__helpers__}/**'
 	],
 	nodeArguments: [
-		'--loader=tsx'
+		'--import=tsx'
 	]
 };
 
