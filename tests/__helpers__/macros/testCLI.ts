@@ -1,4 +1,4 @@
-import { ExecaReturnValue, execa } from 'execa';
+import { Result, execa } from 'execa';
 import { resolve as resolvePath } from 'pathe';
 import test, { ExecutionContext } from 'ava';
 import checkDistFiles, { AdditionalCodeCheckCallback, CheckStrategiesMap } from '../checkDistFiles.js';
@@ -10,7 +10,7 @@ const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'src', '__bin__', 'rl
 
 type TestCLIBeforeCallback = ( t: ExecutionContext, tempDirPath: string ) => Promise<void> | void;
 type TestCLIAfterCallback = TestCLIBeforeCallback;
-type TestCLICallback = ( t: ExecutionContext, results: ExecaReturnValue ) => Promise<void> | void;
+type TestCLICallback = ( t: ExecutionContext, results: Result ) => Promise<void> | void;
 
 interface TestCLIOptions {
 	before?: TestCLIBeforeCallback;
