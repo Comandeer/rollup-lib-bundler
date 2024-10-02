@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.24.0]
+### Changed
+* [#321]: **BREAKING CHANGE**: updated dependencies:
+
+  | Dependency                               | Old version | New version |
+  | ---------------------------------------- | ----------- | ----------- |
+  | `@babel/core`                            | `^7.24.5`   | `^7.25.7`   |
+  | `@babel/plugin-syntax-import-assertions` | `^7.24.1`   | `^7.25.7`   |
+  | `@babel/preset-env`                      | `^7.24.5`   | `^7.25.7`   |
+  | ⚠️ `@rollup/plugin-commonjs`              | `^25.0.7`   | `^28.0.0`   |
+  | ⚠️ `@rollup/plugin-typescript`            | `^11.1.6`   | `^12.1.0`   |
+  | `globby`                                 | `^14.0.1`   | `^14.0.2`   |
+  | `magic-string`                           | `^0.30.1`   | `^0.30.11`  |
+  | ⚠️ `rimraf`                               | `^5.0.5`    | `^6.0.1`    |
+  | `rollup`                                 | `^4.17.2`   | `^4.24.0`   |
+  | `rollup-plugin-dts`                      | `^6.1.0`    | `^6.1.1`    |
+  | `tslib`                                  | `^2.6.2`    | `^2.7.0`    |
+  | `typescript`                             | `^5.4.5`    | `^5.6.2`    |
+
+  Dependencies with major version change are marked with the "⚠️" emoji.
+
 ## [0.23.0] – 2024-05-01
 ### Added
 * [#314]: support for Node 22.
@@ -398,7 +419,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#306]: https://github.com/Comandeer/rollup-lib-bundler/issues/306
 [#311]: https://github.com/Comandeer/rollup-lib-bundler/issues/311
 [#314]: https://github.com/Comandeer/rollup-lib-bundler/issues/314
+[#321]: https://github.com/Comandeer/rollup-lib-bundler/issues/321
 
+
+[0.24.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.21.0...v0.22.0

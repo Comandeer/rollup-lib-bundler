@@ -104,8 +104,8 @@ Sample configuration for a TS project:
 ```json
 "exports": {
 	".": {
-		"import": "./dist/index.mjs",
-		"types": "./dist/index.d.ts"
+		"types": "./dist/index.d.ts",
+		"import": "./dist/index.mjs"
 	},
 
 	"./chunk": {
@@ -209,9 +209,16 @@ The bundler supports also multiple non-standard dist directories, e.g.:
 }
 ```
 
-> **Warning**
+> [!WARNING]
 > Non-standard dist directories are purged befored the bundling!
 > So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
+
+> [!TIP]
+> If the bundling fails with the following error:
+>
+> > RollupError: [plugin typescript] @rollup/plugin-typescript: Path of Typescript compiler option 'outDir' must be located inside the same directory as the Rollup 'file' option.
+>
+> try to unset the `outDir` option in your `tsconfig.json`.
 
 ## Configuring VSC to correctly suggest imports
 

@@ -2,7 +2,7 @@ import { access, constants, mkdir, writeFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
 import test, { ExecutionContext } from 'ava';
 import testCLI from './__helpers__/macros/testCLI.js';
-import { ExecaReturnValue } from 'execa';
+import { Result } from 'execa';
 import { AdditionalCodeCheckCallback, CheckStrategiesMap } from './__helpers__/checkDistFiles.js';
 
 type LinkedBundleMap = Map<string, Array<string>>;
@@ -12,19 +12,19 @@ const defaultExpectedFiles = [
 	'./dist/test-package.mjs.map'
 ];
 const cmdResultChecks = {
-	isSuccesful: ( t: ExecutionContext, { stdout, stderr }: ExecaReturnValue ): void => {
-		t.true( stdout.includes( 'Bundling complete!' ) );
+	isSuccesful: ( t: ExecutionContext, { stdout, stderr }: Result ): void => {
+		t.true( ( stdout as string ).includes( 'Bundling complete!' ) );
 		t.is( stderr, '' );
 	},
 
-	isFailed: ( t: ExecutionContext, { stdout, stderr }: ExecaReturnValue ): void => {
-		t.true( stdout.includes( 'Bundling failed!' ) );
-		t.true( stderr.includes( '🚨Error🚨' ) );
+	isFailed: ( t: ExecutionContext, { stdout, stderr }: Result ): void => {
+		t.true( ( stdout as string ).includes( 'Bundling failed!' ) );
+		t.true( ( stderr as string ).includes( '🚨Error🚨' ) );
 	},
 
-	noError: ( t: ExecutionContext, { stderr }: ExecaReturnValue ): void => {
-		t.false( stderr.includes( 'Bundling failed!' ) );
-		t.false( stderr.includes( '🚨Error🚨' ) );
+	noError: ( t: ExecutionContext, { stderr }: Result ): void => {
+		t.false( ( stderr as string ).includes( 'Bundling failed!' ) );
+		t.false( ( stderr as string ).includes( '🚨Error🚨' ) );
 	}
 };
 const customCheckStrategies: Record<string, CheckStrategiesMap> = {
