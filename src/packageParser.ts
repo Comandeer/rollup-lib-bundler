@@ -15,7 +15,7 @@ export type DistMetadata = Record<string, SubPathMetadata>;
 type EntryPointType = 'js' | 'ts';
 type ExportType = 'import' | 'types';
 type SemVerString = `${ number}.${ number }.${ number }`;
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+
 export interface PackageMetadata {
 	project: string;
 	name: string;
@@ -50,7 +50,7 @@ async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJs
 
 	try {
 		parsed = JSON.parse( contents );
-	} catch ( e ) {
+	} catch {
 		throw new SyntaxError( 'The package.json file is not parsable as a correct JSON.' );
 	}
 
