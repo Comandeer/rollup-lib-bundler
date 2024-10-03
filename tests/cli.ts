@@ -411,6 +411,40 @@ test.serial( 'CLI correctly bundles binaries (simple bin format, TS package)', t
 	]
 } );
 
+// #319
+test.serial( 'CLI correctly bundles binaries (simple bin format, path without dot at the beginning, JS package)', testCLI, {
+	fixture: 'bin/pathWithoutDot',
+	expectedFiles: [
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		'./dist/__bin__/test-package.mjs',
+		'./dist/__bin__/test-package.mjs.map'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	// For some reason source map check fails.
+	customCheckStrategies: customCheckStrategies.skipSourceMaps,
+	additionalCodeChecks: [
+		additionalCodeChecks.checkResolvingOfLinkedBundles( new Map( [
+			[
+				'__bin__/test-package.mjs',
+				[
+					'../index.mjs'
+				]
+			]
+		] ) ),
+
+		additionalCodeChecks.checkShebang( [
+			'__bin__/test-package.mjs'
+		] ),
+
+		additionalCodeChecks.checkBinPermissions( [
+			'__bin__/test-package.mjs'
+		] )
+	]
+} );
+
 // #116
 test.serial( 'CLI correctly bundles binaries (complex bin format, JS package)', testCLI, {
 	fixture: 'bin/complexBinJSPackage',
