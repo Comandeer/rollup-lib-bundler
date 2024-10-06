@@ -111,7 +111,7 @@ Error: hublabubla` ) }
 	t.is( actual, expected );
 } );
 
-test( 'OutputController#addWarning() uses warning#message property as a warning content', ( t ) => {
+test( 'OutputController#addWarning() uses warning#message property as a warning content', async ( t ) => {
 	const expected = [
 		chalk.yellow.bold( '⚠️ Warning!⚠️ hublabubla\n' )
 	];
@@ -124,12 +124,12 @@ test( 'OutputController#addWarning() uses warning#message property as a warning 
 	} );
 
 	outputController.addWarning( warning );
-	outputController.display();
+	await outputController.display();
 
 	t.deepEqual( stderr, expected );
 } );
 
-test( 'OutputController#addWarning() supresses external dependencies warning', ( t ) => {
+test( 'OutputController#addWarning() supresses external dependencies warning', async ( t ) => {
 	const warning = {
 		code: 'UNRESOLVED_IMPORT',
 		message: 'Some message'
@@ -140,12 +140,12 @@ test( 'OutputController#addWarning() supresses external dependencies warning', (
 	} );
 
 	outputController.addWarning( warning );
-	outputController.display();
+	await outputController.display();
 
 	t.deepEqual( stderr, [] );
 } );
 
-test( 'OutputController#display() displays all pending logs in order', testWithSinonSandbox, ( t, sandbox ) => {
+test( 'OutputController#display() displays all pending logs in order', testWithSinonSandbox, async ( t, sandbox ) => {
 	const logs = [
 		[ 5, 'hublabubla', { a: 3 } ],
 		[ 'whatever', false ],
@@ -161,7 +161,7 @@ test( 'OutputController#display() displays all pending logs in order', testWithS
 		outputController.addLog( ...log );
 	} );
 
-	outputController.display();
+	await outputController.display();
 
 	t.true( spy.calledThrice );
 
@@ -171,7 +171,7 @@ test( 'OutputController#display() displays all pending logs in order', testWithS
 } );
 
 // #208
-test( 'OutputController#display() displays all pending warnings in order', testWithSinonSandbox, ( t, sandbox ) => {
+test( 'OutputController#display() displays all pending warnings in order', testWithSinonSandbox, async ( t, sandbox ) => {
 	const warnings = [
 		'hublabubla',
 		'whatever',
@@ -187,7 +187,7 @@ test( 'OutputController#display() displays all pending warnings in order', testW
 		outputController.addWarning( warning );
 	} );
 
-	outputController.display();
+	await outputController.display();
 
 	t.true( spy.calledThrice );
 
@@ -198,7 +198,7 @@ test( 'OutputController#display() displays all pending warnings in order', testW
 	} );
 } );
 
-test( 'OutputController#display() displays warnings before logs', testWithSinonSandbox, ( t, sandbox ) => {
+test( 'OutputController#display() displays warnings before logs', testWithSinonSandbox, async ( t, sandbox ) => {
 	const logs = [
 		'log1',
 		'log2'
@@ -222,21 +222,21 @@ test( 'OutputController#display() displays warnings before logs', testWithSinonS
 		outputController.addWarning( warning );
 	} );
 
-	outputController.display();
+	await outputController.display();
 
 	t.true( warnSpy.calledTwice );
 	t.true( warnSpy.calledBefore( logSpy ) );
 	t.true( logSpy.calledTwice );
 } );
 
-test( 'OutputController#displayError() outputs error into stderr', ( t ) => {
+test( 'OutputController#displayError() outputs error into stderr', async ( t ) => {
 	const { stderr, console } = createDummyConsole();
 	const error = new Error( 'whatever' );
 	const outputController = new OutputController( {
 		console
 	} );
 
-	outputController.displayError( error );
+	await outputController.displayError( error );
 
 	// Just check if there's anything in stderr.
 	t.not( stderr.length, 0 );
@@ -262,6 +262,32 @@ test( 'OutputController#showSpinner() calls spinner\'s hide method', testWithSin
 	const spy = sandbox.spy( spinner, 'hide' );
 
 	await outputController.hideSpinner();
+
+	t.true( spy.calledOnce );
+} );
+
+// #309
+test( 'OutputController#display() calls #hideSpinner() method', testWithSinonSandbox, async ( t, sandbox ) => {
+	const { console } = createDummyConsole();
+	const outputController = new OutputController( {
+		console
+	} );
+	const spy = sandbox.spy( outputController, 'hideSpinner' );
+
+	await outputController.display();
+
+	t.true( spy.calledOnce );
+} );
+
+// #309
+test( 'OutputController#displayError() calls #hideSpinner() method', testWithSinonSandbox, async ( t, sandbox ) => {
+	const { console } = createDummyConsole();
+	const outputController = new OutputController( {
+		console
+	} );
+	const spy = sandbox.spy( outputController, 'hideSpinner' );
+
+	await outputController.displayError( new Error() );
 
 	t.true( spy.calledOnce );
 } );
