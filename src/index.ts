@@ -29,10 +29,9 @@ export default async function rlb(): Promise<void> {
 
 		outputController.addLog( chalk.green.bold( 'Bundling complete!' ) );
 	} catch ( error ) {
-		outputController.displayError( error );
+		await outputController.displayError( error );
 		outputController.addLog( chalk.red.bold( 'Bundling failed!' ) );
 	} finally {
-		await outputController.hideSpinner();
-		outputController.display();
+		await outputController.display();
 	}
 }

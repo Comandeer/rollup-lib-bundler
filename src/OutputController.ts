@@ -102,7 +102,9 @@ ${ newStack }`;
 		this.#pendingWarnings.push( [ warning ] );
 	}
 
-	display(): void {
+	async display(): Promise<void> {
+		await this.hideSpinner();
+
 		this.#pendingWarnings.forEach( ( warning ) => {
 			this.#console.warn( ...warning );
 		} );
@@ -112,7 +114,9 @@ ${ newStack }`;
 		} );
 	}
 
-	displayError( error: StackableError ): void {
+	async displayError( error: StackableError ): Promise<void> {
+		await this.hideSpinner();
+
 		const errorLog = OutputController.createError( error );
 
 		this.#console.error( errorLog );
