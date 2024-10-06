@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
   Dependencies with major version change are marked with the "⚠️" emoji.
 
+### Fixed
+* [#309]: the spinner is correctly hidden before displaying any results.
+
 ## [0.23.0] – 2024-05-01
 ### Added
 * [#314]: support for Node 22.
@@ -417,6 +420,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#300]: https://github.com/Comandeer/rollup-lib-bundler/issues/300
 [#303]: https://github.com/Comandeer/rollup-lib-bundler/issues/303
 [#306]: https://github.com/Comandeer/rollup-lib-bundler/issues/306
+[#309]: https://github.com/Comandeer/rollup-lib-bundler/issues/309
 [#311]: https://github.com/Comandeer/rollup-lib-bundler/issues/311
 [#314]: https://github.com/Comandeer/rollup-lib-bundler/issues/314
 [#321]: https://github.com/Comandeer/rollup-lib-bundler/issues/321
