@@ -97,6 +97,10 @@ As of version 0.19.0 the bundler also automatically omits bundling bundles insid
 
 Starting from v0.17.0 the bundler is able also to bundle TypeScript projects. There is no configuration needed, just replace the `.js` extension with the `.ts` one! Also ensure that there's a valid `tsconfig.json` file in the root of your project. If you want to provide different configuration for the bundler, place a `tsconfig.rlb.json` file instead.
 
+> [!WARNING]
+> The [`outDir` config option](https://www.typescriptlang.org/tsconfig/#outDir) is overridden by the bundler to point to the same directory as the one in the Rollup's configuration.
+> See [#327](https://github.com/Comandeer/rollup-lib-bundler/issues/327) for more details.
+
 The bundler also bundles `.d.ts` files but only if you specified the `exports.types` field in your `package.json`.
 
 Sample configuration for a TS project:
@@ -212,13 +216,6 @@ The bundler supports also multiple non-standard dist directories, e.g.:
 > [!WARNING]
 > Non-standard dist directories are purged befored the bundling!
 > So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
-
-> [!TIP]
-> If the bundling fails with the following error:
->
-> > RollupError: [plugin typescript] @rollup/plugin-typescript: Path of Typescript compiler option 'outDir' must be located inside the same directory as the Rollup 'file' option.
->
-> try to unset the `outDir` option in your `tsconfig.json`.
 
 ## Configuring VSC to correctly suggest imports
 

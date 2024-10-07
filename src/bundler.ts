@@ -15,6 +15,7 @@ import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 import { PackageMetadata, SubPathMetadata } from './packageParser.js';
 import { OnWarnCallback } from './OutputController.js';
+import { dirname } from 'pathe';
 
 interface BundlerOptions {
 	onWarn?: OnWarnCallback;
@@ -125,11 +126,10 @@ function getRollupInputConfig(
 	// and after the custom resolver, so it's at index 3.
 	// Yep, it's not too elegant…
 	if ( output.type === 'ts' ) {
+		const pluginConfig = getTSPluginConfig( output );
+
 		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
-		plugins.splice( 3, 0, typescript( {
-			tsconfig: output.tsConfig ?? false,
-			declaration: false
-		} ) );
+		plugins.splice( 3, 0, typescript( pluginConfig ) );
 	}
 
 	return {
@@ -139,7 +139,7 @@ function getRollupInputConfig(
 	};
 }
 
-function getRollupOutputConfig( outputPath, banner ): OutputOptions {
+function getRollupOutputConfig( outputPath: string, banner: string ): OutputOptions {
 	return {
 		banner,
 		sourcemap: true,
@@ -147,4 +147,28 @@ function getRollupOutputConfig( outputPath, banner ): OutputOptions {
 		file: outputPath,
 		exports: 'auto'
 	};
+}
+
+interface TSPluginConfig {
+	tsconfig: string | boolean;
+	declaration: false;
+	compilerOptions?: {
+		outDir: string;
+	};
+}
+
+function getTSPluginConfig( { esm, tsConfig }: SubPathMetadata ): TSPluginConfig {
+	const config: TSPluginConfig = {
+		tsconfig: tsConfig ?? false,
+		declaration: false
+	};
+
+	// Outdir override fails for projects without the tsconfig.json file.
+	if ( tsConfig !== undefined ) {
+		config.compilerOptions = {
+			outDir: dirname( esm )
+		};
+	}
+
+	return config;
 }
