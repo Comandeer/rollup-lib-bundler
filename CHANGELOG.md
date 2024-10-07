@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   | `typescript`                             | `^5.4.5`    | `^5.6.2`    |
 
   Dependencies with major version change are marked with the "⚠️" emoji.
+* [#327]: **BREAKING CHANGE**: the value of the `outDir` from the `tsconfig.json` file is overridden to point to the same directory as the one in Rollup's configuration.
 
 ### Fixed
 * [#309]: the spinner is correctly hidden before displaying any results.
@@ -424,7 +425,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#311]: https://github.com/Comandeer/rollup-lib-bundler/issues/311
 [#314]: https://github.com/Comandeer/rollup-lib-bundler/issues/314
 [#321]: https://github.com/Comandeer/rollup-lib-bundler/issues/321
-
+[#327]: https://github.com/Comandeer/rollup-lib-bundler/issues/327
 
 [0.24.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
