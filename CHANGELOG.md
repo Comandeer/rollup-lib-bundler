@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.24.0]
+## [0.24.0] – 2024-10-08
 ### Changed
 * [#321]: **BREAKING CHANGE**: updated dependencies:
 
