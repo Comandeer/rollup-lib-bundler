@@ -567,6 +567,25 @@ test.serial( 'CLI correctly bundles TS package with non-standard dist directory'
 	customCheckStrategies: customCheckStrategies.skipSourceMaps
 } );
 
+// #327
+test.serial( 'CLI correctly bundles TS package with non-standard \'outDir\' TSConfig option', testCLI, {
+	fixture: 'typescript/customOutDir',
+	expectedFiles: [
+		'./dist/chunk.mjs',
+		'./dist/chunk.mjs.map',
+		'./dist/index.d.ts',
+		'./dist/index.mjs',
+		'./dist/index.mjs.map',
+		// Thanks to incremental TSConfig option, we can detect if the outDir was overridden
+		// with the correct value
+		'./dist/tsconfig.tsbuildinfo'
+	],
+	cmdResultChecks: [
+		cmdResultChecks.noError
+	],
+	customCheckStrategies: customCheckStrategies.skipSourceMaps
+} );
+
 // #265
 test.serial( 'CLI correctly bundles binaries (simple bin format, JS package, non-standard dist directory)', testCLI, {
 	fixture: 'distDirs/nonStandardDistSimpleBinJSPackage',
