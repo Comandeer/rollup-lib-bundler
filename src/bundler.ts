@@ -15,6 +15,7 @@ import generateBanner from './generateBanner.js';
 import { node as nodeTarget } from './targets.js';
 import { PackageMetadata, SubPathMetadata } from './packageParser.js';
 import { OnWarnCallback } from './OutputController.js';
+import { dirname } from 'pathe';
 
 interface BundlerOptions {
 	onWarn?: OnWarnCallback;
@@ -128,7 +129,12 @@ function getRollupInputConfig(
 		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		plugins.splice( 3, 0, typescript( {
 			tsconfig: output.tsConfig ?? false,
-			declaration: false
+			declaration: false,
+			compilerOptions: {
+				// It's a super ugly hack for bypassing @rollup/plugin-typescript
+				// dist dir validation (#327).
+				outDir: dirname( output.esm )
+			}
 		} ) );
 	}
 
