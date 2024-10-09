@@ -4,12 +4,6 @@ import test from 'ava';
 import getDirName from '../src/utils/getDirName.js';
 import packageParser, { SubPathMetadata } from '../src/packageParser.js';
 
-type MockedFSEntry = Record<string, string | Buffer>;
-
-interface CreateMockedPackageOptions {
-	stringify?: boolean;
-}
-
 const __dirname = getDirName( import.meta.url );
 const fixtures = {
 	invalid: '',
@@ -250,6 +244,15 @@ const fixtures = {
 		bin: {
 			whatever: './hublabubla/__bin__/whatever.mjs'
 		}
+	},
+
+	// #275
+	stringExports: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: './dist/test-package.mjs'
 	}
 };
 const srcFixtures = {
@@ -360,7 +363,8 @@ const srcFixtures = {
 const INVALID_ARGUMENT_TYPE_ERROR = 'Provide a path to a package directory.';
 const MISSING_PACKAGE_JSON_ERROR = 'The package.json does not exist in the provided location.';
 const INVALID_PACKAGE_JSON_ERROR = 'The package.json file is not parsable as a correct JSON.';
-const INVALID_ESM_METADATA_ERROR = 'Package metadata must contain one of "exports[ \'.\' ].import" or "exports.import" properties or all of them.';
+const INVALID_ESM_METADATA_ERROR = 'Package metadata must contain at least one of "exports[ \'.\' ].import" and "exports.import" properties ' +
+	'or the "exports" property must contain the path.';
 
 test.before( () => {
 	mockFS( {
@@ -399,7 +403,8 @@ test.before( () => {
 		...createMockedPackage( 'nonStandardDistSimpleBin', 'simpleBinJS' ),
 		...createMockedPackage( 'nonStandardDistSimpleBin', 'simpleBinTS' ),
 		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinJS' ),
-		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinTS' )
+		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinTS' ),
+		...createMockedPackage( 'stringExports', 'js' )
 	} );
 } );
 
@@ -1024,13 +1029,39 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 	t.deepEqual( actualDist, expectedDist );
 } );
 
+// #275
+test( 'packageParser() correctly parses package metadata when exports is a string', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'stringExports', 'js' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.js' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'js',
+			isBin: false
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
 async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ): Promise<SubPathMetadata> {
 	const parsedMetadata = await packageParser( mockedPackagePath );
 
 	return parsedMetadata.dist[ srcFile ]!;
 }
 
-function createMockedPackage( fixtureName: string, srcFixtureName: string = 'js', {
+interface MockedFSEntry {
+	[x: string]: string | MockedFSEntry;
+}
+
+interface CreateMockedPackageOptions {
+	stringify?: boolean;
+}
+
+type FixtureKey = keyof typeof fixtures;
+type SrcFixtureKey = keyof typeof srcFixtures;
+
+function createMockedPackage( fixtureName: FixtureKey, srcFixtureName: SrcFixtureKey = 'js', {
 	stringify = true
 }: CreateMockedPackageOptions = {} ): MockedFSEntry {
 	const mockedPackagePath = getMockedPackagePath( fixtureName, srcFixtureName );
@@ -1045,6 +1076,6 @@ function createMockedPackage( fixtureName: string, srcFixtureName: string = 'js'
 	};
 }
 
-function getMockedPackagePath( fixtureName: string, srcFixtureName: string ): string {
+function getMockedPackagePath( fixtureName: FixtureKey, srcFixtureName: SrcFixtureKey ): string {
 	return `/${ fixtureName }-${ srcFixtureName }`;
 }
