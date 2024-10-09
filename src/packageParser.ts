@@ -67,12 +67,13 @@ function lintObject( obj: PackageJson ): void {
 	}
 
 	// @ts-expect-error Seems like PackageJson type does not contain all exports variants.
-	const isESMEntryPointPresent = typeof obj.exports?.import !== 'undefined' ||
+	const isESMEntryPointPresent = typeof obj.exports === 'string' || typeof obj.exports?.import !== 'undefined' ||
 		typeof obj.exports?.[ '.' ]?.import !== 'undefined';
 
 	if ( !isESMEntryPointPresent ) {
 		throw new ReferenceError(
-			'Package metadata must contain one of "exports[ \'.\' ].import" or "exports.import" properties or all of them.'
+			'Package metadata must contain at least one of "exports[ \'.\' ].import" and "exports.import" properties ' +
+			'or the "exports" property must contain the path.'
 		);
 	}
 
@@ -120,6 +121,13 @@ async function prepareDistMetadata( packageDir: string, metadata: PackageJson ):
 
 function getSubPaths( metadata: PackageJson ): Array<string> {
 	const exports = metadata.exports!;
+
+	// `exports` as a string is equal to having a one subpath of `.`.
+	if ( typeof exports === 'string' ) {
+		return [
+			'.'
+		];
+	}
 
 	const subPaths = Object.keys( exports ).filter( ( subpath ) => {
 		return subpath.startsWith( '.' );
@@ -252,6 +260,10 @@ function getTypesTarget( metadata: PackageJson, subPath: string ): string {
 
 function getExportsTarget( metadata: PackageJson, subPath: string, type: ExportType ): string | undefined {
 	const exports = metadata.exports!;
+
+	if ( typeof exports === 'string' && subPath === '.' ) {
+		return exports;
+	}
 
 	if ( exports[ subPath ] !== undefined ) {
 		return exports[ subPath ][ type ];

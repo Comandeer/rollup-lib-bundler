@@ -99,6 +99,12 @@ test.serial( 'CLI bundles package based on exports fields', testCLI, {
 	expectedFiles: defaultExpectedFiles
 } );
 
+// #275
+test.serial( 'CLI bundles package based on exports field when it is a string', testCLI, {
+	fixture: 'generic/stringExportsPackage',
+	expectedFiles: defaultExpectedFiles
+} );
+
 // #155
 test.serial( 'CLI bundles package that imports JSON content', testCLI, {
 	fixture: 'json/jsonPackage',
