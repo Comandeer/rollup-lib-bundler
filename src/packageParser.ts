@@ -122,6 +122,13 @@ async function prepareDistMetadata( packageDir: string, metadata: PackageJson ):
 function getSubPaths( metadata: PackageJson ): Array<string> {
 	const exports = metadata.exports!;
 
+	// `exports` as a string is equal to having a one subpath of `.`.
+	if ( typeof exports === 'string' ) {
+		return [
+			'.'
+		];
+	}
+
 	const subPaths = Object.keys( exports ).filter( ( subpath ) => {
 		return subpath.startsWith( '.' );
 	} );
@@ -253,6 +260,10 @@ function getTypesTarget( metadata: PackageJson, subPath: string ): string {
 
 function getExportsTarget( metadata: PackageJson, subPath: string, type: ExportType ): string | undefined {
 	const exports = metadata.exports!;
+
+	if ( typeof exports === 'string' && subPath === '.' ) {
+		return exports;
+	}
 
 	if ( exports[ subPath ] !== undefined ) {
 		return exports[ subPath ][ type ];
