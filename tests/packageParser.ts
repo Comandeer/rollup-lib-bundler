@@ -253,6 +253,18 @@ const fixtures = {
 		author: 'Comandeer',
 		license: 'MIT',
 		exports: './dist/test-package.mjs'
+	},
+
+	// #275
+	stringSubPathExports: {
+		name: 'test-package',
+		version: '9.0.1',
+		author: 'Comandeer',
+		license: 'MIT',
+		exports: {
+			'.': './dist/test-package.mjs',
+			'./chunk': './dist/subpath.js'
+		}
 	}
 };
 const srcFixtures = {
@@ -404,7 +416,8 @@ test.before( () => {
 		...createMockedPackage( 'nonStandardDistSimpleBin', 'simpleBinTS' ),
 		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinJS' ),
 		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinTS' ),
-		...createMockedPackage( 'stringExports', 'js' )
+		...createMockedPackage( 'stringExports', 'js' ),
+		...createMockedPackage( 'stringSubPathExports', 'subPath' )
 	} );
 } );
 
@@ -1036,6 +1049,26 @@ test( 'packageParser() correctly parses package metadata when exports is a strin
 	const expectedDist = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
+			type: 'js',
+			isBin: false
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #275
+test( 'packageParser() correctly parses package metadata when subpath exports are strings', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'stringSubPathExports', 'subPath' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist = {
+		[ 'src/index.js' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'js',
+			isBin: false
+		},
+		[ 'src/chunk.mjs' ]: {
+			esm: './dist/subpath.js',
 			type: 'js',
 			isBin: false
 		}

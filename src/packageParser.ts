@@ -66,9 +66,9 @@ function lintObject( obj: PackageJson ): void {
 		throw new ReferenceError( 'Package metadata must contain "version" property.' );
 	}
 
-	// @ts-expect-error Seems like PackageJson type does not contain all exports variants.
-	const isESMEntryPointPresent = typeof obj.exports === 'string' || typeof obj.exports?.import !== 'undefined' ||
-		typeof obj.exports?.[ '.' ]?.import !== 'undefined';
+	const isESMEntryPointPresent = typeof obj.exports === 'string' || typeof obj.exports?.[ '.' ] === 'string' ||
+		// @ts-expect-error Seems like PackageJson type does not contain all exports variants.
+		typeof obj.exports?.import !== 'undefined' || typeof obj.exports?.[ '.' ]?.import !== 'undefined';
 
 	if ( !isESMEntryPointPresent ) {
 		throw new ReferenceError(
@@ -266,7 +266,7 @@ function getExportsTarget( metadata: PackageJson, subPath: string, type: ExportT
 	}
 
 	if ( exports[ subPath ] !== undefined ) {
-		return exports[ subPath ][ type ];
+		return typeof exports[ subPath ] === 'string' ? exports[ subPath ] : exports[ subPath ][ type ];
 	}
 
 	if ( exports[ subPath ] === undefined && subPath === '.' ) {
