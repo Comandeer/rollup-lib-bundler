@@ -2,7 +2,7 @@ import mockFS from 'mock-fs';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import getDirName from '../src/utils/getDirName.js';
-import packageParser, { SubPathMetadata } from '../src/packageParser.js';
+import packageParser, { DistMetadata, PackageMetadata, SubPathMetadata } from '../src/packageParser.js';
 
 const __dirname = getDirName( import.meta.url );
 const fixtures = {
@@ -314,6 +314,13 @@ const srcFixtures = {
 			'chunk.mjs': ''
 		}
 	},
+	tsSubPath: {
+		src: {
+			'index.ts': '',
+			'chunk.ts': ''
+		},
+		'tsconfig.json': ''
+	},
 	nestedSubPath: {
 		src: {
 			'index.js': '',
@@ -417,7 +424,9 @@ test.before( () => {
 		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinJS' ),
 		...createMockedPackage( 'nonStandardDistComplexBin', 'complexBinTS' ),
 		...createMockedPackage( 'stringExports', 'js' ),
-		...createMockedPackage( 'stringSubPathExports', 'subPath' )
+		...createMockedPackage( 'stringExports', 'ts' ),
+		...createMockedPackage( 'stringSubPathExports', 'subPath' ),
+		...createMockedPackage( 'stringSubPathExports', 'tsSubPath' )
 	} );
 } );
 
@@ -524,7 +533,7 @@ test( 'packageParser() linter requires the license property', async ( t ) => {
 test( 'packageParser() returns simplified metadata', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'js' );
 	const actualMetadata = await packageParser( mockedPackagePath );
-	const expectedMetadata = {
+	const expectedMetadata: PackageMetadata = {
 		project: mockedPackagePath,
 		name: 'test-package',
 		author: 'Comandeer',
@@ -546,7 +555,7 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 test( 'packageParser() returns simplified metadata for package with subpath "exports" field', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validSubPathExports', 'subPath' );
 	const actualMetadata = await packageParser( mockedPackagePath );
-	const expectedMetadata = {
+	const expectedMetadata: PackageMetadata = {
 		project: mockedPackagePath,
 		name: 'test-package',
 		author: 'Comandeer',
@@ -573,7 +582,7 @@ test( 'packageParser() returns simplified metadata for package with subpath "exp
 test( 'packageParser() returns simplified metadata for package with CJS "exports" field', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'withCJSExports', 'js' );
 	const actualMetadata = await packageParser( mockedPackagePath );
-	const expectedMetadata = {
+	const expectedMetadata: PackageMetadata = {
 		project: mockedPackagePath,
 		name: 'test-package',
 		author: 'Comandeer',
@@ -595,7 +604,7 @@ test( 'packageParser() returns simplified metadata for package with CJS "exports
 test( 'packageParser() returns simplified metadata for package with CJS subpath "exports" field', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'withCJSSubPathExports', 'subPath' );
 	const actualMetadata = await packageParser( mockedPackagePath );
-	const expectedMetadata = {
+	const expectedMetadata: PackageMetadata = {
 		project: mockedPackagePath,
 		name: 'test-package',
 		author: 'Comandeer',
@@ -641,7 +650,7 @@ test( 'packageParser() parses author object into string', async ( t ) => {
 test( 'packageParser() correctly detects JS type with single .js entry point', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'js' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -656,7 +665,7 @@ test( 'packageParser() correctly detects JS type with single .js entry point', a
 test( 'packageParser() correctly detects JS type with single .mjs entry point', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'mjs' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.mjs' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -671,7 +680,7 @@ test( 'packageParser() correctly detects JS type with single .mjs entry point', 
 test( 'packageParser() correctly detects JS type with .mjs and .js entry point', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'mixedJS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.mjs' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -686,7 +695,7 @@ test( 'packageParser() correctly detects JS type with .mjs and .js entry point',
 test( 'packageParser() correctly detects JS type with single .js entry point and single .mjs subexport', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validSubPathExports', 'subPath' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/es6.mjs',
 			type: 'js',
@@ -707,7 +716,7 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 test( 'packageParser() correctly detects JS type with single .js entry point and single .mjs nested subexport', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nestedSubPathExports', 'nestedSubPath' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/index.mjs',
 			type: 'js',
@@ -728,7 +737,7 @@ test( 'packageParser() correctly detects JS type with single .js entry point and
 test( 'packageParser() correctly detects TS type with single .ts entry point', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'ts' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			tsConfig: 'tsconfig.json',
@@ -745,7 +754,7 @@ test( 'packageParser() correctly detects TS type with single .ts entry point', a
 test( 'packageParser() correctly detects TS type with single .mts entry point', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'mts' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.mts' ]: {
 			esm: './dist/test-package.mjs',
 			tsConfig: 'tsconfig.json',
@@ -762,7 +771,7 @@ test( 'packageParser() correctly detects TS type with single .mts entry point', 
 test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'mixedProject', 'mixedProject' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			types: './dist/test-package.d.ts',
@@ -784,7 +793,7 @@ test( 'packageParser() correctly detects mixed JS/TS projects', async ( t ) => {
 test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in TS projects', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'tsConfig' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			tsConfig: 'tsconfig.rlb.json',
@@ -800,7 +809,7 @@ test( 'packageParser() prefers ts.config.rlb.json file over tsconfig.json one in
 test( 'packageParser() skips tsConfig metadata if there is no tsconfig?(.rlb).json file in TS projects', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'tsProject', 'noTSConfig' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			types: './dist/test-package.d.ts',
@@ -831,7 +840,7 @@ test( 'packageParser() skips types metadata if there is no exports.types field i
 test( 'packageParser() correctly detects bin source file with the .js extension (simple bin format)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'simpleBin', 'simpleBinJS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -852,7 +861,7 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 test( 'packageParser() correctly detects bin source file with the .ts extension (simple bin format)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'simpleBin', 'simpleBinTS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'ts',
@@ -875,7 +884,7 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 test( 'packageParser() correctly detects bin source file with the .js extension (complex bin format)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'complexBin', 'complexBinJS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -896,7 +905,7 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 test( 'packageParser() correctly detects bin source file with the .ts extension (complex bin format)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'complexBin', 'complexBinTS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'ts',
@@ -919,7 +928,7 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 test( 'packageParser() correctly parses JS project with non-standard dist directory', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nonStandardDist', 'js' );
 	const actualMetadata = await packageParser( mockedPackagePath );
-	const expectedMetadata = {
+	const expectedMetadata: PackageMetadata = {
 		project: mockedPackagePath,
 		name: 'test-package',
 		author: 'Comandeer',
@@ -941,7 +950,7 @@ test( 'packageParser() correctly parses JS project with non-standard dist direct
 test( 'packageParser() correctly parses TS project with non-standard dist directory', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistTS', 'ts' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './hublabubla/test-package.mjs',
 			tsConfig: 'tsconfig.json',
@@ -958,7 +967,7 @@ test( 'packageParser() correctly parses TS project with non-standard dist direct
 test( 'packageParser() correctly detects bin source file with the .js extension (simple bin format, non-standard dist directory)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistSimpleBin', 'simpleBinJS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './hublabubla/test-package.mjs',
 			type: 'js',
@@ -979,7 +988,7 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 test( 'packageParser() correctly detects bin source file with the .ts extension (simple bin format, non-standard dist directory)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistSimpleBin', 'simpleBinTS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './hublabubla/test-package.mjs',
 			type: 'ts',
@@ -1002,7 +1011,7 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 test( 'packageParser() correctly detects bin source file with the .js extension (complex bin format, non-standard dist directory)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistComplexBin', 'complexBinJS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './hublabubla/test-package.mjs',
 			type: 'js',
@@ -1023,7 +1032,7 @@ test( 'packageParser() correctly detects bin source file with the .js extension 
 test( 'packageParser() correctly detects bin source file with the .ts extension (complex bin format, non-standard dist directory)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'nonStandardDistComplexBin', 'complexBinTS' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.ts' ]: {
 			esm: './hublabubla/test-package.mjs',
 			type: 'ts',
@@ -1043,10 +1052,10 @@ test( 'packageParser() correctly detects bin source file with the .ts extension 
 } );
 
 // #275
-test( 'packageParser() correctly parses package metadata when exports is a string', async ( t ) => {
+test( 'packageParser() correctly parses package metadata when exports is a string (JS)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'stringExports', 'js' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -1058,10 +1067,26 @@ test( 'packageParser() correctly parses package metadata when exports is a strin
 } );
 
 // #275
-test( 'packageParser() correctly parses package metadata when subpath exports are strings', async ( t ) => {
+test( 'packageParser() correctly parses package metadata when exports is a string (TS)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'stringExports', 'ts' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist: DistMetadata = {
+		[ 'src/index.ts' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'ts',
+			isBin: false,
+			tsConfig: 'tsconfig.json'
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #275
+test( 'packageParser() correctly parses package metadata when subpath exports are strings (JS)', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'stringSubPathExports', 'subPath' );
 	const { dist: actualDist } = await packageParser( mockedPackagePath );
-	const expectedDist = {
+	const expectedDist: DistMetadata = {
 		[ 'src/index.js' ]: {
 			esm: './dist/test-package.mjs',
 			type: 'js',
@@ -1071,6 +1096,28 @@ test( 'packageParser() correctly parses package metadata when subpath exports ar
 			esm: './dist/subpath.js',
 			type: 'js',
 			isBin: false
+		}
+	};
+
+	t.deepEqual( actualDist, expectedDist );
+} );
+
+// #275
+test( 'packageParser() correctly parses package metadata when subpath exports are strings (TS)', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'stringSubPathExports', 'tsSubPath' );
+	const { dist: actualDist } = await packageParser( mockedPackagePath );
+	const expectedDist: DistMetadata = {
+		[ 'src/index.ts' ]: {
+			esm: './dist/test-package.mjs',
+			type: 'ts',
+			isBin: false,
+			tsConfig: 'tsconfig.json'
+		},
+		[ 'src/chunk.ts' ]: {
+			esm: './dist/subpath.js',
+			type: 'ts',
+			isBin: false,
+			tsConfig: 'tsconfig.json'
 		}
 	};
 

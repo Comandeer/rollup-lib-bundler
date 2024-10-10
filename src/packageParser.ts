@@ -262,11 +262,15 @@ function getExportsTarget( metadata: PackageJson, subPath: string, type: ExportT
 	const exports = metadata.exports!;
 
 	if ( typeof exports === 'string' && subPath === '.' ) {
-		return exports;
+		return type === 'import' ? exports : undefined;
+	}
+
+	if ( typeof exports[ subPath ] === 'string' ) {
+		return type === 'import' ? exports[ subPath ] : undefined;
 	}
 
 	if ( exports[ subPath ] !== undefined ) {
-		return typeof exports[ subPath ] === 'string' ? exports[ subPath ] : exports[ subPath ][ type ];
+		return exports[ subPath ][ type ];
 	}
 
 	if ( exports[ subPath ] === undefined && subPath === '.' ) {
