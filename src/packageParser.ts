@@ -1,7 +1,6 @@
 import { access, readFile } from 'node:fs/promises';
 import { globby } from 'globby';
 import { extname, join as joinPath, normalize as normalizePath } from 'pathe';
-import { PackageJson } from 'type-fest';
 
 export interface SubPathMetadata {
 	esm: string;
@@ -25,6 +24,24 @@ export interface PackageMetadata {
 	dist: DistMetadata;
 }
 
+interface PackageJSONExports {
+	readonly import?: string;
+	readonly types?: string;
+}
+
+interface PackageJSONAuthor {
+	name: string;
+}
+
+interface PackageJSON {
+	readonly name?: string;
+	readonly version?: string;
+	readonly author?: string | PackageJSONAuthor;
+	readonly license?: string;
+	readonly exports?: string | PackageJSONExports;
+	readonly bin?: string | Record<string, string>;
+}
+
 export default async function packageParser( packageDir: string ): Promise<PackageMetadata> {
 	if ( typeof packageDir !== 'string' ) {
 		throw new TypeError( 'Provide a path to a package directory.' );
@@ -36,7 +53,7 @@ export default async function packageParser( packageDir: string ): Promise<Packa
 	return prepareMetadata( packageDir, metadata );
 }
 
-async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJson> {
+async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJSON> {
 	const path = joinPath( dirPath, 'package.json' );
 
 	try {
@@ -46,7 +63,7 @@ async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJs
 	}
 
 	const contents = await readFile( path, 'utf8' );
-	let parsed;
+	let parsed: PackageJSON;
 
 	try {
 		parsed = JSON.parse( contents );
@@ -57,7 +74,7 @@ async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJs
 	return parsed;
 }
 
-function lintObject( obj: PackageJson ): void {
+function lintObject( obj: PackageJSON ): void {
 	if ( typeof obj.name === 'undefined' ) {
 		throw new ReferenceError( 'Package metadata must contain "name" property.' );
 	}
@@ -67,7 +84,6 @@ function lintObject( obj: PackageJson ): void {
 	}
 
 	const isESMEntryPointPresent = typeof obj.exports === 'string' || typeof obj.exports?.[ '.' ] === 'string' ||
-		// @ts-expect-error Seems like PackageJson type does not contain all exports variants.
 		typeof obj.exports?.import !== 'undefined' || typeof obj.exports?.[ '.' ]?.import !== 'undefined';
 
 	if ( !isESMEntryPointPresent ) {
@@ -86,7 +102,7 @@ function lintObject( obj: PackageJson ): void {
 	}
 }
 
-async function prepareMetadata( packageDir, metadata: PackageJson ): Promise<PackageMetadata> {
+async function prepareMetadata( packageDir, metadata: PackageJSON ): Promise<PackageMetadata> {
 	const project = normalizePath( packageDir );
 
 	return {
@@ -99,7 +115,7 @@ async function prepareMetadata( packageDir, metadata: PackageJson ): Promise<Pac
 	};
 }
 
-function prepareAuthorMetadata( author: PackageJson['author'] ): string {
+function prepareAuthorMetadata( author: PackageJSON['author'] ): string {
 	if ( typeof author !== 'object' ) {
 		return String( author );
 	}
@@ -107,7 +123,7 @@ function prepareAuthorMetadata( author: PackageJson['author'] ): string {
 	return author.name;
 }
 
-async function prepareDistMetadata( packageDir: string, metadata: PackageJson ): Promise<DistMetadata> {
+async function prepareDistMetadata( packageDir: string, metadata: PackageJSON ): Promise<DistMetadata> {
 	const subpaths = getSubPaths( metadata );
 	const subPathsMetadata = await Promise.all( subpaths.map( ( subPath ) => {
 		return prepareSubPathMetadata( packageDir, metadata, subPath );
@@ -119,7 +135,7 @@ async function prepareDistMetadata( packageDir: string, metadata: PackageJson ):
 	return distMetadata;
 }
 
-function getSubPaths( metadata: PackageJson ): Array<string> {
+function getSubPaths( metadata: PackageJSON ): Array<string> {
 	const exports = metadata.exports!;
 
 	// `exports` as a string is equal to having a one subpath of `.`.
@@ -144,7 +160,7 @@ function getSubPaths( metadata: PackageJson ): Array<string> {
 	return subPaths;
 }
 
-function getBinSubPaths( { bin, name }: PackageJson ): Array<string> {
+function getBinSubPaths( { bin, name }: PackageJSON ): Array<string> {
 	if ( typeof bin === 'undefined' ) {
 		return [];
 	}
@@ -235,13 +251,13 @@ function isBinSubPath( subPath: string ): boolean {
 	return subPath.startsWith( './__bin__' );
 }
 
-function getESMTarget( metadata: PackageJson, subPath: string ): string {
+function getESMTarget( metadata: PackageJSON, subPath: string ): string {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'import' )!;
 
 	return exportsTarget;
 }
 
-function getBinTarget( { bin, name }: PackageJson, subPath: string ): string {
+function getBinTarget( { bin, name }: PackageJSON, subPath: string ): string {
 	const subPathPrefixRegex = /^\.\/__bin__\//g;
 	const binName = subPath.replace( subPathPrefixRegex, '' );
 
@@ -252,13 +268,13 @@ function getBinTarget( { bin, name }: PackageJson, subPath: string ): string {
 	return bin![ binName ];
 }
 
-function getTypesTarget( metadata: PackageJson, subPath: string ): string {
+function getTypesTarget( metadata: PackageJSON, subPath: string ): string {
 	const exportsTarget = getExportsTarget( metadata, subPath, 'types' )!;
 
 	return exportsTarget;
 }
 
-function getExportsTarget( metadata: PackageJson, subPath: string, type: ExportType ): string | undefined {
+function getExportsTarget( metadata: PackageJSON, subPath: string, type: ExportType ): string | undefined {
 	const exports = metadata.exports!;
 
 	if ( typeof exports === 'string' && subPath === '.' ) {
