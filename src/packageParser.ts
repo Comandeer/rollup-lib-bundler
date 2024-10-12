@@ -2,7 +2,7 @@ import { globby } from 'globby';
 import { extname, join as joinPath, normalize as normalizePath } from 'pathe';
 import loadAndParsePackageJSONFile, {
 	PackageJSON,
-	SemVerString
+	PackageJSONVersion
 } from './packageParser/loadAndParsePackageJSONFile.js';
 
 export interface SubPathMetadata {
@@ -20,7 +20,7 @@ type ExportType = 'import' | 'types';
 export interface PackageMetadata {
 	project: string;
 	name: string;
-	version: SemVerString;
+	version: PackageJSONVersion;
 	author: string;
 	license: string;
 	dist: DistMetadata;

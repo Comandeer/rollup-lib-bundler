@@ -1,24 +1,33 @@
 import { access, readFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
 
-export type SemVerString = `${ number}.${ number }.${ number }`;
+export type PackageJSONVersion = `${ number}.${ number }.${ number }`;
 
-interface PackageJSONExports {
+type PackageJSONSubPathExport = '.' | `.${ string }`;
+
+interface PackageJSONConditionalExport {
 	readonly import?: string;
 	readonly types?: string;
 }
 
-interface PackageJSONAuthor {
+type PackageJSONExports = string | (
+	Readonly<Record<PackageJSONSubPathExport, string | PackageJSONConditionalExport>>
+	& PackageJSONConditionalExport
+);
+
+type PackageJSONAuthor = string | {
 	name: string;
-}
+};
+
+type PackageJSONBin = string | Record<string, string>;
 
 export interface PackageJSON {
 	readonly name: string;
-	readonly version: SemVerString;
-	readonly author: string | PackageJSONAuthor;
+	readonly version: PackageJSONVersion;
+	readonly author: PackageJSONAuthor;
 	readonly license: string;
-	readonly exports: string | PackageJSONExports;
-	readonly bin?: string | Record<string, string>;
+	readonly exports: PackageJSONExports;
+	readonly bin?: PackageJSONBin;
 }
 
 type UnvalidatedPackageJSON = Partial<PackageJSON>;
