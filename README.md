@@ -31,7 +31,10 @@ It gets `package.json` from the current working directory, parses it and get nee
 * `name`, `author`, `version` and `license` to create beautiful banner comment,
 * `exports.import` for saving ESM bundle.
 
-Then the bundling happens. The default entry point for Rollup is `src/index.js`. Please note that **dist directory is purged before bundling**! So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
+Then the bundling happens. The default entry point for Rollup is `src/index.js`.
+
+> [!WARNING]
+> Please note that **dist directory is purged before bundling**! So if anything should be there alongside the bundle, it should be added there _after_ the bundling.
 
 ### Assumed file structure
 
@@ -65,7 +68,7 @@ Bundler search for source files with the following extensions in the following o
 * `.cts`,
 * `.cjs`.
 
-### Multiple bundles
+## Multiple bundles
 
 By default, `src/index.js` is treated as the only entry point. However, using [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) you can create several bundled chunks/files. Example:
 
@@ -87,11 +90,53 @@ In this case two source files will be bundled:
 * `src/chunk.js`:
 	* ESM output: `dist/chunk.mjs`.
 
-Although Node.js supports several different syntaxes for subpath exports, this bundler supports only the form presented on the example above (so each subpath an `import` property for ESM bundle).
-
 Each subpath is translated to appropriate file in `src` directory. Basically, `./` at the beginning is translated to `src/` and the name of the subpath is translated to `<subpath>.<extension>` (e.g. `./chunk` → `src/chunk.js`). The only exception is the `.` subpath, which is translated to `src/index.js`.
 
 As of version 0.19.0 the bundler also automatically omits bundling bundles inside other bundles. If there were an import of the `src/chunk.js` file inside the `src/index.js` file in the above structure, then the `dist/package.(c|m)js` file would contain an import from `dist/chunk.(c|m)js` file instead of the content of the other bundle.
+
+### Supported `exports` syntax
+
+The bundler supports only the subset of the `exports` syntax allowed by the Node.js:
+
+* **`exports` as a string**:
+
+	```json
+	{
+		"exports": "./dist/package.mjs"
+	}
+	```
+* **subpaths as strings**:
+
+	```json
+	{
+		"exports": {
+			".": "./dist/package.mjs",
+			"./subpath": "./dist/chunk.js"
+		}
+	}
+	```
+* **`exports` with conditional exports**:
+
+	```json
+	{
+		"exports": {
+			"types": "./dist/package.d.mts",
+			"import": "./dist/package.mjs"
+		}
+	}
+	```
+* **subpaths with conditional exports**:
+
+	```json
+	{
+		"exports": {
+			".": {
+				"types": "./dist/package.d.mts",
+				"import": "./dist/package.mjs"
+			}
+		}
+	}
+	```
 
 ## TypeScript support
 
@@ -228,7 +273,6 @@ VSC uses TypeScript rules to suggest imports. However, TS uses CJS rules by defa
 	"moduleResolution": "node16"
 }
 ```
-
 
 ## License
 

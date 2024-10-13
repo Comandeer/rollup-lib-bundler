@@ -83,8 +83,7 @@
     "sinon": "^19.0.2",
     "sourcemap-validator": "^2.1.0",
     "tempy": "^3.1.0",
-    "tsx": "^4.19.1",
-    "type-fest": "^4.26.1"
+    "tsx": "^4.19.1"
   },
   "dependencies": {
     "@babel/core": "^7.25.7",
