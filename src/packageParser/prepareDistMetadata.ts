@@ -156,7 +156,7 @@ function getESMTarget( { exports }: PackageJSON, subPath: string ): string {
 	if (
 		exports[ subPath ] === undefined &&
 		subPath === '.' &&
-		exports.import !== undefined
+		'import' in exports
 	) {
 		return exports.import;
 	}
@@ -182,7 +182,7 @@ function getTypesTarget( { exports }: PackageJSON, subPath: string ): string | u
 		return undefined;
 	}
 
-	if ( exports[ subPath ] === undefined && subPath === '.' ) {
+	if ( exports[ subPath ] === undefined && subPath === '.' && 'types' in exports ) {
 		return exports.types;
 	}
 

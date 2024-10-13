@@ -10,10 +10,10 @@ interface PackageJSONConditionalExport {
 	readonly types?: string;
 }
 
-type PackageJSONExports = string | (
-	Readonly<Record<PackageJSONSubPathExport, string | PackageJSONConditionalExport>>
-	& PackageJSONConditionalExport
-);
+type PackageJSONExports =
+| string
+| Readonly<Record<PackageJSONSubPathExport, string | PackageJSONConditionalExport>>
+| PackageJSONConditionalExport;
 
 type PackageJSONAuthor = string | {
 	name: string;
@@ -64,8 +64,12 @@ function validatePackageJSON( obj: UnvalidatedPackageJSON ): void {
 		throw new ReferenceError( 'Package metadata must contain "version" property.' );
 	}
 
-	const isESMEntryPointPresent = typeof obj.exports === 'string' || typeof obj.exports?.[ '.' ] === 'string' ||
-		typeof obj.exports?.import !== 'undefined' || typeof obj.exports?.[ '.' ]?.import !== 'undefined';
+	const isESMEntryPointPresent = obj.exports !== undefined && (
+		typeof obj.exports === 'string' ||
+		typeof obj.exports[ '.' ] === 'string' ||
+		'import' in obj.exports ||
+		typeof obj.exports[ '.' ]?.import !== 'undefined'
+	);
 
 	if ( !isESMEntryPointPresent ) {
 		throw new ReferenceError(
