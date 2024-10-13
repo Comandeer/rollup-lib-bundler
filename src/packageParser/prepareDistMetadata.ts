@@ -1,5 +1,6 @@
+import assert from 'node:assert/strict';
 import { globby } from 'globby';
-import { extname, join as joinPath } from 'pathe';
+import { extname, join as joinPath, resolve as resolvePath } from 'pathe';
 import { PackageJSON } from './loadAndParsePackageJSONFile.js';
 
 export interface SubPathMetadata {
@@ -15,7 +16,10 @@ export type EntryPointType = 'js' | 'ts';
 export type ExportType = 'import' | 'types';
 
 export async function prepareDistMetadata( packageDir: string, metadata: PackageJSON ): Promise<DistMetadata> {
-	const subpaths = getSubPaths( metadata );
+	const subpaths = [
+		...getExportsSubPaths( metadata ),
+		...getBinSubPaths( metadata )
+	];
 	const subPathsMetadata = await Promise.all( subpaths.map( ( subPath ) => {
 		return prepareSubPathMetadata( packageDir, metadata, subPath );
 	} ) );
@@ -26,7 +30,7 @@ export async function prepareDistMetadata( packageDir: string, metadata: Package
 	return distMetadata;
 }
 
-function getSubPaths( metadata: PackageJSON ): Array<string> {
+function getExportsSubPaths( metadata: PackageJSON ): Array<string> {
 	const exports = metadata.exports;
 
 	// `exports` as a string is equal to having a one subpath of `.`.
@@ -43,10 +47,6 @@ function getSubPaths( metadata: PackageJSON ): Array<string> {
 	if ( !subPaths.includes( '.' ) ) {
 		subPaths.unshift( '.' );
 	}
-
-	const binSubPaths = getBinSubPaths( metadata );
-
-	subPaths.push( ...binSubPaths );
 
 	return subPaths;
 }
@@ -87,7 +87,7 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ): Promise<
 		const typesTarget = getTypesTarget( metadata, subPath );
 		const tsConfigPath = await getTSConfigPath( packageDir );
 
-		if ( typesTarget ) {
+		if ( typesTarget !== undefined ) {
 			exportMetadata.types = typesTarget;
 		}
 
@@ -102,7 +102,7 @@ async function prepareSubPathMetadata( packageDir, metadata, subPath ): Promise<
 }
 
 async function getSubPathFilePath( packageDir: string, subPath: string ): Promise<string> {
-	const srcPath = joinPath( packageDir, 'src' );
+	const srcPath = resolvePath( packageDir, 'src' );
 	const subPathFileName = subPath === '.' ? 'index' : subPath;
 	const subPathGlobPattern = `${ subPathFileName}.{mts,ts,mjs,js,cts,cjs}`;
 	const matchedFiles = await globby( subPathGlobPattern, {
@@ -129,11 +129,13 @@ function getEntryPoint( matchedFiles: Array<string> ): string {
 		return aIndex - bIndex;
 	} );
 
-	return orderedFiles[ 0 ]!;
+	assert( orderedFiles[ 0 ] !== undefined, 'At least one entrypoint exists' );
+
+	return orderedFiles[ 0 ];
 }
 
 function getEntryPointType( srcPath: string ): EntryPointType  {
-	const isTS = srcPath.toLowerCase().endsWith( 'ts' );
+	const isTS = extname( srcPath ).toLowerCase().endsWith( 'ts' );
 
 	return isTS ? 'ts' : 'js';
 }
@@ -142,47 +144,53 @@ function isBinSubPath( subPath: string ): boolean {
 	return subPath.startsWith( './__bin__' );
 }
 
-function getESMTarget( metadata: PackageJSON, subPath: string ): string {
-	const exportsTarget = getExportsTarget( metadata, subPath, 'import' )!;
+function getESMTarget( { exports }: PackageJSON, subPath: string ): string {
+	if ( typeof exports === 'string' ) {
+		return exports;
+	}
 
-	return exportsTarget;
+	if ( typeof exports[ subPath ] === 'string' ) {
+		return exports[ subPath ];
+	}
+
+	if (
+		exports[ subPath ] === undefined &&
+		subPath === '.' &&
+		exports.import !== undefined
+	) {
+		return exports.import;
+	}
+
+	return exports[ subPath ].import;
 }
 
 function getBinTarget( { bin, name }: PackageJSON, subPath: string ): string {
 	const subPathPrefixRegex = /^\.\/__bin__\//g;
 	const binName = subPath.replace( subPathPrefixRegex, '' );
 
+	assert( bin !== undefined, 'Bin metadata is specified' );
+
 	if ( binName === name && typeof bin === 'string' ) {
 		return bin;
 	}
 
-	return bin![ binName ];
+	return bin[ binName ];
 }
 
-function getTypesTarget( metadata: PackageJSON, subPath: string ): string {
-	const exportsTarget = getExportsTarget( metadata, subPath, 'types' )!;
-
-	return exportsTarget;
-}
-
-function getExportsTarget( metadata: PackageJSON, subPath: string, type: ExportType ): string | undefined {
-	const exports = metadata.exports;
-
-	if ( typeof exports === 'string' && subPath === '.' ) {
-		return type === 'import' ? exports : undefined;
-	}
-
-	if ( typeof exports[ subPath ] === 'string' ) {
-		return type === 'import' ? exports[ subPath ] : undefined;
-	}
-
-	if ( exports[ subPath ] !== undefined ) {
-		return exports[ subPath ][ type ];
+function getTypesTarget( { exports }: PackageJSON, subPath: string ): string | undefined {
+	if ( typeof exports === 'string' || typeof exports[ subPath ] === 'string' ) {
+		return undefined;
 	}
 
 	if ( exports[ subPath ] === undefined && subPath === '.' ) {
-		return exports[ type ];
+		return exports.types;
 	}
+
+	if ( exports[ subPath ] !== undefined ) {
+		return exports[ subPath ].types;
+	}
+
+	return undefined;
 }
 
 async function getTSConfigPath( packageDir ): Promise<string | undefined> {
