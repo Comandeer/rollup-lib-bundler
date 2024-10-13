@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.25.0]
+### Added
+* [#275]: support for `exports` as a string.
+
 ## [0.24.0] – 2024-10-08
 ### Changed
 * [#321]: **BREAKING CHANGE**: updated dependencies:
@@ -414,6 +418,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#267]: https://github.com/Comandeer/rollup-lib-bundler/issues/267
 [#268]: https://github.com/Comandeer/rollup-lib-bundler/issues/268
 [#271]: https://github.com/Comandeer/rollup-lib-bundler/issues/271
+[#275]: https://github.com/Comandeer/rollup-lib-bundler/issues/275
 [#276]: https://github.com/Comandeer/rollup-lib-bundler/issues/276
 [#277]: https://github.com/Comandeer/rollup-lib-bundler/issues/277
 [#278]: https://github.com/Comandeer/rollup-lib-bundler/issues/278
@@ -427,6 +432,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#321]: https://github.com/Comandeer/rollup-lib-bundler/issues/321
 [#327]: https://github.com/Comandeer/rollup-lib-bundler/issues/327
 
+[0.25.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
 [0.22.1]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.0...v0.22.1
