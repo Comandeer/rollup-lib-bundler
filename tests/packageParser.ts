@@ -545,6 +545,9 @@ test( 'packageParser() returns simplified metadata', async ( t ) => {
 				type: 'js',
 				isBin: false
 			}
+		},
+		targets: {
+			node: 'current'
 		}
 	};
 
@@ -572,6 +575,9 @@ test( 'packageParser() returns simplified metadata for package with subpath "exp
 				type: 'js',
 				isBin: false
 			}
+		},
+		targets: {
+			node: 'current'
 		}
 	};
 
@@ -594,6 +600,9 @@ test( 'packageParser() returns simplified metadata for package with CJS "exports
 				type: 'js',
 				isBin: false
 			}
+		},
+		targets: {
+			node: 'current'
 		}
 	};
 
@@ -621,6 +630,9 @@ test( 'packageParser() returns simplified metadata for package with CJS subpath 
 				type: 'js',
 				isBin: false
 			}
+		},
+		targets: {
+			node: 'current'
 		}
 	};
 
@@ -940,6 +952,9 @@ test( 'packageParser() correctly parses JS project with non-standard dist direct
 				type: 'js',
 				isBin: false
 			}
+		},
+		targets: {
+			node: 'current'
 		}
 	};
 

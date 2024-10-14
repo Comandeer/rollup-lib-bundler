@@ -8,13 +8,18 @@ import { type DistMetadata, prepareDistMetadata, type SubPathMetadata } from './
 
 export { DistMetadata, SubPathMetadata };
 
+interface PackageMetadataTargets {
+	readonly node: PackageJSONVersion | 'current';
+}
+
 export interface PackageMetadata {
-	project: string;
-	name: string;
-	version: PackageJSONVersion;
-	author: string;
-	license: string;
-	dist: DistMetadata;
+	readonly project: string;
+	readonly name: string;
+	readonly version: PackageJSONVersion;
+	readonly author: string;
+	readonly license: string;
+	readonly dist: DistMetadata;
+	readonly targets: PackageMetadataTargets;
 }
 
 export default async function packageParser( packageDir: string ): Promise<PackageMetadata> {
@@ -36,7 +41,10 @@ async function prepareMetadata( packageDir, metadata: PackageJSON ): Promise<Pac
 		version: metadata.version,
 		author: prepareAuthorMetadata( metadata.author ),
 		license: metadata.license,
-		dist: await prepareDistMetadata( packageDir, metadata )
+		dist: await prepareDistMetadata( packageDir, metadata ),
+		targets: {
+			node: 'current'
+		}
 	};
 }
 
