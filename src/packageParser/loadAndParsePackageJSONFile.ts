@@ -21,6 +21,10 @@ type PackageJSONAuthor = string | {
 
 type PackageJSONBin = string | Record<string, string>;
 
+interface PackageJSONEngines {
+	readonly node?: string;
+}
+
 export interface PackageJSON {
 	readonly name: string;
 	readonly version: PackageJSONVersion;
@@ -28,6 +32,7 @@ export interface PackageJSON {
 	readonly license: string;
 	readonly exports: PackageJSONExports;
 	readonly bin?: PackageJSONBin;
+	readonly engines?: PackageJSONEngines;
 }
 
 type UnvalidatedPackageJSON = Partial<PackageJSON>;

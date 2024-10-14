@@ -1,4 +1,5 @@
 import { normalize as normalizePath } from 'pathe';
+import semver from 'semver';
 import loadAndParsePackageJSONFile, {
 	PackageJSON,
 	PackageJSONVersion
@@ -8,8 +9,10 @@ import { type DistMetadata, prepareDistMetadata, type SubPathMetadata } from './
 
 export { DistMetadata, SubPathMetadata };
 
-interface PackageMetadataTargets {
-	readonly node: PackageJSONVersion | 'current';
+type PackageMetadataNodeTarget = 'current' | string & {};
+
+export interface PackageMetadataTargets {
+	readonly node: PackageMetadataNodeTarget;
 }
 
 export interface PackageMetadata {
@@ -43,7 +46,7 @@ async function prepareMetadata( packageDir, metadata: PackageJSON ): Promise<Pac
 		license: metadata.license,
 		dist: await prepareDistMetadata( packageDir, metadata ),
 		targets: {
-			node: 'current'
+			node: prepareNodeTarget( metadata )
 		}
 	};
 }
@@ -54,4 +57,18 @@ function prepareAuthorMetadata( author: PackageJSON['author'] ): string {
 	}
 
 	return author.name;
+}
+
+function prepareNodeTarget( { engines }: PackageJSON ): PackageMetadataNodeTarget {
+	if ( engines?.node === undefined ) {
+		return 'current';
+	}
+
+	try {
+		const target = semver.minVersion( engines.node )?.version;
+
+		return target ?? 'current';
+	} catch {
+		return 'current';
+	}
 }

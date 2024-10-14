@@ -2,10 +2,10 @@ import mockFS from 'mock-fs';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
 import getDirName from '../src/utils/getDirName.js';
-import packageParser, { DistMetadata, PackageMetadata, SubPathMetadata } from '../src/packageParser.js';
+import packageParser, { DistMetadata, PackageMetadata, PackageMetadataTargets, SubPathMetadata } from '../src/packageParser.js';
 
 const __dirname = getDirName( import.meta.url );
-const fixtures = {
+const packageJSONFixtures = {
 	invalid: '',
 	empty: {},
 
@@ -265,6 +265,42 @@ const fixtures = {
 			'.': './dist/test-package.mjs',
 			'./chunk': './dist/subpath.js'
 		}
+	},
+
+	// #234
+	engines: {
+		name: 'test-package',
+		version: '2.3.4',
+		author: 'Comandeer',
+		license: 'MIT',
+		engines: {
+			node: '>=0.10.3 <15'
+		},
+		exports: './dist/test-package.mjs'
+	},
+
+	// #234
+	enginesInvalid: {
+		name: 'test-package',
+		version: '2.3.4',
+		author: 'Comandeer',
+		license: 'MIT',
+		engines: {
+			node: 'hublabubla'
+		},
+		exports: './dist/test-package.mjs'
+	},
+
+	// #234
+	enginesImpossible: {
+		name: 'test-package',
+		version: '2.3.4',
+		author: 'Comandeer',
+		license: 'MIT',
+		engines: {
+			node: '>0.10.13 <0.10.14'
+		},
+		exports: './dist/test-package.mjs'
 	}
 };
 const srcFixtures = {
@@ -426,7 +462,10 @@ test.before( () => {
 		...createMockedPackage( 'stringExports', 'js' ),
 		...createMockedPackage( 'stringExports', 'ts' ),
 		...createMockedPackage( 'stringSubPathExports', 'subPath' ),
-		...createMockedPackage( 'stringSubPathExports', 'tsSubPath' )
+		...createMockedPackage( 'stringSubPathExports', 'tsSubPath' ),
+		...createMockedPackage( 'engines', 'js' ),
+		...createMockedPackage( 'enginesInvalid', 'js' ),
+		...createMockedPackage( 'enginesImpossible', 'js' )
 	} );
 } );
 
@@ -642,7 +681,7 @@ test( 'packageParser() returns simplified metadata for package with CJS subpath 
 // #185
 test( 'packageParser() prefers exports[ \'.\' ].import over exports.import', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'exportsDotImportOverExportsImport', 'js' );
-	const expectedDistPath = fixtures.exportsDotImportOverExportsImport.exports[ '.' ].import;
+	const expectedDistPath = packageJSONFixtures.exportsDotImportOverExportsImport.exports[ '.' ].import;
 	const indexDistMetadata = await parseMetadataAndGetDistInfo( mockedPackagePath );
 	const actualDistPath = indexDistMetadata.esm;
 
@@ -651,7 +690,7 @@ test( 'packageParser() prefers exports[ \'.\' ].import over exports.import', asy
 
 test( 'packageParser() parses author object into string', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'authorAsObject', 'js' );
-	const expectedAuthor = fixtures.authorAsObject.author.name;
+	const expectedAuthor = packageJSONFixtures.authorAsObject.author.name;
 	const parsedMetadata = await packageParser( mockedPackagePath );
 	const actualAuthor = parsedMetadata.author;
 
@@ -1139,6 +1178,47 @@ test( 'packageParser() correctly parses package metadata when subpath exports ar
 	t.deepEqual( actualDist, expectedDist );
 } );
 
+// #234
+test( 'packageParser() correctly detects target Node version when the \'engines\' field is present', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'engines', 'js' );
+	const { targets } = await packageParser( mockedPackagePath );
+	const expectedTargets: PackageMetadataTargets = {
+		node: '0.10.3'
+	};
+
+	t.deepEqual( targets, expectedTargets );
+} );
+
+// #234
+test(
+	'packageParser() fallbacks to \'current\' target Node version when ' +
+	'the \'engines\' field has invalid value',
+	async ( t ) => {
+		const mockedPackagePath = getMockedPackagePath( 'enginesInvalid', 'js' );
+		const { targets } = await packageParser( mockedPackagePath );
+		const expectedTargets: PackageMetadataTargets = {
+			node: 'current'
+		};
+
+		t.deepEqual( targets, expectedTargets );
+	}
+);
+
+// #234
+test(
+	'packageParser() fallbacks to \'current\' target Node version when ' +
+	'the \'engines\' field contains impossible condition',
+	async ( t ) => {
+		const mockedPackagePath = getMockedPackagePath( 'enginesImpossible', 'js' );
+		const { targets } = await packageParser( mockedPackagePath );
+		const expectedTargets: PackageMetadataTargets = {
+			node: 'current'
+		};
+
+		t.deepEqual( targets, expectedTargets );
+	}
+);
+
 async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ): Promise<SubPathMetadata> {
 	const parsedMetadata = await packageParser( mockedPackagePath );
 
@@ -1153,14 +1233,14 @@ interface CreateMockedPackageOptions {
 	stringify?: boolean;
 }
 
-type FixtureKey = keyof typeof fixtures;
+type PackageJSONFixtureKey = keyof typeof packageJSONFixtures;
 type SrcFixtureKey = keyof typeof srcFixtures;
 
-function createMockedPackage( fixtureName: FixtureKey, srcFixtureName: SrcFixtureKey = 'js', {
+function createMockedPackage( fixtureName: PackageJSONFixtureKey, srcFixtureName: SrcFixtureKey = 'js', {
 	stringify = true
 }: CreateMockedPackageOptions = {} ): MockedFSEntry {
 	const mockedPackagePath = getMockedPackagePath( fixtureName, srcFixtureName );
-	const packageJSON = stringify ? JSON.stringify( fixtures[ fixtureName ] ) : fixtures[ fixtureName ];
+	const packageJSON = stringify ? JSON.stringify( packageJSONFixtures[ fixtureName ] ) : packageJSONFixtures[ fixtureName ];
 	const srcFixture = srcFixtures[ srcFixtureName ];
 
 	return {
@@ -1171,6 +1251,6 @@ function createMockedPackage( fixtureName: FixtureKey, srcFixtureName: SrcFixtur
 	};
 }
 
-function getMockedPackagePath( fixtureName: FixtureKey, srcFixtureName: SrcFixtureKey ): string {
+function getMockedPackagePath( fixtureName: PackageJSONFixtureKey, srcFixtureName: SrcFixtureKey ): string {
 	return `/${ fixtureName }-${ srcFixtureName }`;
 }
