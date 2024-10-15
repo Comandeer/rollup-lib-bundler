@@ -13,9 +13,9 @@ export default async function rlb(): Promise<void> {
 		await outputController.showSpinner();
 
 		const packageDirectory = process.cwd();
-		const packageInfo = await packageParser( packageDirectory );
-		const distPaths = getDistDirPaths( packageInfo ).filter( ( distDir ) => {
-			return distDir !== packageInfo.project;
+		const packageMetadata = await packageParser( packageDirectory );
+		const distPaths = getDistDirPaths( packageMetadata ).filter( ( distDir ) => {
+			return distDir !== packageMetadata.project;
 		} );
 
 		await rimraf( distPaths );
@@ -24,7 +24,7 @@ export default async function rlb(): Promise<void> {
 			onWarn( warning: RollupLog ): void {
 				outputController.addWarning( warning );
 			},
-			packageInfo
+			packageMetadata
 		} );
 
 		outputController.addLog( chalk.green.bold( 'Bundling complete!' ) );

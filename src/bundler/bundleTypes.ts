@@ -9,7 +9,7 @@ import { PackageMetadata } from '../packageParser.js';
 import { OnWarnCallback } from '../OutputController.js';
 
 interface BundleTypesOptions {
-	packageInfo: PackageMetadata;
+	packageMetadata: PackageMetadata;
 	sourceFile: string;
 	outputFile: string;
 	tsConfig: string | undefined;
@@ -17,13 +17,13 @@ interface BundleTypesOptions {
 }
 
 export default async function bundleTypes( {
-	packageInfo,
+	packageMetadata,
 	sourceFile,
 	outputFile,
 	tsConfig,
 	onWarn = (): void => {}
 }: BundleTypesOptions ): Promise<void> {
-	const projectPath = packageInfo.project;
+	const projectPath = packageMetadata.project;
 	const userCompilerOptions = getUserCompilerOptions( projectPath, tsConfig );
 	const compilerOptions = {
 		...userCompilerOptions,
@@ -62,7 +62,7 @@ export default async function bundleTypes( {
 			// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 			virtual( emittedFiles ),
 
-			resolveLinkedBundles( projectPath, packageInfo.dist, {
+			resolveLinkedBundles( projectPath, packageMetadata.dist, {
 				isTypeBundling: true
 			} ),
 

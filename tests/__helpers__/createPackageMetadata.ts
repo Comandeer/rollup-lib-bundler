@@ -13,7 +13,11 @@ const DEFAULT_METADATA: PackageMetadata = {
 	}
 };
 
-export default function createPackageInfo( fixturePath: string, distMetadata = {}, projectMetadata = DEFAULT_METADATA ): PackageMetadata {
+export default function createPackageMetadata(
+	fixturePath: string,
+	distMetadata = {},
+	projectMetadata = DEFAULT_METADATA
+): PackageMetadata {
 	const parsedDistMetadata = Object.fromEntries( Object.entries( distMetadata ).map( ( metadata ) => {
 		return createFileMetadata( fixturePath, metadata );
 	} ) );
