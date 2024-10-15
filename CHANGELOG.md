@@ -10,26 +10,37 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * [#275]: support for `exports` as a string.
 
+### Changed
+* [#234]: **BREAKING CHANGE**: updated dependencies:
+
+	| Dependency | Old version | New version |
+	| ---------- | ----------- | ----------- |
+	| ⭐ `semver` | N/A         | `^7.6.3`    |
+
+	New dependencies are marked with the "⭐" emoji.
+* [#234]: **BREAKING CHANGE**: the transpilation target is now determined by the `engines.node` field in the `package.json` file and default to the `current` version (the one used to run the bundler).
+
+
 ## [0.24.0] – 2024-10-08
 ### Changed
 * [#321]: **BREAKING CHANGE**: updated dependencies:
 
-  | Dependency                               | Old version | New version |
-  | ---------------------------------------- | ----------- | ----------- |
-  | `@babel/core`                            | `^7.24.5`   | `^7.25.7`   |
-  | `@babel/plugin-syntax-import-assertions` | `^7.24.1`   | `^7.25.7`   |
-  | `@babel/preset-env`                      | `^7.24.5`   | `^7.25.7`   |
-  | ⚠️ `@rollup/plugin-commonjs`              | `^25.0.7`   | `^28.0.0`   |
-  | ⚠️ `@rollup/plugin-typescript`            | `^11.1.6`   | `^12.1.0`   |
-  | `globby`                                 | `^14.0.1`   | `^14.0.2`   |
-  | `magic-string`                           | `^0.30.1`   | `^0.30.11`  |
-  | ⚠️ `rimraf`                               | `^5.0.5`    | `^6.0.1`    |
-  | `rollup`                                 | `^4.17.2`   | `^4.24.0`   |
-  | `rollup-plugin-dts`                      | `^6.1.0`    | `^6.1.1`    |
-  | `tslib`                                  | `^2.6.2`    | `^2.7.0`    |
-  | `typescript`                             | `^5.4.5`    | `^5.6.2`    |
+	| Dependency                               | Old version | New version |
+	| ---------------------------------------- | ----------- | ----------- |
+	| `@babel/core`                            | `^7.24.5`   | `^7.25.7`   |
+	| `@babel/plugin-syntax-import-assertions` | `^7.24.1`   | `^7.25.7`   |
+	| `@babel/preset-env`                      | `^7.24.5`   | `^7.25.7`   |
+	| ⚠️ `@rollup/plugin-commonjs`              | `^25.0.7`   | `^28.0.0`   |
+	| ⚠️ `@rollup/plugin-typescript`            | `^11.1.6`   | `^12.1.0`   |
+	| `globby`                                 | `^14.0.1`   | `^14.0.2`   |
+	| `magic-string`                           | `^0.30.1`   | `^0.30.11`  |
+	| ⚠️ `rimraf`                               | `^5.0.5`    | `^6.0.1`    |
+	| `rollup`                                 | `^4.17.2`   | `^4.24.0`   |
+	| `rollup-plugin-dts`                      | `^6.1.0`    | `^6.1.1`    |
+	| `tslib`                                  | `^2.6.2`    | `^2.7.0`    |
+	| `typescript`                             | `^5.4.5`    | `^5.6.2`    |
 
-  Dependencies with major version change are marked with the "⚠️" emoji.
+	Dependencies with major version change are marked with the "⚠️" emoji.
 * [#327]: **BREAKING CHANGE**: the value of the `outDir` from the `tsconfig.json` file is overridden to point to the same directory as the one in Rollup's configuration.
 
 ### Fixed
@@ -404,6 +415,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#230]: https://github.com/Comandeer/rollup-lib-bundler/issues/230
 [#232]: https://github.com/Comandeer/rollup-lib-bundler/issues/232
 [#233]: https://github.com/Comandeer/rollup-lib-bundler/issues/233
+[#234]: https://github.com/Comandeer/rollup-lib-bundler/issues/234
 [#235]: https://github.com/Comandeer/rollup-lib-bundler/issues/235
 [#240]: https://github.com/Comandeer/rollup-lib-bundler/issues/240
 [#242]: https://github.com/Comandeer/rollup-lib-bundler/issues/242

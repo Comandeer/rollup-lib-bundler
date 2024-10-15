@@ -7,10 +7,17 @@ const DEFAULT_METADATA: PackageMetadata = {
 	author: 'Comandeer',
 	license: 'MIT',
 	version: '9.0.1',
-	dist: {}
+	dist: {},
+	targets: {
+		node: 'current'
+	}
 };
 
-export default function createPackageInfo( fixturePath: string, distMetadata = {}, projectMetadata = DEFAULT_METADATA ): PackageMetadata {
+export default function createPackageMetadata(
+	fixturePath: string,
+	distMetadata = {},
+	projectMetadata = DEFAULT_METADATA
+): PackageMetadata {
 	const parsedDistMetadata = Object.fromEntries( Object.entries( distMetadata ).map( ( metadata ) => {
 		return createFileMetadata( fixturePath, metadata );
 	} ) );

@@ -891,6 +891,44 @@ test.serial( 'skip cleaning the root directory if it is the dist one', testCLI, 
 	]
 } );
 
+// #234
+test.serial(
+	'CLI correctly transpiles code in JS project when the custom Node version is set in the \'engine\' field',
+	testCLI, {
+		fixture: 'targets/customNodeTargetJS',
+		expectedFiles: defaultExpectedFiles,
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		additionalCodeChecks: [
+			( t, path, code ): void => {
+				if ( !path.endsWith( '.js' ) ) {
+					return;
+				}
+
+				t.true( code.includes( 'var ' ) );
+			}
+		]
+	}
+);
+
+// #234
+test.serial(
+	'CLI correctly transpiles code in TS project when the custom Node version is set in the \'engine\' field',
+	testCLI, {
+		fixture: 'targets/customNodeTargetTS',
+		expectedFiles: defaultExpectedFiles,
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		additionalCodeChecks: [
+			( t, path, code ): void => {
+				if ( !path.endsWith( '.ts' ) ) {
+					return;
+				}
+
+				t.true( code.includes( 'var ' ) );
+			}
+		]
+	}
+);
+
 async function createDummyDists( packagePath, distDirs = [ 'dist' ] ): Promise<void> {
 	const distDirsPromises = distDirs.map( async ( distDir ) => {
 		const distPath = resolvePath( packagePath, distDir );

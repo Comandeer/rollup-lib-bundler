@@ -12,33 +12,32 @@ import fixBinPermissions from './bundler/fixBinPermissions.js';
 import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
 import resolveLinkedBundles from './bundler/rollupPlugins/resolveLinkedBundles.js';
 import generateBanner from './generateBanner.js';
-import { node as nodeTarget } from './targets.js';
 import { PackageMetadata, SubPathMetadata } from './packageParser.js';
 import { OnWarnCallback } from './OutputController.js';
 import { dirname } from 'pathe';
 
 interface BundlerOptions {
 	onWarn?: OnWarnCallback;
-	packageInfo: PackageMetadata;
+	packageMetadata: PackageMetadata;
 }
 
 export default async function bundler( {
 	onWarn,
-	packageInfo
+	packageMetadata
 }: BundlerOptions ): Promise<void> {
-	await Promise.all( bundleChunks( packageInfo, onWarn ) );
+	await Promise.all( bundleChunks( packageMetadata, onWarn ) );
 }
 
-function bundleChunks( packageInfo: PackageMetadata, onWarn: OnWarnCallback = (): void => {} ): Array<Promise<void>> {
-	const distInfo = Object.entries( packageInfo.dist );
+function bundleChunks( packageMetadata: PackageMetadata, onWarn: OnWarnCallback = (): void => {} ): Array<Promise<void>> {
+	const distInfo = Object.entries( packageMetadata.dist );
 
 	return distInfo.map( ( [ source, output ] ) => {
-		return bundleChunk( packageInfo, source, output, { onWarn } );
+		return bundleChunk( packageMetadata, source, output, { onWarn } );
 	} );
 }
 
 async function bundleChunk(
-	packageInfo: PackageMetadata,
+	packageMetadata: PackageMetadata,
 	source: string,
 	output: SubPathMetadata,
 	{
@@ -47,8 +46,8 @@ async function bundleChunk(
 		onWarn?: OnWarnCallback;
 	} = {}
 ): Promise<void> {
-	const banner = generateBanner( packageInfo );
-	const inputConfig = getRollupInputConfig( packageInfo, source, output, onWarn );
+	const banner = generateBanner( packageMetadata );
+	const inputConfig = getRollupInputConfig( packageMetadata, source, output, onWarn );
 
 	const outputConfig = getRollupOutputConfig( output.esm, banner );
 
@@ -57,12 +56,12 @@ async function bundleChunk(
 	await bundle.write( outputConfig );
 
 	if ( output.isBin ) {
-		await fixBinPermissions( packageInfo.project, output );
+		await fixBinPermissions( packageMetadata.project, output );
 	}
 
 	if ( output.types !== undefined ) {
 		await bundleTypes( {
-			packageInfo,
+			packageMetadata,
 			sourceFile: source,
 			outputFile: output.types,
 			tsConfig: output.tsConfig,
@@ -72,7 +71,7 @@ async function bundleChunk(
 }
 
 function getRollupInputConfig(
-	packageInfo: PackageMetadata,
+	packageMetadata: PackageMetadata,
 	input: string,
 	output: SubPathMetadata,
 	onwarn: OnWarnCallback = (): void => {}
@@ -84,7 +83,7 @@ function getRollupInputConfig(
 		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		json(),
 
-		resolveLinkedBundles( packageInfo.project, packageInfo.dist ),
+		resolveLinkedBundles( packageMetadata.project, packageMetadata.dist ),
 
 		preserveDynamicImports(),
 
@@ -100,7 +99,7 @@ function getRollupInputConfig(
 					babelPreset,
 					{
 						targets: {
-							node: nodeTarget
+							node: packageMetadata.targets.node
 						}
 					}
 				]

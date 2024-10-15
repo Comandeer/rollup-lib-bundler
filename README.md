@@ -26,10 +26,10 @@ No configuration. Consider it a feature.
 
 ## How does it work?
 
-It gets `package.json` from the current working directory, parses it and get neeeded info:
+It gets `package.json` from the current working directory, parses it and fetches the neeeded info:
 
 * `name`, `author`, `version` and `license` to create beautiful banner comment,
-* `exports.import` for saving ESM bundle.
+* `exports.import` to determine where to save ESM bundle (see the ["Supported `exports` syntax"](#supported-exports-syntax) section for more info).
 
 Then the bundling happens. The default entry point for Rollup is `src/index.js`.
 
@@ -94,7 +94,7 @@ Each subpath is translated to appropriate file in `src` directory. Basically, `.
 
 As of version 0.19.0 the bundler also automatically omits bundling bundles inside other bundles. If there were an import of the `src/chunk.js` file inside the `src/index.js` file in the above structure, then the `dist/package.(c|m)js` file would contain an import from `dist/chunk.(c|m)js` file instead of the content of the other bundle.
 
-### Supported `exports` syntax
+## Supported `exports` syntax
 
 The bundler supports only the subset of the `exports` syntax allowed by the Node.js:
 
@@ -137,6 +137,21 @@ The bundler supports only the subset of the `exports` syntax allowed by the Node
 		}
 	}
 	```
+## Transpilation
+
+The bundler transpiles all the code with Babel. The transpilation target can be specified with the `engines.node` field in the `package.json` file:
+
+```json
+{
+	"engines": {
+		"node": "20.1.0"
+	}
+}
+```
+
+Any valid [semver syntax](https://semver.npmjs.com/) is supported.
+
+If the `engines.node` field is not specified or it contains invalid version, the bundler fallbacks to the `current` version – so the version of Node that was used to run the bundler.
 
 ## TypeScript support
 

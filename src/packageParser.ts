@@ -1,4 +1,5 @@
 import { normalize as normalizePath } from 'pathe';
+import semver from 'semver';
 import loadAndParsePackageJSONFile, {
 	PackageJSON,
 	PackageJSONVersion
@@ -8,13 +9,20 @@ import { type DistMetadata, prepareDistMetadata, type SubPathMetadata } from './
 
 export { DistMetadata, SubPathMetadata };
 
+type PackageMetadataNodeTarget = 'current' | string & {};
+
+export interface PackageMetadataTargets {
+	readonly node: PackageMetadataNodeTarget;
+}
+
 export interface PackageMetadata {
-	project: string;
-	name: string;
-	version: PackageJSONVersion;
-	author: string;
-	license: string;
-	dist: DistMetadata;
+	readonly project: string;
+	readonly name: string;
+	readonly version: PackageJSONVersion;
+	readonly author: string;
+	readonly license: string;
+	readonly dist: DistMetadata;
+	readonly targets: PackageMetadataTargets;
 }
 
 export default async function packageParser( packageDir: string ): Promise<PackageMetadata> {
@@ -36,7 +44,10 @@ async function prepareMetadata( packageDir, metadata: PackageJSON ): Promise<Pac
 		version: metadata.version,
 		author: prepareAuthorMetadata( metadata.author ),
 		license: metadata.license,
-		dist: await prepareDistMetadata( packageDir, metadata )
+		dist: await prepareDistMetadata( packageDir, metadata ),
+		targets: {
+			node: prepareNodeTarget( metadata )
+		}
 	};
 }
 
@@ -46,4 +57,18 @@ function prepareAuthorMetadata( author: PackageJSON['author'] ): string {
 	}
 
 	return author.name;
+}
+
+function prepareNodeTarget( { engines }: PackageJSON ): PackageMetadataNodeTarget {
+	if ( engines?.node === undefined ) {
+		return 'current';
+	}
+
+	try {
+		const target = semver.minVersion( engines.node )?.version;
+
+		return target ?? 'current';
+	} catch {
+		return 'current';
+	}
 }

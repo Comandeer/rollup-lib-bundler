@@ -1,6 +1,6 @@
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
-import createPackageInfo from './__helpers__/createPackageInfo.js';
+import createPackageMetadata from './__helpers__/createPackageMetadata.js';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
 import getDirName from '../src/utils/getDirName.js';
@@ -17,7 +17,7 @@ test( 'bundler() is a function', ( t ) => {
 
 // #156
 test( 'bundler() throws error when any error is encountered', async ( t ) => {
-	const packageInfo = createPackageInfo( errorPackageFixturePath, {
+	const packageMetadata = createPackageMetadata( errorPackageFixturePath, {
 		'src/index.js': {
 			esm: './dist/index.mjs',
 			type: 'js'
@@ -25,7 +25,7 @@ test( 'bundler() throws error when any error is encountered', async ( t ) => {
 	} );
 
 	await t.throwsAsync( bundler( {
-		packageInfo
+		packageMetadata
 	} ) );
 } );
 
@@ -35,7 +35,7 @@ test( 'bundler() handle warnings via provided onWarn() method', testWithSinonSan
 		return removeArtifacts( externalDepPackageFixturePath );
 	} );
 
-	const packageInfo = createPackageInfo( externalDepPackageFixturePath, {
+	const packageMetadata = createPackageMetadata( externalDepPackageFixturePath, {
 		'src/index.js': {
 			esm: './dist/index.mjs',
 			type: 'js'
@@ -44,7 +44,7 @@ test( 'bundler() handle warnings via provided onWarn() method', testWithSinonSan
 	const onWarnSpy = sandbox.spy();
 
 	await bundler( {
-		packageInfo,
+		packageMetadata,
 		onWarn: onWarnSpy
 	} );
 
