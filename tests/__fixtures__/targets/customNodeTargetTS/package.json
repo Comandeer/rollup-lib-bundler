@@ -1,0 +1,16 @@
+{
+  "name": "test-package",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Test package",
+  "exports": {
+    ".": {
+      "import": "./dist/test-package.mjs"
+    }
+  },
+  "engines": {
+    "node": "0.10.3"
+  },
+  "author": "Comandeer",
+  "license": "ISC"
+}
