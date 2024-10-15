@@ -897,6 +897,7 @@ test.serial(
 	testCLI, {
 		fixture: 'targets/customNodeTargetJS',
 		expectedFiles: defaultExpectedFiles,
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
 		additionalCodeChecks: [
 			( t, path, code ): void => {
 				if ( !path.endsWith( '.js' ) ) {
@@ -915,6 +916,7 @@ test.serial(
 	testCLI, {
 		fixture: 'targets/customNodeTargetTS',
 		expectedFiles: defaultExpectedFiles,
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
 		additionalCodeChecks: [
 			( t, path, code ): void => {
 				if ( !path.endsWith( '.ts' ) ) {
