@@ -12,7 +12,6 @@ import fixBinPermissions from './bundler/fixBinPermissions.js';
 import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
 import resolveLinkedBundles from './bundler/rollupPlugins/resolveLinkedBundles.js';
 import generateBanner from './generateBanner.js';
-import { node as nodeTarget } from './targets.js';
 import { PackageMetadata, SubPathMetadata } from './packageParser.js';
 import { OnWarnCallback } from './OutputController.js';
 import { dirname } from 'pathe';
@@ -100,7 +99,7 @@ function getRollupInputConfig(
 					babelPreset,
 					{
 						targets: {
-							node: nodeTarget
+							node: packageInfo.targets.node
 						}
 					}
 				]
