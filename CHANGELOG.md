@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.25.0]
+## [0.25.0] – 2024-11-16
 ### Added
 * [#275]: support for `exports` as a string.
 
@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 	New dependencies are marked with the "⭐" emoji.
 * [#234]: **BREAKING CHANGE**: the transpilation target is now determined by the `engines.node` field in the `package.json` file and default to the `current` version (the one used to run the bundler).
+* [#332]: **BREAKING CHANGE**: the minimal supported version of Node.js was bumped to `20.11.0`.
 
 
 ## [0.24.0] – 2024-10-08
@@ -443,6 +444,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#314]: https://github.com/Comandeer/rollup-lib-bundler/issues/314
 [#321]: https://github.com/Comandeer/rollup-lib-bundler/issues/321
 [#327]: https://github.com/Comandeer/rollup-lib-bundler/issues/327
+[#332]: https://github.com/Comandeer/rollup-lib-bundler/issues/332
 
 [0.25.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.23.0...v0.24.0
