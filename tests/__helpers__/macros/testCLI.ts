@@ -3,10 +3,8 @@ import { resolve as resolvePath } from 'pathe';
 import test, { ExecutionContext } from 'ava';
 import checkDistFiles, { AdditionalCodeCheckCallback, CheckStrategiesMap } from '../checkDistFiles.js';
 import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.js';
-import getDirName from '../../../src/utils/getDirName.js';
 
-const __dirname = getDirName( import.meta.url );
-const BIN_PATH = resolvePath( __dirname, '..', '..', '..', 'src', '__bin__', 'rlb.mts' );
+const BIN_PATH = resolvePath( import.meta.dirname!, '..', '..', '..', 'src', '__bin__', 'rlb.mts' );
 
 type TestCLIBeforeCallback = ( t: ExecutionContext, tempDirPath: string ) => Promise<void> | void;
 type TestCLIAfterCallback = TestCLIBeforeCallback;

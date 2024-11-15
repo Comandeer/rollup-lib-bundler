@@ -3,11 +3,9 @@ import test from 'ava';
 import createPackageMetadata from './__helpers__/createPackageMetadata.js';
 import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
 import removeArtifacts from './__helpers__/removeArtifacts.js';
-import getDirName from '../src/utils/getDirName.js';
 import bundler from '../src/bundler.js';
 
-const __dirname = getDirName( import.meta.url );
-const fixturesPath = resolvePath( __dirname, '__fixtures__' );
+const fixturesPath = resolvePath( import.meta.dirname!, '__fixtures__' );
 const errorPackageFixturePath = resolvePath( fixturesPath, 'generic', 'errorPackage' );
 const externalDepPackageFixturePath = resolvePath( fixturesPath, 'generic', 'externalDepPackage' );
 

@@ -1,10 +1,8 @@
 import mockFS from 'mock-fs';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
-import getDirName from '../src/utils/getDirName.js';
 import packageParser, { DistMetadata, PackageMetadata, PackageMetadataTargets, SubPathMetadata } from '../src/packageParser.js';
 
-const __dirname = getDirName( import.meta.url );
 const packageJSONFixtures = {
 	invalid: '',
 	empty: {},
@@ -424,7 +422,7 @@ const INVALID_ESM_METADATA_ERROR = 'Package metadata must contain at least one o
 test.before( () => {
 	mockFS( {
 		// We need to load node_modules to make sure that we can resolve dependencies.
-		'node_modules': mockFS.load( resolvePath( __dirname, '../node_modules' ) ),
+		'node_modules': mockFS.load( resolvePath( import.meta.dirname!, '../node_modules' ) ),
 		...createMockedPackage( 'invalid', 'js', {
 			stringify: false
 		} ),
