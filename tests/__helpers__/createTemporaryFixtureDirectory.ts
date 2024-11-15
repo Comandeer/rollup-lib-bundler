@@ -3,10 +3,8 @@ import { cp } from 'node:fs/promises';
 import { ExecutionContext } from 'ava';
 import { resolve as resolvePath } from 'pathe';
 import { temporaryDirectoryTask as tempy } from 'tempy';
-import getDirName from '../../src/utils/getDirName.js';
 
-const __dirname = getDirName( import.meta.url );
-const FIXTURES_PATH = resolvePath( __dirname, '..', '__fixtures__' );
+const FIXTURES_PATH = resolvePath( import.meta.dirname!, '..', '__fixtures__' );
 
 type TemporaryFixtureDirectoryCallback = ( t: ExecutionContext, tempDirPath: string ) => Promise<void> | void;
 
