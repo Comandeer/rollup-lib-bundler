@@ -70,6 +70,7 @@
   "devDependencies": {
     "@comandeer/eslint-config": "^0.15.0",
     "@comandeer/rollup-lib-bundler": "^0.23.0",
+    "@types/node": "^20.11.0",
     "@types/semver": "^7.5.8",
     "@types/sinon": "^17.0.3",
     "ava": "^6.1.3",
