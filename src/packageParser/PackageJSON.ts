@@ -5,6 +5,7 @@ export type PackageJSONSubPath = '.' | `.${ string }`;
 export interface PackageJSONConditionalExport {
 	readonly import: string;
 	readonly types?: string;
+	readonly requires?: string;
 }
 
 export type PackageJSONSubPathExports = Readonly<Record<PackageJSONSubPath, string | PackageJSONConditionalExport>>;
@@ -46,7 +47,7 @@ export function isConditionalExport( obj: unknown ): obj is PackageJSONCondition
 	}
 
 	return keys.every( ( key ) => {
-		return key === 'import' || key === 'types';
+		return key === 'import' || key === 'types' || key === 'require';
 	} );
 }
 
