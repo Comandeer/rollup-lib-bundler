@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { globby } from 'globby';
 import { extname, join as joinPath, resolve as resolvePath } from 'pathe';
-import { PackageJSON } from './loadAndParsePackageJSONFile.js';
+import { isConditionalExport, isSubPath, isSubPathExports, PackageJSON, PackageJSONBin, PackageJSONSubPath } from './PackageJSON.js';
 
 export interface SubPathMetadata {
 	esm: string;
@@ -16,7 +16,7 @@ export type EntryPointType = 'js' | 'ts';
 export type ExportType = 'import' | 'types';
 
 export async function prepareDistMetadata( packageDir: string, metadata: PackageJSON ): Promise<DistMetadata> {
-	const subpaths = [
+	const subpaths: ReadonlyArray<PackageJSONSubPath> = [
 		...getExportsSubPaths( metadata ),
 		...getBinSubPaths( metadata )
 	];
@@ -30,7 +30,7 @@ export async function prepareDistMetadata( packageDir: string, metadata: Package
 	return distMetadata;
 }
 
-function getExportsSubPaths( metadata: PackageJSON ): Array<string> {
+function getExportsSubPaths( metadata: PackageJSON ): Array<PackageJSONSubPath> {
 	const exports = metadata.exports;
 
 	// `exports` as a string is equal to having a one subpath of `.`.
@@ -40,8 +40,8 @@ function getExportsSubPaths( metadata: PackageJSON ): Array<string> {
 		];
 	}
 
-	const subPaths = Object.keys( exports ).filter( ( subpath ) => {
-		return subpath.startsWith( '.' );
+	const subPaths = Object.keys( exports ).filter( ( subPath ) => {
+		return isSubPath( subPath );
 	} );
 
 	if ( !subPaths.includes( '.' ) ) {
@@ -51,7 +51,7 @@ function getExportsSubPaths( metadata: PackageJSON ): Array<string> {
 	return subPaths;
 }
 
-function getBinSubPaths( { bin, name }: PackageJSON ): Array<string> {
+function getBinSubPaths( { bin, name }: PackageJSON ): Array<PackageJSONSubPath> {
 	if ( typeof bin === 'undefined' ) {
 		return [];
 	}
@@ -63,13 +63,13 @@ function getBinSubPaths( { bin, name }: PackageJSON ): Array<string> {
 	}
 
 	const binSubPaths = Object.keys( bin ).map( ( bin ) => {
-		return `./__bin__/${ bin }`;
+		return `./__bin__/${ bin }` as PackageJSONSubPath;
 	} );
 
 	return binSubPaths;
 }
 
-async function prepareSubPathMetadata( packageDir, metadata, subPath ): Promise<DistMetadata> {
+async function prepareSubPathMetadata( packageDir: string, metadata: PackageJSON, subPath: PackageJSONSubPath ): Promise<DistMetadata> {
 	const subPathFilePath = await getSubPathFilePath( packageDir, subPath );
 	const srcPath = joinPath( 'src', subPathFilePath );
 	const isBin = isBinSubPath( subPath );
@@ -144,24 +144,23 @@ function isBinSubPath( subPath: string ): boolean {
 	return subPath.startsWith( './__bin__' );
 }
 
-function getESMTarget( { exports }: PackageJSON, subPath: string ): string {
+function getESMTarget( { exports }: PackageJSON, subPath: PackageJSONSubPath ): string {
 	if ( typeof exports === 'string' ) {
 		return exports;
 	}
 
-	if ( typeof exports[ subPath ] === 'string' ) {
-		return exports[ subPath ];
-	}
-
-	if (
-		exports[ subPath ] === undefined &&
-		subPath === '.' &&
-		'import' in exports
-	) {
+	if ( isConditionalExport( exports ) && subPath === '.' ) {
 		return exports.import;
 	}
 
-	return exports[ subPath ].import;
+	assert( isSubPathExports( exports ), 'Incorrect format of \'exports\' package metadata' );
+	assert( exports[ subPath ] !== undefined, `Missing target for the '${ subPath }' export` );
+
+	if ( isConditionalExport( exports[ subPath ] ) ) {
+		return exports[ subPath ].import;
+	}
+
+	return exports[ subPath ];
 }
 
 function getBinTarget( { bin, name }: PackageJSON, subPath: string ): string {
@@ -174,26 +173,32 @@ function getBinTarget( { bin, name }: PackageJSON, subPath: string ): string {
 		return bin;
 	}
 
-	return bin[ binName ];
+	assert( isComplexBin( bin ), 'Incorrect format of the bin property' );
+
+	return bin[ binName ]!;
 }
 
-function getTypesTarget( { exports }: PackageJSON, subPath: string ): string | undefined {
-	if ( typeof exports === 'string' || typeof exports[ subPath ] === 'string' ) {
+function isComplexBin( bin: PackageJSONBin ): bin is Record<string, string> {
+	return typeof bin !== 'string';
+}
+
+function getTypesTarget( { exports }: PackageJSON, subPath: PackageJSONSubPath ): string | undefined {
+	if ( typeof exports === 'string' ) {
 		return undefined;
 	}
 
-	if ( exports[ subPath ] === undefined && subPath === '.' && 'types' in exports ) {
+	if ( subPath === '.' && 'types' in exports ) {
 		return exports.types;
 	}
 
-	if ( exports[ subPath ] !== undefined ) {
+	if ( isSubPathExports( exports ) && isConditionalExport( exports[ subPath ] ) ) {
 		return exports[ subPath ].types;
 	}
 
 	return undefined;
 }
 
-async function getTSConfigPath( packageDir ): Promise<string | undefined> {
+async function getTSConfigPath( packageDir: string ): Promise<string | undefined> {
 	const tsConfigGlobPattern = 'tsconfig?(.rlb).json';
 	const matchedFiles = await globby( tsConfigGlobPattern, {
 		cwd: packageDir

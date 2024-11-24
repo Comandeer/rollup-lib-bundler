@@ -41,7 +41,7 @@ export default async function bundleTypes( {
 		absolute: true,
 		cwd: projectPath
 	} );
-	const emittedFiles = {};
+	const emittedFiles: Record<string, string> = {};
 
 	const host = ts.createCompilerHost( compilerOptions );
 	host.writeFile = ( filePath: string, contents: string ): void => {

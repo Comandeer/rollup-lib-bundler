@@ -16,7 +16,7 @@ interface ConsoleLike {
 	error: ( ...args: Array<unknown> ) => void;
 }
 
-interface StackableError extends Error {
+export interface StackableError extends Error {
 	stack?: string;
 }
 
