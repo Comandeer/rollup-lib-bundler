@@ -1217,7 +1217,7 @@ test(
 	}
 );
 
-async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ): Promise<SubPathMetadata> {
+async function parseMetadataAndGetDistInfo( mockedPackagePath: string, srcFile = 'src/index.js' ): Promise<SubPathMetadata> {
 	const parsedMetadata = await packageParser( mockedPackagePath );
 
 	return parsedMetadata.dist[ srcFile ]!;

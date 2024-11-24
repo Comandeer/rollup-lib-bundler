@@ -18,7 +18,8 @@ test( 'bundler() throws error when any error is encountered', async ( t ) => {
 	const packageMetadata = createPackageMetadata( errorPackageFixturePath, {
 		'src/index.js': {
 			esm: './dist/index.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	} );
 
@@ -36,7 +37,8 @@ test( 'bundler() handle warnings via provided onWarn() method', testWithSinonSan
 	const packageMetadata = createPackageMetadata( externalDepPackageFixturePath, {
 		'src/index.js': {
 			esm: './dist/index.mjs',
-			type: 'js'
+			type: 'js',
+			isBin: false
 		}
 	} );
 	const onWarnSpy = sandbox.spy();
