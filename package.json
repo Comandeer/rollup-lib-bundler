@@ -70,9 +70,12 @@
   "devDependencies": {
     "@comandeer/eslint-config": "^0.15.0",
     "@comandeer/rollup-lib-bundler": "^0.23.0",
+    "@types/babel__preset-env": "^7.9.7",
+    "@types/mock-fs": "^4.13.4",
     "@types/node": "^20.11.0",
     "@types/semver": "^7.5.8",
     "@types/sinon": "^17.0.3",
+    "@types/sourcemap-validator": "^2.1.2",
     "ava": "^6.1.3",
     "c8": "^10.1.2",
     "commitplease": "^3.2.0",

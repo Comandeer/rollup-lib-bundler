@@ -13,9 +13,12 @@ const DEFAULT_METADATA: PackageMetadata = {
 	}
 };
 
+type SimplifiedSubPathMetadata = Exclude<SubPathMetadata, 'isBin'>;
+type SimplifiedDistMetadata = Record<string, SimplifiedSubPathMetadata>;
+
 export default function createPackageMetadata(
 	fixturePath: string,
-	distMetadata = {},
+	distMetadata: SimplifiedDistMetadata = {},
 	projectMetadata = DEFAULT_METADATA
 ): PackageMetadata {
 	const parsedDistMetadata = Object.fromEntries( Object.entries( distMetadata ).map( ( metadata ) => {
@@ -30,10 +33,10 @@ export default function createPackageMetadata(
 	};
 }
 
-function createFileMetadata( fixturePath, [ filePath, entryPoints ] ): [ string, SubPathMetadata ] {
+function createFileMetadata( fixturePath: string, [ filePath, entryPoints ]: [ string, SubPathMetadata ] ): [ string, SubPathMetadata ] {
 	const fullFilePath = resolvePath( fixturePath, filePath );
 	const parsedEntryPoints = Object.fromEntries( Object.entries( entryPoints ).map(
-		( [ entryPointName, entryPointPath ]: [ keyof SubPathMetadata, string ] ): [ keyof SubPathMetadata, string ] => {
+		( [ entryPointName, entryPointPath ]: [ keyof SimplifiedDistMetadata, string ] ): [ string, string ] => {
 			if ( entryPointName === 'type' ) {
 				return [ entryPointName, entryPointPath ];
 			}

@@ -1,11 +1,9 @@
 import { normalize as normalizePath } from 'pathe';
 import semver from 'semver';
-import loadAndParsePackageJSONFile, {
-	PackageJSON,
-	PackageJSONVersion
-} from './packageParser/loadAndParsePackageJSONFile.js';
+import loadAndParsePackageJSONFile from './packageParser/loadAndParsePackageJSONFile.js';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { type DistMetadata, prepareDistMetadata, type SubPathMetadata } from './packageParser/prepareDistMetadata.js';
+import { PackageJSON, PackageJSONVersion } from './packageParser/PackageJSON.js';
 
 export { DistMetadata, SubPathMetadata };
 
@@ -35,7 +33,7 @@ export default async function packageParser( packageDir: string ): Promise<Packa
 	return prepareMetadata( packageDir, metadata );
 }
 
-async function prepareMetadata( packageDir, metadata: PackageJSON ): Promise<PackageMetadata> {
+async function prepareMetadata( packageDir: string, metadata: PackageJSON ): Promise<PackageMetadata> {
 	const project = normalizePath( packageDir );
 
 	return {

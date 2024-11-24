@@ -1,7 +1,7 @@
 import mockFS from 'mock-fs';
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
-import packageParser, { DistMetadata, PackageMetadata, PackageMetadataTargets, SubPathMetadata } from '../src/packageParser.js';
+import packageParser, { DistMetadata, PackageMetadata, PackageMetadataTargets } from '../src/packageParser.js';
 
 const packageJSONFixtures = {
 	invalid: '',
@@ -144,7 +144,7 @@ const packageJSONFixtures = {
 		license: 'ISC'
 	},
 
-	exportsDotImportOverExportsImport: {
+	invalidExportsShape: {
 		name: 'test-package',
 		version: '9.0.1',
 		author: 'Comandeer',
@@ -432,6 +432,7 @@ test.before( () => {
 		...createMockedPackage( 'noESMEntrypoint', 'js' ),
 		...createMockedPackage( 'noAuthor', 'js' ),
 		...createMockedPackage( 'noLicense', 'js' ),
+		...createMockedPackage( 'invalidExportsShape', 'js' ),
 		...createMockedPackage( 'validExports', 'js' ),
 		...createMockedPackage( 'validExports', 'mjs' ),
 		...createMockedPackage( 'validExports', 'mixedJS' ),
@@ -443,7 +444,6 @@ test.before( () => {
 		...createMockedPackage( 'tsProject', 'mts' ),
 		...createMockedPackage( 'tsProject', 'tsConfig' ),
 		...createMockedPackage( 'tsProject', 'noTSConfig' ),
-		...createMockedPackage( 'exportsDotImportOverExportsImport', 'js' ),
 		...createMockedPackage( 'authorAsObject', 'js' ),
 		...createMockedPackage( 'mixedProject', 'mixedProject' ),
 		...createMockedPackage( 'noTypes', 'ts' ),
@@ -566,6 +566,18 @@ test( 'packageParser() linter requires the license property', async ( t ) => {
 	} );
 } );
 
+// #185
+test( 'packageParser() linter requires valid shape of the exports metadata', async ( t ) => {
+	const mockedPackagePath = getMockedPackagePath( 'invalidExportsShape', 'js' );
+
+	await t.throwsAsync( () => {
+		return packageParser( mockedPackagePath );
+	}, {
+		instanceOf: ReferenceError,
+		message: INVALID_ESM_METADATA_ERROR
+	} );
+} );
+
 // #61
 test( 'packageParser() returns simplified metadata', async ( t ) => {
 	const mockedPackagePath = getMockedPackagePath( 'validExports', 'js' );
@@ -674,16 +686,6 @@ test( 'packageParser() returns simplified metadata for package with CJS subpath 
 	};
 
 	t.deepEqual( actualMetadata, expectedMetadata );
-} );
-
-// #185
-test( 'packageParser() prefers exports[ \'.\' ].import over exports.import', async ( t ) => {
-	const mockedPackagePath = getMockedPackagePath( 'exportsDotImportOverExportsImport', 'js' );
-	const expectedDistPath = packageJSONFixtures.exportsDotImportOverExportsImport.exports[ '.' ].import;
-	const indexDistMetadata = await parseMetadataAndGetDistInfo( mockedPackagePath );
-	const actualDistPath = indexDistMetadata.esm;
-
-	t.is( actualDistPath, expectedDistPath );
 } );
 
 test( 'packageParser() parses author object into string', async ( t ) => {
@@ -1216,12 +1218,6 @@ test(
 		t.deepEqual( targets, expectedTargets );
 	}
 );
-
-async function parseMetadataAndGetDistInfo( mockedPackagePath, srcFile = 'src/index.js' ): Promise<SubPathMetadata> {
-	const parsedMetadata = await packageParser( mockedPackagePath );
-
-	return parsedMetadata.dist[ srcFile ]!;
-}
 
 interface MockedFSEntry {
 	[x: string]: string | MockedFSEntry;

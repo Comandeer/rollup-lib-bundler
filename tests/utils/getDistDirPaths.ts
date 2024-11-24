@@ -38,6 +38,9 @@ test( '#getDistDirPaths() returns an array of absolute paths to dist directories
 				type: 'js',
 				isBin: true
 			}
+		},
+		targets: {
+			node: 'current'
 		}
 	};
 	const distDirPaths = getDistDirPaths( packageMetadata );

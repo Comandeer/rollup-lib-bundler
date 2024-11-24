@@ -23,7 +23,7 @@ export type CheckStrategyCallback = (
 	t: ExecutionContext,
 	path: string,
 	code: string,
-	options?: CheckStrategyCallbackOptions
+	options: CheckStrategyCallbackOptions
 ) => Promise<void> | void;
 
 export type CheckStrategiesMap = Map<RegExp, CheckStrategyCallback>;
@@ -157,7 +157,7 @@ async function checkSourceMapFile( t: ExecutionContext, path: string, sourceMap:
 	const jsCode = await readFile( jsFilePath, 'utf8' );
 
 	t.notThrows( () => {
-		return validateSourceMap( jsCode, sourceMap );
+		validateSourceMap( jsCode, sourceMap );
 	} );
 
 	// Check if mappings are not empty (#105).

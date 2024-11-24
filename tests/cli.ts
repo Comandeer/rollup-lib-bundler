@@ -929,7 +929,7 @@ test.serial(
 	}
 );
 
-async function createDummyDists( packagePath, distDirs = [ 'dist' ] ): Promise<void> {
+async function createDummyDists( packagePath: string, distDirs = [ 'dist' ] ): Promise<void> {
 	const distDirsPromises = distDirs.map( async ( distDir ) => {
 		const distPath = resolvePath( packagePath, distDir );
 		const dummyFilePath = resolvePath( distPath, 'dummy.js' );

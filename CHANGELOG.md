@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.26.0]
+### Changed
+* [#335]: **BREAKING CHANGE**: invalid `exports` shapes (both subpaths and `import`) are no longer supported.
+
 ## [0.25.0] – 2024-11-16
 ### Added
 * [#275]: support for `exports` as a string.
@@ -445,7 +449,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#321]: https://github.com/Comandeer/rollup-lib-bundler/issues/321
 [#327]: https://github.com/Comandeer/rollup-lib-bundler/issues/327
 [#332]: https://github.com/Comandeer/rollup-lib-bundler/issues/332
+[#335]: https://github.com/Comandeer/rollup-lib-bundler/issues/335
 
+[0.26.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.22.1...v0.23.0
