@@ -17,8 +17,7 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strictNullChecks": true,
-		// It needs to wait after the code is rewritten.
-		// "strict": true,
+		"strict": true,
 		"target": "esnext"
 	},
 	"include": [
