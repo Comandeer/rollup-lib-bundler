@@ -35,11 +35,33 @@ export interface PackageJSON {
 }
 
 export function isConditionalExport( obj: unknown ): obj is PackageJSONConditionalExport {
-	return obj != null && typeof obj === 'object' && 'import' in obj;
+	if ( obj === undefined || obj === null ) {
+		return false;
+	}
+
+	const keys = Object.keys( obj );
+
+	if ( keys.length === 0 ) {
+		return false;
+	}
+
+	return keys.every( ( key ) => {
+		return key === 'import' || key === 'types';
+	} );
 }
 
 export function isSubPathExports( obj: unknown ): obj is PackageJSONSubPathExports {
-	return obj != null && Object.keys( obj ).every( ( key ) => {
+	if ( obj === undefined || obj === null ) {
+		return false;
+	}
+
+	const keys = Object.keys( obj );
+
+	if ( keys.length === 0 ) {
+		return false;
+	}
+
+	return keys.every( ( key ) => {
 		return isSubPath( key );
 	} );
 }
