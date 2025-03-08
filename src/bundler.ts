@@ -1,7 +1,6 @@
 import babelImportAssertionsPlugin from '@babel/plugin-syntax-import-assertions';
 import babelPreset from '@babel/preset-env';
 import babel from '@rollup/plugin-babel';
-import convertCJS from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
@@ -77,9 +76,6 @@ function getRollupInputConfig(
 	onwarn: OnWarnCallback = (): void => {}
 ): InputOptions {
 	const plugins = [
-		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
-		convertCJS(),
-
 		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		json(),
 
