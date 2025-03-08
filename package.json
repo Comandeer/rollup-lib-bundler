@@ -96,7 +96,6 @@
     "@babel/preset-env": "^7.26.9",
     "@comandeer/cli-spinner": "^1.0.2",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
