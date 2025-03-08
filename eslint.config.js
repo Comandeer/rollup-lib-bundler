@@ -1,5 +1,5 @@
-import eslintConfig from '@comandeer/eslint-config';
-import formattingConfig from '@comandeer/eslint-config/formatting';
+import { eslintConfig } from '@comandeer/eslint-config';
+import { formattingConfig } from '@comandeer/eslint-config/formatting';
 
 export default [
 	...eslintConfig(),
