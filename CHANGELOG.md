@@ -10,6 +10,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 * [#335]: **BREAKING CHANGE**: invalid `exports` shapes (both subpaths and `import`) are no longer supported.
 
+* [#337]: **BREAKING CHANGE**: updated dependencies:
+
+  | Dependency                               | Old version | New version |
+  | ---------------------------------------- | ----------- | ----------- |
+  | `@babel/core`                            | `^7.25.7`   | `^7.26.9`   |
+  | `@babel/plugin-syntax-import-assertions` | `^7.25.7`   | `^7.26.0`   |
+  | `@babel/preset-env`                      | `^7.25.7`   | `^7.26.9`   |
+  | ☠️ `@rollup/plugin-commonjs`             | `^28.0.0`   | N/A         |
+  | `@rollup/plugin-typescript`              | `^12.1.0`   | `^12.1.2`   |
+  | `chalk`                                  | `^5.3.0`    | `^5.4.1`    |
+  | `globby`                                 | `^14.0.2`   | `^14.1.0`   |
+  | `magic-string`                           | `^0.30.11`  | `^0.30.17`  |
+  | ⚠️ `pathe`                               | `^1.1.2`    | `^2.0.3`    |
+  | `rollup`                                 | `^4.24.0`   | `^4.35.0`   |
+  | `semver`                                 | `^7.6.3`    | `^7.7.1`    |
+  | `tslib`                                  | `^2.7.0`    | `^2.8.1`    |
+  | `typescript`                             | `^5.6.2`    | `^5.8.2`    |
+
+  Dependencies with major version change are marked with the "⚠️" emoji.
+
+  Removed dependencies are marked with the "☠️" emoji.
+
 ## [0.25.0] – 2024-11-16
 ### Added
 * [#275]: support for `exports` as a string.
@@ -19,7 +41,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 	| Dependency | Old version | New version |
 	| ---------- | ----------- | ----------- |
-	| ⭐ `semver` | N/A         | `^7.6.3`    |
+	| ⭐ `semver` | N/A        | `^7.6.3`    |
 
 	New dependencies are marked with the "⭐" emoji.
 * [#234]: **BREAKING CHANGE**: the transpilation target is now determined by the `engines.node` field in the `package.json` file and default to the `current` version (the one used to run the bundler).
@@ -35,11 +57,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	| `@babel/core`                            | `^7.24.5`   | `^7.25.7`   |
 	| `@babel/plugin-syntax-import-assertions` | `^7.24.1`   | `^7.25.7`   |
 	| `@babel/preset-env`                      | `^7.24.5`   | `^7.25.7`   |
-	| ⚠️ `@rollup/plugin-commonjs`              | `^25.0.7`   | `^28.0.0`   |
-	| ⚠️ `@rollup/plugin-typescript`            | `^11.1.6`   | `^12.1.0`   |
+	| ⚠️ `@rollup/plugin-commonjs`             | `^25.0.7`   | `^28.0.0`   |
+	| ⚠️ `@rollup/plugin-typescript`           | `^11.1.6`   | `^12.1.0`   |
 	| `globby`                                 | `^14.0.1`   | `^14.0.2`   |
 	| `magic-string`                           | `^0.30.1`   | `^0.30.11`  |
-	| ⚠️ `rimraf`                               | `^5.0.5`    | `^6.0.1`    |
+	| ⚠️ `rimraf`                              | `^5.0.5`    | `^6.0.1`    |
 	| `rollup`                                 | `^4.17.2`   | `^4.24.0`   |
 	| `rollup-plugin-dts`                      | `^6.1.0`    | `^6.1.1`    |
 	| `tslib`                                  | `^2.6.2`    | `^2.7.0`    |
@@ -63,20 +85,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	| `@babel/core`                            | `^7.22.0`   | `^7.24.5`   |
 	| `@babel/plugin-syntax-import-assertions` | `^7.22.5`   | `^7.24.1`   |
 	| `@babel/preset-env`                      | `^7.22.9`   | `^7.24.5`   |
-	| ⚠️ `@comandeer/cli-spinner`               | `^0.3.2`    | `^1.0.2`    |
+	| ⚠️ `@comandeer/cli-spinner`              | `^0.3.2`    | `^1.0.2`    |
 	| `@rollup/plugin-babel`                   | `^6.0.3`    | `^6.0.4`    |
 	| `@rollup/plugin-commonjs`                | `^25.0.2`   | `^25.0.7`   |
 	| `@rollup/plugin-json`                    | `^6.0.0`    | `^6.1.0`    |
 	| `@rollup/plugin-terser`                  | `^0.4.3`    | `^0.4.4`    |
 	| `@rollup/plugin-typescript`              | `^11.1.2`   | `^11.1.6`   |
 	| `@rollup/plugin-virtual`                 | `^3.0.1`    | `^3.0.2`    |
-	| ⭐ `chalk`                                | N/A         | `^5.3.0`    |
-	| ☠️ `console-control-strings`              | `^1.1.0`    | N/A         |
-	| ⚠️ `globby`                               | `^13.2.2`   | `^14.0.1`   |
+	| ⭐ `chalk`                               | N/A         | `^5.3.0`    |
+	| ☠️ `console-control-strings`             | `^1.1.0`    | N/A         |
+	| ⚠️ `globby`                              | `^13.2.2`   | `^14.0.1`   |
 	| `pathe`                                  | `^1.1.1`    | `^1.1.2`    |
 	| `rimraf`                                 | `^5.0.1`    | `^5.0.5`    |
-	| ⚠️ `rollup`                               | `^3.26.2`   | `^4.17.2`   |
-	| ⚠️ `rollup-plugin-dts`                    | `^5.3.0`    | `^6.1.0`    |
+	| ⚠️ `rollup`                              | `^3.26.2`   | `^4.17.2`   |
+	| ⚠️ `rollup-plugin-dts`                   | `^5.3.0`    | `^6.1.0`    |
 	| `tslib`                                  | `^2.6.0`    | `^2.6.2`    |
 	| `typescript`                             | `^5.1.6`    | `^5.4.5`    |
 
@@ -110,19 +132,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 	| ---------------------------------------- | ----------- | ----------- |
 	| `@babel/core`                            | `^7.20.12`  | `^7.22.9`   |
 	| `@babel/plugin-syntax-import-assertions` | `^7.20.0`   | `^7.22.5`   |
-	| ☠️ `@babel/plugin-transform-typescript`   | `^7.20.13`  | N/A         |
+	| ☠️ `@babel/plugin-transform-typescript`  | `^7.20.13`  | N/A         |
 	| `@babel/preset-env`                      | `^7.20.2`   | `^7.22.9`   |
-	| ☠️ `@babel/types`                         | `^7.20.7`   | N/A         |
-	| ⚠️ `@rollup/plugin-commonjs`              | `^24.0.0`   | `^25.0.2`   |
-	| ⚠️ `@rollup/plugin-terser`                | `^0.3.0`    | `^0.4.3`    |
+	| ☠️ `@babel/types`                        | `^7.20.7`   | N/A         |
+	| ⚠️ `@rollup/plugin-commonjs`             | `^24.0.0`   | `^25.0.2`   |
+	| ⚠️ `@rollup/plugin-terser`               | `^0.3.0`    | `^0.4.3`    |
 	| `@rollup/plugin-typescript`              | `^11.0.0`   | `^11.1.2`   |
 	| `globby`                                 | `^13.1.3`   | `^13.2.2`   |
-	| ⭐ `magic-string`                         | N/A         | `^0.30.1`   |
+	| ⭐ `magic-string`                        | N/A         | `^0.30.1`   |
 	| `pathe`                                  | `^1.1.0`    | `^1.1.1`    |
-	| ⚠️ `rimraf`                               | `^4.0.7`    | `^5.0.1`    |
+	| ⚠️ `rimraf`                              | `^4.0.7`    | `^5.0.1`    |
 	| `rollup`                                 | `^3.10.0`   | `^3.26.2`   |
 	| `tslib`                                  | `^2.4.1`    | `^2.6.0`    |
-	| ⚠️ `typescript`                           | `^5.1.6`    | `^4.9.4`    |
+	| ⚠️ `typescript`                          | `^5.1.6`    | `^4.9.4`    |
 
 	New dependencies are marked with the "⭐" emoji.
 
@@ -450,6 +472,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#327]: https://github.com/Comandeer/rollup-lib-bundler/issues/327
 [#332]: https://github.com/Comandeer/rollup-lib-bundler/issues/332
 [#335]: https://github.com/Comandeer/rollup-lib-bundler/issues/335
+[#337]: https://github.com/Comandeer/rollup-lib-bundler/issues/337
 
 [0.26.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.24.0...v0.25.0
