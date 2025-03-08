@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.26.0]
+## [0.26.0] – 2025-03-09
 ### Changed
 * [#335]: **BREAKING CHANGE**: invalid `exports` shapes (both subpaths and `import`) are no longer supported.
 * [#337]: **BREAKING CHANGE**: updated dependencies:
@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   Dependencies with major version change are marked with the "⚠️" emoji.
 
   Removed dependencies are marked with the "☠️" emoji.
-* [#339]: the shape of the public API has changed from the default export to the named `rlb` one.
+* [#339]: **BREAKING CHANGE**: the shape of the public API has changed from the default export to the named `rlb` one.
 
 ## [0.25.0] – 2024-11-16
 ### Added
