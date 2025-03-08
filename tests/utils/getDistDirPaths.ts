@@ -1,5 +1,5 @@
 import test from 'ava';
-import getDistDirPaths from '../../src/utils/getDistDirPaths.js';
+import { getDistDirPaths } from '../../src/utils/getDistDirPaths.js';
 import type { PackageMetadata } from '../../src/packageParser.js';
 
 test( '#getDistDirPaths() is a function', ( t ) => {

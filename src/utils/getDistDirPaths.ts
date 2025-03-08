@@ -1,7 +1,7 @@
 import { dirname, resolve as resolvePath } from 'pathe';
-import { PackageMetadata } from '../packageParser.js';
+import type { PackageMetadata } from '../packageParser.js';
 
-export default function getDistDirPaths( { project, dist }: PackageMetadata ): Array<string> {
+export function getDistDirPaths( { project, dist }: PackageMetadata ): Array<string> {
 	const distDirPaths = new Set<string>();
 	const distFilePaths = Object.values( dist );
 
