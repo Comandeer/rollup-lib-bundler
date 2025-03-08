@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import test from 'ava';
-import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
-import OutputController from '../src/OutputController.js';
-import createDummyConsole from './__helpers__/createDummyConsole.js';
-import createDummySpinner from './__helpers__/createDummySpinner.js';
+import { testWithSinonSandbox } from './__helpers__/macros/testWithSinonSandbox.js';
+import { OutputController } from '../src/OutputController.js';
+import { createDummyConsole } from './__helpers__/createDummyConsole.js';
+import { createDummySpinner } from './__helpers__/createDummySpinner.js';
 
 test( 'OutputController is a class', ( t ) => {
 	t.is( typeof OutputController, 'function' );

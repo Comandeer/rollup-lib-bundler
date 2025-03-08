@@ -1,11 +1,11 @@
 import { rimraf } from 'rimraf';
 import chalk from 'chalk';
-import bundler from './bundler.js';
-import OutputController, { StackableError } from './OutputController.js';
-import packageParser from './packageParser.js';
-import getDistDirPaths from './utils/getDistDirPaths.js';
+import { bundler } from './bundler.js';
+import { OutputController, type StackableError } from './OutputController.js';
+import { packageParser } from './packageParser.js';
+import { getDistDirPaths } from './utils/getDistDirPaths.js';
 
-export default async function rlb(): Promise<void> {
+export async function rlb(): Promise<void> {
 	const outputController = new OutputController();
 
 	try {

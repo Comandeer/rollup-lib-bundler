@@ -1,6 +1,6 @@
 import test from 'ava';
-import getDistDirPaths from '../../src/utils/getDistDirPaths.js';
-import { PackageMetadata } from '../../src/packageParser.js';
+import { getDistDirPaths } from '../../src/utils/getDistDirPaths.js';
+import type { PackageMetadata } from '../../src/packageParser.js';
 
 test( '#getDistDirPaths() is a function', ( t ) => {
 	t.is( typeof getDistDirPaths, 'function' );

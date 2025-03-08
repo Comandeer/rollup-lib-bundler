@@ -1,5 +1,5 @@
 import { resolve as resolvePath } from 'pathe';
-import { PackageMetadata, SubPathMetadata } from '../../src/packageParser.js';
+import type { PackageMetadata, SubPathMetadata } from '../../src/packageParser.js';
 
 const DEFAULT_METADATA: PackageMetadata = {
 	project: '.',
@@ -16,7 +16,7 @@ const DEFAULT_METADATA: PackageMetadata = {
 type SimplifiedSubPathMetadata = Exclude<SubPathMetadata, 'isBin'>;
 type SimplifiedDistMetadata = Record<string, SimplifiedSubPathMetadata>;
 
-export default function createPackageMetadata(
+export function createPackageMetadata(
 	fixturePath: string,
 	distMetadata: SimplifiedDistMetadata = {},
 	projectMetadata = DEFAULT_METADATA

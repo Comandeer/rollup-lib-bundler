@@ -1,9 +1,9 @@
 import { access, constants, mkdir, writeFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
-import test, { ExecutionContext } from 'ava';
-import testCLI from './__helpers__/macros/testCLI.js';
-import { Result } from 'execa';
-import { AdditionalCodeCheckCallback, CheckStrategiesMap } from './__helpers__/checkDistFiles.js';
+import test, { type ExecutionContext } from 'ava';
+import { testCLI } from './__helpers__/macros/testCLI.js';
+import type { Result } from 'execa';
+import type { AdditionalCodeCheckCallback, CheckStrategiesMap } from './__helpers__/checkDistFiles.js';
 
 type LinkedBundleMap = Map<string, Array<string>>;
 

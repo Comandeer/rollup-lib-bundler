@@ -1,17 +1,17 @@
 import test from 'ava';
-import rlb from '../src/index.js';
+import { rlb } from '../src/index.js';
 import * as rlbPackage from '../src/index.js';
 
-// #164
-test( 'package has one, default exports', ( t ) => {
+// #164, #339
+test( 'package has one, named export', ( t ) => {
 	const actualExports = Object.keys( rlbPackage );
 	const expectedExports = [
-		'default'
+		'rlb'
 	];
 
 	t.deepEqual( actualExports, expectedExports );
 } );
 
-test( 'package default export is a function', ( t ) => {
+test( 'package\'s rlb export is a function', ( t ) => {
 	t.is( typeof rlb, 'function' );
 } );

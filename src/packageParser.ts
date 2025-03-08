@@ -1,9 +1,8 @@
 import { normalize as normalizePath } from 'pathe';
 import semver from 'semver';
-import loadAndParsePackageJSONFile from './packageParser/loadAndParsePackageJSONFile.js';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { loadAndParsePackageJSONFile } from './packageParser/loadAndParsePackageJSONFile.js';
 import { type DistMetadata, prepareDistMetadata, type SubPathMetadata } from './packageParser/prepareDistMetadata.js';
-import { PackageJSON, PackageJSONVersion } from './packageParser/PackageJSON.js';
+import type { PackageJSON, PackageJSONVersion } from './packageParser/PackageJSON.js';
 
 export { DistMetadata, SubPathMetadata };
 
@@ -23,7 +22,7 @@ export interface PackageMetadata {
 	readonly targets: PackageMetadataTargets;
 }
 
-export default async function packageParser( packageDir: string ): Promise<PackageMetadata> {
+export async function packageParser( packageDir: string ): Promise<PackageMetadata> {
 	if ( typeof packageDir !== 'string' ) {
 		throw new TypeError( 'Provide a path to a package directory.' );
 	}

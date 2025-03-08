@@ -1,19 +1,18 @@
 import babelImportAssertionsPlugin from '@babel/plugin-syntax-import-assertions';
 import babelPreset from '@babel/preset-env';
 import babel from '@rollup/plugin-babel';
-import convertCJS from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
-import { InputOptions, OutputOptions, rollup } from 'rollup';
+import { type InputOptions, type OutputOptions, rollup } from 'rollup';
 import preserveShebang from 'rollup-plugin-preserve-shebang';
-import bundleTypes from './bundler/bundleTypes.js';
-import fixBinPermissions from './bundler/fixBinPermissions.js';
-import preserveDynamicImports from './bundler/rollupPlugins/preserveDynamicImports.js';
-import resolveLinkedBundles from './bundler/rollupPlugins/resolveLinkedBundles.js';
-import generateBanner from './generateBanner.js';
-import { PackageMetadata, SubPathMetadata } from './packageParser.js';
-import { OnWarnCallback } from './OutputController.js';
+import { bundleTypes } from './bundler/bundleTypes.js';
+import { fixBinPermissions } from './bundler/fixBinPermissions.js';
+import { preserveDynamicImports } from './bundler/rollupPlugins/preserveDynamicImports.js';
+import { resolveLinkedBundles } from './bundler/rollupPlugins/resolveLinkedBundles.js';
+import { generateBanner } from './generateBanner.js';
+import type { PackageMetadata, SubPathMetadata } from './packageParser.js';
+import type { OnWarnCallback } from './OutputController.js';
 import { dirname } from 'pathe';
 
 interface BundlerOptions {
@@ -21,7 +20,7 @@ interface BundlerOptions {
 	packageMetadata: PackageMetadata;
 }
 
-export default async function bundler( {
+export async function bundler( {
 	onWarn,
 	packageMetadata
 }: BundlerOptions ): Promise<void> {
@@ -77,9 +76,6 @@ function getRollupInputConfig(
 	onwarn: OnWarnCallback = (): void => {}
 ): InputOptions {
 	const plugins = [
-		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
-		convertCJS(),
-
 		// @ts-expect-error Import is callable but TS mistakenly claims it's not.
 		json(),
 

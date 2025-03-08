@@ -14,7 +14,7 @@ type ttyStream = ( WritableStream | DuplexStream ) & {
 	isTTY?: boolean;
 };
 
-export default function createDummyStream( {
+export function createDummyStream( {
 	type = 'writable',
 	isTTY = true
 }: CreateDummyStreamOptions = {} ): DummyStream {

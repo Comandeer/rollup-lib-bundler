@@ -1,6 +1,6 @@
 import test from 'ava';
-import generateBanner from '../src/generateBanner.js';
-import { PackageMetadata } from '../src/packageParser.js';
+import { generateBanner } from '../src/generateBanner.js';
+import type { PackageMetadata } from '../src/packageParser.js';
 
 test( 'generateBanner() produces correct banner', ( t ) => {
 	const metadata: PackageMetadata = {

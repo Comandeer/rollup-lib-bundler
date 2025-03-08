@@ -1,11 +1,11 @@
-import { Plugin } from 'rollup';
+import type { Plugin } from 'rollup';
 
 interface RenderDynamicImportResult {
 	left: string;
 	right: string;
 }
 
-export default function preserveDynamicImports(): Plugin {
+export function preserveDynamicImports(): Plugin {
 	return {
 		name: 'rlb-preserve-dynamic-imports',
 

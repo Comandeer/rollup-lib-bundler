@@ -1,10 +1,9 @@
 import { readFile } from 'node:fs/promises';
-// eslint-disable-next-line ava/use-test
-import { ExecutionContext } from 'ava';
+import type { ExecutionContext } from 'ava';
 import { globby } from 'globby';
 import { resolve as resolvePath } from 'pathe';
 import validateSourceMap from 'sourcemap-validator';
-import checkBanner from './checkBanner.js';
+import { checkBanner } from './checkBanner.js';
 
 export type AdditionalCodeCheckCallback = (
 	t: ExecutionContext,
@@ -44,15 +43,7 @@ interface CheckDistFilesOptions {
 	additionalCodeChecks?: Array<AdditionalCodeCheckCallback>;
 }
 
-/**
- *
- * @param {AvaTestContext} t
- * @param {string} fixturePath
- * @param {Array<string>} expectedFiles
- * @param {CheckDistFilesOptions} options
- * @returns {Promise<void>}
- */
-export default async function checkDistFiles(
+export async function checkDistFiles(
 	t: ExecutionContext,
 	fixturePath: string,
 	expectedFiles: Array<string>,
