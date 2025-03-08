@@ -3,7 +3,7 @@ interface DummySpinner {
 	hide: () => Promise<void>;
 }
 
-export default function createDummySpinner(): DummySpinner {
+export function createDummySpinner(): DummySpinner {
 	return {
 		async show(): Promise<void> {},
 		async hide(): Promise<void> {}

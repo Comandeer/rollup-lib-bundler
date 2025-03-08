@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict';
 import { globby } from 'globby';
 import { extname, join as joinPath, resolve as resolvePath } from 'pathe';
-import { isConditionalExport, isSubPath, isSubPathExports, PackageJSON, PackageJSONBin, PackageJSONSubPath } from './PackageJSON.js';
+import {
+	isConditionalExport,
+	isSubPath,
+	isSubPathExports,
+	type PackageJSON,
+	type PackageJSONBin,
+	type PackageJSONSubPath
+} from './PackageJSON.js';
 
 export interface SubPathMetadata {
 	esm: string;

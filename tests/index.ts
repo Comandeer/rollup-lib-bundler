@@ -1,5 +1,5 @@
 import test from 'ava';
-import rlb from '../src/index.js';
+import { rlb } from '../src/index.js';
 import * as rlbPackage from '../src/index.js';
 
 // #164

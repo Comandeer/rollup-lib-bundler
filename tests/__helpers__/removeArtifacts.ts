@@ -1,7 +1,7 @@
 import { globby } from 'globby';
 import { rimraf } from 'rimraf';
 
-export default async function removeArtifacts( fixturePath: string ): Promise<boolean> {
+export async function removeArtifacts( fixturePath: string ): Promise<boolean> {
 	const distPaths = await globby( [
 		'**/*Package/dist'
 	], {

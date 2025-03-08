@@ -8,7 +8,7 @@ export interface DTSImportPaths {
 	tsSourceFilePath: string;
 }
 
-export default function resolveDTSImportPaths( importee: string, importer: string ): DTSImportPaths {
+export function resolveDTSImportPaths( importee: string, importer: string ): DTSImportPaths {
 	const originalExtension = extname( importee );
 	const tsExtension = originalExtension.replace( /js$/, 'ts' );
 	const originalExtensionRegex = new RegExp( `${ originalExtension }$` );

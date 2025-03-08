@@ -30,7 +30,7 @@ interface OutputControllerOptions {
 	readonly spinner?: SpinnerLike;
 }
 
-export default class OutputController {
+export class OutputController {
 	#console: ConsoleLike;
 	#spinner: SpinnerLike;
 	#pendingLogs: Array<Array<unknown>>;

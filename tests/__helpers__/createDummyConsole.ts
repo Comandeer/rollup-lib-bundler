@@ -1,5 +1,5 @@
 import { Console } from 'node:console';
-import createDummyStream from './createDummyStream.js';
+import { createDummyStream } from './createDummyStream.js';
 
 interface DummyConsole {
 	stdout: Array<unknown>;
@@ -7,7 +7,7 @@ interface DummyConsole {
 	console: typeof console;
 }
 
-export default function createDummyConsole(): DummyConsole {
+export function createDummyConsole(): DummyConsole {
 	const stdout = createDummyStream();
 	const stderr = createDummyStream();
 	const console = new Console( {

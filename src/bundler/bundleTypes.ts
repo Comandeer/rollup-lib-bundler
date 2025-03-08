@@ -1,12 +1,12 @@
 import virtual from '@rollup/plugin-virtual';
 import { globby } from 'globby';
 import { resolve as resolvePath } from 'pathe';
-import { OutputOptions, rollup } from 'rollup';
+import { type OutputOptions, rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
-import ts, { CompilerOptions } from 'typescript';
-import resolveLinkedBundles from './rollupPlugins/resolveLinkedBundles.js';
-import { PackageMetadata } from '../packageParser.js';
-import { OnWarnCallback } from '../OutputController.js';
+import ts, { type CompilerOptions } from 'typescript';
+import { resolveLinkedBundles } from './rollupPlugins/resolveLinkedBundles.js';
+import type { PackageMetadata } from '../packageParser.js';
+import type { OnWarnCallback } from '../OutputController.js';
 
 interface BundleTypesOptions {
 	packageMetadata: PackageMetadata;
@@ -16,7 +16,7 @@ interface BundleTypesOptions {
 	onWarn: OnWarnCallback;
 }
 
-export default async function bundleTypes( {
+export async function bundleTypes( {
 	packageMetadata,
 	sourceFile,
 	outputFile,

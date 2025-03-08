@@ -1,8 +1,8 @@
 import MagicString from 'magic-string';
 import { dirname, relative as getRelativePath, resolve as resolvePath } from 'pathe';
-import resolveDTSImportPaths, { DTSImportPaths } from '../resolveDTSImportPaths.js';
-import { NormalizedOutputOptions, PartialResolvedId, Plugin, ResolveIdResult, SourceMapInput } from 'rollup';
-import { DistMetadata } from '../../packageParser.js';
+import { resolveDTSImportPaths, type DTSImportPaths } from '../resolveDTSImportPaths.js';
+import type { NormalizedOutputOptions, PartialResolvedId, Plugin, ResolveIdResult, SourceMapInput } from 'rollup';
+import type { DistMetadata } from '../../packageParser.js';
 
 interface ResolveLinkedBundlesOptions {
 	isTypeBundling?: boolean;
@@ -13,7 +13,7 @@ interface RenderChunkResult {
 	map: SourceMapInput;
 }
 
-export default function resolveLinkedBundles( projectPath: string, metadata: DistMetadata, {
+export function resolveLinkedBundles( projectPath: string, metadata: DistMetadata, {
 	isTypeBundling = false
 }: ResolveLinkedBundlesOptions = {} ): Plugin {
 	return {

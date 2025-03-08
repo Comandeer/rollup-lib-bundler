@@ -1,11 +1,11 @@
 import { resolve as resolvePath } from 'pathe';
 import test from 'ava';
-import createPackageMetadata from './__helpers__/createPackageMetadata.js';
-import testWithSinonSandbox from './__helpers__/macros/testWithSinonSandbox.js';
-import removeArtifacts from './__helpers__/removeArtifacts.js';
-import bundler from '../src/bundler.js';
+import { createPackageMetadata } from './__helpers__/createPackageMetadata.js';
+import { testWithSinonSandbox } from './__helpers__/macros/testWithSinonSandbox.js';
+import { removeArtifacts } from './__helpers__/removeArtifacts.js';
+import { bundler } from '../src/bundler.js';
 
-const fixturesPath = resolvePath( import.meta.dirname!, '__fixtures__' );
+const fixturesPath = resolvePath( import.meta.dirname, '__fixtures__' );
 const errorPackageFixturePath = resolvePath( fixturesPath, 'generic', 'errorPackage' );
 const externalDepPackageFixturePath = resolvePath( fixturesPath, 'generic', 'externalDepPackage' );
 

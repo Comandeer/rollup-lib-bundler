@@ -1,10 +1,10 @@
-import { Result, execa } from 'execa';
+import { type Result, execa } from 'execa';
 import { resolve as resolvePath } from 'pathe';
-import test, { ExecutionContext } from 'ava';
-import checkDistFiles, { AdditionalCodeCheckCallback, CheckStrategiesMap } from '../checkDistFiles.js';
-import createTemporaryFixtureDirectory from '../createTemporaryFixtureDirectory.js';
+import test, { type ExecutionContext } from 'ava';
+import { checkDistFiles, type AdditionalCodeCheckCallback, type CheckStrategiesMap } from '../checkDistFiles.js';
+import { createTemporaryFixtureDirectory } from '../createTemporaryFixtureDirectory.js';
 
-const BIN_PATH = resolvePath( import.meta.dirname!, '..', '..', '..', 'src', '__bin__', 'rlb.mts' );
+const BIN_PATH = resolvePath( import.meta.dirname, '..', '..', '..', 'src', '__bin__', 'rlb.mts' );
 
 type TestCLIBeforeCallback = ( t: ExecutionContext, tempDirPath: string ) => Promise<void> | void;
 type TestCLIAfterCallback = TestCLIBeforeCallback;
@@ -27,7 +27,7 @@ interface TestCLIOptions {
  * @param {TestCLIOptions} options
  * @returns {Promise<void>}
  */
-export default test.macro( async ( t: ExecutionContext, {
+export const testCLI = test.macro( async ( t: ExecutionContext, {
 	before,
 	after,
 	cliPath = BIN_PATH,

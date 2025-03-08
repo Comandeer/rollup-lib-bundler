@@ -1,10 +1,10 @@
 import { access, readFile } from 'node:fs/promises';
 import { resolve as resolvePath } from 'pathe';
-import { isConditionalExport, isSubPathExports, PackageJSON } from './PackageJSON.js';
+import { isConditionalExport, isSubPathExports, type PackageJSON } from './PackageJSON.js';
 
 type UnvalidatedPackageJSON = Partial<PackageJSON>;
 
-export default async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJSON> {
+export async function loadAndParsePackageJSONFile( dirPath: string ): Promise<PackageJSON> {
 	const path = resolvePath( dirPath, 'package.json' );
 
 	try {
