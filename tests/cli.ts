@@ -22,7 +22,8 @@ const cmdResultChecks = {
 		t.true( ( stderr as string ).includes( '🚨Error🚨' ) );
 	},
 
-	noError: ( t: ExecutionContext, { stderr }: Result ): void => {
+	noError: ( t: ExecutionContext, { stdout, stderr }: Result ): void => {
+		t.true( ( stdout as string ).includes( 'Bundling complete!' ) );
 		t.false( ( stderr as string ).includes( 'Bundling failed!' ) );
 		t.false( ( stderr as string ).includes( '🚨Error🚨' ) );
 	}
@@ -186,7 +187,7 @@ test.serial( 'CLI bundles TypeScript package without the tsconfig.json file', te
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	cmdResultChecks: [
-		cmdResultChecks.isSuccesful
+		cmdResultChecks.noError
 	]
 } );
 
@@ -769,7 +770,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles without type de
 		'./dist/index.mjs.map'
 	],
 	cmdResultChecks: [
-		cmdResultChecks.isSuccesful
+		cmdResultChecks.noError
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
@@ -795,7 +796,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles in non-standard
 		'./some-dist/fn.mjs.map'
 	],
 	cmdResultChecks: [
-		cmdResultChecks.isSuccesful
+		cmdResultChecks.noError
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
