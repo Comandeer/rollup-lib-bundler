@@ -929,6 +929,30 @@ test.serial(
 	}
 );
 
+// #341
+test.serial(
+	'CLI hardcodes TS compiler options for module, module resolution and target',
+	testCLI, {
+		fixture: 'typescript/hardcodedCompilerOptions',
+		expectedFiles: [
+			'dist/index.d.ts',
+			'dist/index.mjs',
+			'dist/index.mjs.map'
+		],
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		additionalCodeChecks: [
+			( t, path, code ): void => {
+				if ( !path.endsWith( '.mjs' ) ) {
+					return;
+				}
+
+				t.false( code.includes( 'var ' ) );
+				t.true( code.includes( 'export{' ) );
+			}
+		]
+	}
+);
+
 async function createDummyDists( packagePath: string, distDirs = [ 'dist' ] ): Promise<void> {
 	const distDirsPromises = distDirs.map( async ( distDir ) => {
 		const distPath = resolvePath( packagePath, distDir );
