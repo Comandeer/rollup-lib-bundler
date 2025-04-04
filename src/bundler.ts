@@ -3,7 +3,7 @@ import babelPreset from '@babel/preset-env';
 import babel from '@rollup/plugin-babel';
 import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
-import typescript from '@rollup/plugin-typescript';
+import typescript, { type PartialCompilerOptions } from '@rollup/plugin-typescript';
 import { type InputOptions, type OutputOptions, rollup } from 'rollup';
 import preserveShebang from 'rollup-plugin-preserve-shebang';
 import { bundleTypes } from './bundler/bundleTypes.js';
@@ -147,22 +147,24 @@ function getRollupOutputConfig( outputPath: string, banner: string ): OutputOpti
 interface TSPluginConfig {
 	tsconfig: string | boolean;
 	declaration: false;
-	compilerOptions?: {
-		outDir: string;
-	};
+	compilerOptions: PartialCompilerOptions;
 }
 
 function getTSPluginConfig( { esm, tsConfig }: SubPathMetadata ): TSPluginConfig {
 	const config: TSPluginConfig = {
 		tsconfig: tsConfig ?? false,
-		declaration: false
+		declaration: false,
+		compilerOptions: {
+			lib: [ 'ESNext' ],
+			target: 'ESNext',
+			module: 'NodeNext',
+			moduleResolution: 'NodeNext'
+		}
 	};
 
 	// Outdir override fails for projects without the tsconfig.json file.
 	if ( tsConfig !== undefined ) {
-		config.compilerOptions = {
-			outDir: dirname( esm )
-		};
+		config.compilerOptions.outDir = dirname( esm );
 	}
 
 	return config;
