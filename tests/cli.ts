@@ -22,7 +22,8 @@ const cmdResultChecks = {
 		t.true( ( stderr as string ).includes( '🚨Error🚨' ) );
 	},
 
-	noError: ( t: ExecutionContext, { stderr }: Result ): void => {
+	noError: ( t: ExecutionContext, { stdout, stderr }: Result ): void => {
+		t.true( ( stdout as string ).includes( 'Bundling complete!' ) );
 		t.false( ( stderr as string ).includes( 'Bundling failed!' ) );
 		t.false( ( stderr as string ).includes( '🚨Error🚨' ) );
 	}
@@ -186,7 +187,7 @@ test.serial( 'CLI bundles TypeScript package without the tsconfig.json file', te
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	cmdResultChecks: [
-		cmdResultChecks.isSuccesful
+		cmdResultChecks.noError
 	]
 } );
 
@@ -769,7 +770,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles without type de
 		'./dist/index.mjs.map'
 	],
 	cmdResultChecks: [
-		cmdResultChecks.isSuccesful
+		cmdResultChecks.noError
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
@@ -795,7 +796,7 @@ test.serial( 'CLI correctly bundles type definitions for bundles in non-standard
 		'./some-dist/fn.mjs.map'
 	],
 	cmdResultChecks: [
-		cmdResultChecks.isSuccesful
+		cmdResultChecks.noError
 	],
 	customCheckStrategies: customCheckStrategies.skipSourceMaps,
 	additionalCodeChecks: [
@@ -925,6 +926,52 @@ test.serial(
 
 				t.true( code.includes( 'var ' ) );
 			}
+		]
+	}
+);
+
+// #341
+test.serial(
+	'CLI hardcodes TS module, target and lib compiler options',
+	testCLI, {
+		fixture: 'typescript/hardcodedCompilerOptions',
+		expectedFiles: [
+			'dist/index.d.ts',
+			'dist/index.mjs',
+			'dist/index.mjs.map'
+		],
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		cmdResultChecks: [
+			( t: ExecutionContext, { stdout, stderr }: Result ): void => {
+				t.true( ( stdout as string ).includes( 'Bundling complete!' ) );
+				// This error code indicates that the console name can't be found.
+				// If the lib was not overriden, this warning wouldn't be raised
+				// as the 'DOM' lib contains definitions for the console.
+				t.true( ( stderr as string ).includes( 'TS2584' ) );
+			}
+		],
+		additionalCodeChecks: [
+			( t, path, code ): void => {
+				if ( !path.endsWith( '.mjs' ) ) {
+					return;
+				}
+
+				t.false( code.includes( 'var ' ) );
+				t.true( code.includes( 'export{' ) );
+			}
+		]
+	}
+);
+
+// #341
+test.serial(
+	'CLI hardcodes TS moduleResolution compiler option',
+	testCLI, {
+		fixture: 'typescript/hardcodedModuleResolutionCompilerOption',
+		expectedFiles: [],
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		cmdResultChecks: [
+			cmdResultChecks.isFailed
 		]
 	}
 );

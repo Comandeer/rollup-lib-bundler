@@ -144,25 +144,38 @@ function getRollupOutputConfig( outputPath: string, banner: string ): OutputOpti
 	};
 }
 
+interface HardcodedCompilerOptions {
+	target: 'ESNext';
+	lib: [ 'ESNext' ];
+	module: 'NodeNext';
+	moduleResolution: 'NodeNext';
+}
+
+interface OutDirCompilerOption {
+	outDir?: string;
+}
+
 interface TSPluginConfig {
 	tsconfig: string | boolean;
 	declaration: false;
-	compilerOptions?: {
-		outDir: string;
-	};
+	compilerOptions: HardcodedCompilerOptions & OutDirCompilerOption;
 }
 
 function getTSPluginConfig( { esm, tsConfig }: SubPathMetadata ): TSPluginConfig {
 	const config: TSPluginConfig = {
 		tsconfig: tsConfig ?? false,
-		declaration: false
+		declaration: false,
+		compilerOptions: {
+			target: 'ESNext',
+			lib: [ 'ESNext' ],
+			module: 'NodeNext',
+			moduleResolution: 'NodeNext'
+		}
 	};
 
 	// Outdir override fails for projects without the tsconfig.json file.
 	if ( tsConfig !== undefined ) {
-		config.compilerOptions = {
-			outDir: dirname( esm )
-		};
+		config.compilerOptions.outDir = dirname( esm );
 	}
 
 	return config;

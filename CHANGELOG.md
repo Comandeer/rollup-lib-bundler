@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
+## [0.27.0]
+### Changed
+* [#341]: **BREAKING CHANGE**: some compiler options in the TS config has been hardcoded:
+	* [`target`](https://www.typescriptlang.org/tsconfig/#target): `ESNext`,
+	* [`lib`](https://www.typescriptlang.org/tsconfig/#lib): `[ 'ESNext' ]`,
+	* [`module`](https://www.typescriptlang.org/tsconfig/#module): `NodeNext`,
+	* [`moduleResolution`](https://www.typescriptlang.org/tsconfig/#moduleResolution): `NodeNext`.
+
 ## [0.26.0] – 2025-03-09
 ### Changed
 * [#335]: **BREAKING CHANGE**: invalid `exports` shapes (both subpaths and `import`) are no longer supported.
@@ -474,7 +482,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [#335]: https://github.com/Comandeer/rollup-lib-bundler/issues/335
 [#337]: https://github.com/Comandeer/rollup-lib-bundler/issues/337
 [#339]: https://github.com/Comandeer/rollup-lib-bundler/issues/339
+[#341]: https://github.com/Comandeer/rollup-lib-bundler/issues/341
 
+[0.27.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.24.0...v0.25.0
 [0.24.0]: https://github.com/Comandeer/rollup-lib-bundler/compare/v0.23.0...v0.24.0

@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "./whatever",
-		"incremental": true
+		"moduleResolution": "node"
 	},
 	"include": ["src/**/*.ts"]
 }
