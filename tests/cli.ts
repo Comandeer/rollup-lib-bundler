@@ -968,11 +968,7 @@ test.serial(
 	'CLI hardcodes TS moduleResolution compiler option',
 	testCLI, {
 		fixture: 'typescript/hardcodedModuleResolutionCompilerOption',
-		expectedFiles: [
-			// 'dist/index.d.ts',
-			// 'dist/index.mjs',
-			// 'dist/index.mjs.map'
-		],
+		expectedFiles: [],
 		customCheckStrategies: customCheckStrategies.skipSourceMaps,
 		cmdResultChecks: [
 			cmdResultChecks.isFailed
