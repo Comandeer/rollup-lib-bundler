@@ -3,7 +3,7 @@ import babelPreset from '@babel/preset-env';
 import babel from '@rollup/plugin-babel';
 import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
-import typescript, { type PartialCompilerOptions } from '@rollup/plugin-typescript';
+import typescript from '@rollup/plugin-typescript';
 import { type InputOptions, type OutputOptions, rollup } from 'rollup';
 import preserveShebang from 'rollup-plugin-preserve-shebang';
 import { bundleTypes } from './bundler/bundleTypes.js';
@@ -144,10 +144,21 @@ function getRollupOutputConfig( outputPath: string, banner: string ): OutputOpti
 	};
 }
 
+interface HardcodedCompilerOptions {
+	target: 'ESNext';
+	lib: [ 'ESNext' ];
+	module: 'NodeNext';
+	moduleResolution: 'NodeNext';
+}
+
+interface OutDirCompilerOption {
+	outDir?: string;
+}
+
 interface TSPluginConfig {
 	tsconfig: string | boolean;
 	declaration: false;
-	compilerOptions: PartialCompilerOptions;
+	compilerOptions: HardcodedCompilerOptions & OutDirCompilerOption;
 }
 
 function getTSPluginConfig( { esm, tsConfig }: SubPathMetadata ): TSPluginConfig {
@@ -155,8 +166,8 @@ function getTSPluginConfig( { esm, tsConfig }: SubPathMetadata ): TSPluginConfig
 		tsconfig: tsConfig ?? false,
 		declaration: false,
 		compilerOptions: {
-			lib: [ 'ESNext' ],
 			target: 'ESNext',
+			lib: [ 'ESNext' ],
 			module: 'NodeNext',
 			moduleResolution: 'NodeNext'
 		}
