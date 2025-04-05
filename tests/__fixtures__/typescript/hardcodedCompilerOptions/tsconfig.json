@@ -1,8 +1,11 @@
 {
 	"compilerOptions": {
 		"module": "CommonJS",
-		"moduleResolution": "classic",
-		"target": "ES5"
+		"target": "ES5",
+		"lib": [
+			"ESNext",
+			"DOM"
+		]
 	},
 	"include": ["src/**/*.ts"]
 }

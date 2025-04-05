@@ -932,7 +932,7 @@ test.serial(
 
 // #341
 test.serial(
-	'CLI hardcodes TS compiler options for module, module resolution and target',
+	'CLI hardcodes TS module, target and lib compiler options',
 	testCLI, {
 		fixture: 'typescript/hardcodedCompilerOptions',
 		expectedFiles: [
@@ -941,6 +941,15 @@ test.serial(
 			'dist/index.mjs.map'
 		],
 		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		cmdResultChecks: [
+			( t: ExecutionContext, { stdout, stderr }: Result ): void => {
+				t.true( ( stdout as string ).includes( 'Bundling complete!' ) );
+				// This error code indicates that the console name can't be found.
+				// If the lib was not overriden, this warning wouldn't be raised
+				// as the 'DOM' lib contains definitions for the console.
+				t.true( ( stderr as string ).includes( 'TS2584' ) );
+			}
+		],
 		additionalCodeChecks: [
 			( t, path, code ): void => {
 				if ( !path.endsWith( '.mjs' ) ) {
@@ -950,6 +959,23 @@ test.serial(
 				t.false( code.includes( 'var ' ) );
 				t.true( code.includes( 'export{' ) );
 			}
+		]
+	}
+);
+
+// #341
+test.serial(
+	'CLI hardcodes TS moduleResolution compiler option',
+	testCLI, {
+		fixture: 'typescript/hardcodedModuleResolutionCompilerOption',
+		expectedFiles: [
+			// 'dist/index.d.ts',
+			// 'dist/index.mjs',
+			// 'dist/index.mjs.map'
+		],
+		customCheckStrategies: customCheckStrategies.skipSourceMaps,
+		cmdResultChecks: [
+			cmdResultChecks.isFailed
 		]
 	}
 );
