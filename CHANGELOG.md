@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-## [0.27.0]
+## [0.27.0] – 2025-04-05
 ### Changed
 * [#341]: **BREAKING CHANGE**: some compiler options in the TS config has been hardcoded:
 	* [`target`](https://www.typescriptlang.org/tsconfig/#target): `ESNext`,
